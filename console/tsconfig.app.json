@@ -26,6 +26,7 @@
       "@constants/*": ["src/constants/*"],
       "@types/*": ["src/types/*"],
       "@utils/*": ["src/utils/*"],
+      "@atoms/*": ["src/atoms/*"],
     },
 
     /* Linting */

@@ -97,6 +97,30 @@ export const AppTheme = createTheme({
   },
   spacing: 8,
   components: {
+    MuiTextField: {
+      styleOverrides: {
+        root:{
+          variants: [
+            {
+              props: { variant: 'outlined' },
+              style: ({theme}) => theme.unstable_sx({
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'white',
+                      borderRadius: '8px',
+                      height: '56px',
+                      '&:hover fieldset': {
+                        borderColor: 'primary.main',
+                      },
+                      '& fieldset': {
+                        borderWidth: '2px',
+                      },
+                  }
+              })
+            }
+          ]
+        }
+      }
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -104,11 +128,33 @@ export const AppTheme = createTheme({
           borderRadius: '4px',
         },
         contained: {
-          boxShadow: 'none',
+          paddingBlock: '16px',
+          borderRadius: '12px',
+          fontSize: '1.1rem',
+          textTransform: 'none',
+          boxShadow: '0 4px 12px rgba(194, 24, 91, 0.3)',
           '&:hover': {
-            boxShadow: '0px 2px 4px rgba(0,0,0,0.2)',
+            transform: 'translateY(-2px)',
+            boxShadow: '0 6px 16px rgba(194, 24, 91, 0.4)',
           },
+          transition: 'all 0.2s ease-in-out',
         },
+        outlined: ({theme}) => theme.unstable_sx({
+          py: 2,
+          borderRadius: '12px',
+          borderWidth: '2px',
+          borderColor: 'divider',
+          backgroundColor: 'white',
+          color: 'text.primary',
+          fontSize: '1.1rem',
+          textTransform: 'none',
+          '&:hover': {
+            borderColor: 'primary.main',
+            bgcolor: 'grey.50',
+            transform: 'translateY(-2px)',
+          },
+          transition: 'all 0.2s ease-in-out',
+        })
       },
     },
     MuiCard: {

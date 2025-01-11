@@ -61,7 +61,7 @@ export const OtpForm = () => {
 
         <Button
           type="submit"
-          variant="contained"
+          variant="bold-contained"
           fullWidth
         >
           Verify

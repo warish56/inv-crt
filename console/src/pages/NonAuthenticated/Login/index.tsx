@@ -63,7 +63,7 @@ export const LoginPage = () => {
           </Box>
           <Button
             fullWidth
-            variant="outlined"
+            variant="bold-outlined"
             startIcon={<Google />}
           >
             Continue with Google

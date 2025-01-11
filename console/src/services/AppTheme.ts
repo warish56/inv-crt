@@ -1,5 +1,12 @@
 import { createTheme } from '@mui/material';
 
+declare module '@mui/material/Button' {
+  interface ButtonPropsVariantOverrides {
+    'bold-contained': true;
+    'bold-outlined': true;
+  }
+}
+
 export const AppTheme = createTheme({
   palette: {
     primary: {
@@ -107,7 +114,7 @@ export const AppTheme = createTheme({
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: 'white',
                       borderRadius: '8px',
-                      height: '56px',
+                      minHeight: '56px',
                       '&:hover fieldset': {
                         borderColor: 'primary.main',
                       },
@@ -126,35 +133,46 @@ export const AppTheme = createTheme({
         root: {
           textTransform: 'none',
           borderRadius: '4px',
-        },
-        contained: {
-          paddingBlock: '16px',
-          borderRadius: '12px',
-          fontSize: '1.1rem',
-          textTransform: 'none',
-          boxShadow: '0 4px 12px rgba(194, 24, 91, 0.3)',
-          '&:hover': {
-            transform: 'translateY(-2px)',
-            boxShadow: '0 6px 16px rgba(194, 24, 91, 0.4)',
-          },
-          transition: 'all 0.2s ease-in-out',
-        },
-        outlined: ({theme}) => theme.unstable_sx({
-          py: 2,
-          borderRadius: '12px',
-          borderWidth: '2px',
-          borderColor: 'divider',
-          backgroundColor: 'white',
-          color: 'text.primary',
-          fontSize: '1.1rem',
-          textTransform: 'none',
-          '&:hover': {
-            borderColor: 'primary.main',
-            bgcolor: 'grey.50',
-            transform: 'translateY(-2px)',
-          },
-          transition: 'all 0.2s ease-in-out',
-        })
+          variants:[
+            {
+              props: {variant: 'bold-contained'},
+              style: ({theme}) => theme.unstable_sx({
+                paddingBlock: '16px',
+                borderRadius: '12px',
+                fontSize: '1.1rem',
+                textTransform: 'none',
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
+                boxShadow: '0 4px 12px rgba(194, 24, 91, 0.3)',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 16px rgba(194, 24, 91, 0.4)',
+                },
+                transition: 'all 0.2s ease-in-out',
+              })
+            },
+            {
+              props: {variant: 'bold-outlined'},
+              style: ({theme}) => theme.unstable_sx({
+                py: 2,
+                borderRadius: '12px',
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                borderColor: 'divider',
+                backgroundColor: 'white',
+                color: 'text.primary',
+                fontSize: '1.1rem',
+                textTransform: 'none',
+                '&:hover': {
+                  borderColor: "primary.main",
+                  bgcolor: 'grey.50',
+                  transform: 'translateY(-2px)',
+                },
+                transition: 'all 0.2s ease-in-out',
+              })
+            }
+          ]
+        }
       },
     },
     MuiCard: {

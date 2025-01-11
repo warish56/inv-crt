@@ -53,7 +53,7 @@ export const LoginForm = () => {
 
           <Button
             type="submit"
-            variant="contained"
+            variant="bold-contained"
             fullWidth
             >
             Send OTP

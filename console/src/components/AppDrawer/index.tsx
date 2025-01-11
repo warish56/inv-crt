@@ -24,14 +24,13 @@ export const AppDrawer = () => {
 
   const primaryNavLinks = [
     { title: 'Dashboard', icon: <Dashboard />, path: '/' },
-    { title: 'Invoices', icon: <Analytics />, path: '/invoices' },
-    { title: 'Schedule', icon: <Schedule />, path: '/schedule' },
-    { title: 'Documents', icon: <Folder />, path: '/documents' },
+    { title: 'Create Invoice', icon: <Analytics />, path: '/invoices/create' },
+    { title: 'Manage Invoices', icon: <Schedule />, path: '/invoices' },
+    { title: 'Customers', icon: <Folder />, path: '/customers' },
   ];
 
   const secondaryNavLinks = [
-    { title: 'Profile', icon: <Person />, path: '/profile' },
-    { title: 'Notifications', icon: <Notifications />, path: '/notifications' },
+    { title: 'Profile', icon: <Person />, path: '/business' },
     { title: 'Settings', icon: <Settings />, path: '/settings' },
   ];
 

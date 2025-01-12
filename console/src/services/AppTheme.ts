@@ -112,7 +112,7 @@ export const AppTheme = createTheme({
               props: { variant: 'outlined' },
               style: ({theme}) => theme.unstable_sx({
                     '& .MuiOutlinedInput-root': {
-                      backgroundColor: 'white',
+                      backgroundColor: 'grey.50',
                       borderRadius: '8px',
                       minHeight: '56px',
                       '&:hover fieldset': {

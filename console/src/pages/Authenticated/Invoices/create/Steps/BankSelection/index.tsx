@@ -4,52 +4,98 @@ import {
   Button,
   Typography,
   TextField,
-  Card,
-  CardContent,
+  Paper,
   InputAdornment,
   Avatar,
-  IconButton,
-  Tooltip,
   Chip,
-  Divider
+  Card,
+  CardContent,
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import {
   Add as AddIcon,
   Search as SearchIcon,
   Business as BusinessIcon,
+  AccountBalance as BankIcon,
   CheckCircle as CheckCircleIcon,
-  Email as EmailIcon,
-  LocationOn as LocationIcon,
-  ArrowForward as ArrowForwardIcon,
-  Receipt as GSTIcon
+  ContentCopy as CopyIcon,
+  ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
-import { StepHeader } from '../../components/StepHeader';
 
-type Props = {
-  selectedCustomerId: number;
-  onAddCustomer: () => void;
-  handleSelectCustomer: (id: number) => void;
+type Bank = {
+  id: number;
+  name: string;
+  holderName: string;
+  accountNumber: string;
+  ifsc: string;
+  type: 'Savings' | 'Current';
 }
 
-export const CustomerSelectionStep = ({
-  selectedCustomerId,
-  handleSelectCustomer,
-  onAddCustomer
-}: Props) => {
+type Props = {
+  selectedBankId: number;
+  onAddBank: () => void;
+  handleSelectBank: (id: number) => void;
+}
+
+export const BankSelection = ({ selectedBankId, onAddBank, handleSelectBank }: Props) => {
+  const formatAccountNumber = (number: string) => {
+    return `••••${number.slice(-4)}`;
+  };
+
+  const getChipStyles = (type: string) => {
+    if (type === 'Savings') {
+      return {
+        bgcolor: 'rgba(194, 24, 91, 0.08)',
+        color: 'primary.main'
+      };
+    }
+    return {
+      bgcolor: 'rgba(0, 145, 139, 0.08)',
+      color: '#00918b'
+    };
+  };
+
   return (
     <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
-
-      <StepHeader 
-        title='Select Customer'
-        description='Choose a customer for your transaction'
-        onBtnClick={onAddCustomer}
-        btnText='New Customer'
-      />
+      {/* Header Section */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          mb: 4 
+        }}
+      >
+        <Box>
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              fontWeight: 600,
+              color: 'primary.main',
+              mb: 0.5
+            }}
+          >
+            Select Bank Account
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Choose a bank account for your transactions
+          </Typography>
+        </Box>
+        <Button
+          startIcon={<AddIcon />}
+          variant="contained"
+          size="medium"
+          onClick={onAddBank}
+        >
+          Add Bank
+        </Button>
+      </Box>
 
       {/* Search Section */}
       <TextField
         fullWidth
-        placeholder="Search customers by name, GSTIN, or location..."
+        placeholder="Search banks by name or account number..."
         variant="outlined"
         sx={{ 
           mb: 4,
@@ -67,78 +113,76 @@ export const CustomerSelectionStep = ({
         }}
       />
 
-      {/* Customers List */}
+      {/* Banks List */}
       <Box sx={{ mt: 2 }}>
         {[
-          { id: 1, name: 'Acme Corp', gstin: 'GSTIN001', email: 'acme@example.com', address: 'Mumbai, India', type: 'Corporate' },
-          { id: 2, name: 'TechCorp', gstin: 'GSTIN002', email: 'tech@example.com', address: 'Delhi, India', type: 'Startup' },
-        ].map((customer) => (
+          { id: 1, name: 'Bank 1', holderName: 'Mr.Darvin', accountNumber: '123123', ifsc: 'KUH23423', type: 'Savings' },
+          { id: 2, name: 'Bank 2', holderName: 'Mr.Mark', accountNumber: '345345', ifsc: 'HYTU322', type: 'Current' },
+        ].map((bank) => (
           <Card
-            key={customer.id}
+            key={bank.id}
             sx={{
               mb: 2,
               cursor: 'pointer',
               borderRadius: 2,
               border: '2px solid',
-              borderColor: selectedCustomerId === customer.id ? 'primary.main' : 'transparent',
+              borderColor: selectedBankId === bank.id ? 'primary.main' : 'transparent',
               transition: 'all 0.3s ease',
               '&:hover': {
                 transform: 'translateY(-2px)',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               },
             }}
-            onClick={() => handleSelectCustomer(customer.id)}
+            onClick={() => handleSelectBank(bank.id)}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Avatar 
                     sx={{ 
-                      bgcolor: selectedCustomerId === customer.id ? 'primary.main' : 'grey.200',
+                      bgcolor: selectedBankId === bank.id ? 'primary.main' : 'grey.200',
                       width: 56,
                       height: 56,
                       '& .MuiSvgIcon-root': {
-                        color: selectedCustomerId === customer.id ? 'white' : 'grey.600'
+                        color: selectedBankId === bank.id ? 'white' : 'grey.600'
                       }
                     }}
                   >
-                    <BusinessIcon sx={{ fontSize: 28 }} />
+                    <BankIcon sx={{ fontSize: 28 }} />
                   </Avatar>
                   <Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                       <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        {customer.name}
+                        {bank.name}
                       </Typography>
                       <Chip 
-                        label={customer.type}
+                        label={bank.type}
                         size="small"
                         sx={{ 
-                          bgcolor: 'rgba(194, 24, 91, 0.08)',
-                          color: 'primary.main',
+                          ...getChipStyles(bank.type),
                           fontWeight: 500,
                           fontSize: '0.75rem',
                           height: '24px'
                         }}
                       />
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mt: 1 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <GSTIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                        <Typography variant="body2" sx={{ color: 'text.secondary', fontFamily: 'monospace' }}>
-                          {customer.gstin}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <EmailIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                        <Typography variant="body2" color="text.secondary">
-                          {customer.email}
-                        </Typography>
-                      </Box>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      {bank.holderName}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                        {formatAccountNumber(bank.accountNumber)}
+                      </Typography>
+                      <Tooltip title="Copy Account Number">
+                        <IconButton size="small">
+                          <CopyIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     </Box>
                   </Box>
                 </Box>
                 
-                {selectedCustomerId === customer.id && (
+                {selectedBankId === bank.id && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <CheckCircleIcon color="primary" />
                     <Typography variant="body2" color="primary.main" fontWeight={500}>
@@ -159,12 +203,9 @@ export const CustomerSelectionStep = ({
                   alignItems: 'center'
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LocationIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                  <Typography variant="body2" color="text.secondary">
-                    {customer.address}
-                  </Typography>
-                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  IFSC: <span style={{ fontFamily: 'monospace' }}>{bank.ifsc}</span>
+                </Typography>
                 <IconButton 
                   size="small" 
                   sx={{ 
@@ -184,4 +225,4 @@ export const CustomerSelectionStep = ({
   );
 };
 
-export default CustomerSelectionStep;
+export default BankSelection;

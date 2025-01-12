@@ -21,8 +21,14 @@ import {
   MarkunreadMailbox as PostalIcon,
   AccountBalanceWallet as PANIcon
 } from '@mui/icons-material';
+import { SubStepHeader } from '../../components/SubStepHeader';
 
-export const ClientDetailsStep= () => {
+
+type props = {
+  onBack: () => void
+}
+
+export const ClientDetailsStep= ({onBack}:props) => {
   const [formData, setFormData] = useState({
     country: '',
     businessName: '',
@@ -108,22 +114,16 @@ export const ClientDetailsStep= () => {
     <Card 
       sx={{ 
         borderRadius: 2,
-        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-        bgcolor: 'background.paper'
+        boxShadow: 'none',
+        bgcolor: 'background.default'
       }}
     >
+      <SubStepHeader 
+       title='Client details'
+       description='Fill the required client details'
+       onBack={onBack}
+      />
       <CardContent>
-        <Typography 
-          variant="h5" 
-          sx={{ 
-            mb: 3, 
-            fontWeight: 500,
-            color: 'primary.main'
-          }}
-        >
-          Client Details
-        </Typography>
-
         <Grid container spacing={3}>
           {/* Required Fields Section */}
           <Grid item xs={12}>

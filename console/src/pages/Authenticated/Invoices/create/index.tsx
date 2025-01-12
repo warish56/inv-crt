@@ -9,13 +9,14 @@ import {
 import { CustomerSelectionStep } from './Steps/CustomerSelection';
 import { ServicesProvidedStep } from './Steps/ServicesProvidedStep';
 import { ShippingDetailsStep } from './Steps/ShippingDetails';
-import { PaymentDetailsStep } from './Steps/PaymentDetails';
+import { BankSelection } from './Steps/BankSelection';
 import { AdditionalDetailsStep } from './Steps/AdditionalDetails';
 import { InvoicePreview } from './Preview';
 import { StepManager } from './Steps/StepManager';
 import { StepFooter } from './Footer';
-import { ClientDetailsStep } from './CreationOrUpdatationForms/ClientDetails';
-import { ServiceDetails } from './CreationOrUpdatationForms/ServiceDetails';
+import { ClientDetailsStep } from './SubSteps/ClientDetails';
+import { ServiceDetails } from './SubSteps/ServiceDetails';
+import { BankingDetails } from './SubSteps/BankDetails';
 
 
 
@@ -52,13 +53,20 @@ export const CreateInvoicePage = () => {
     handleStep((currentStep) => currentStep - 1);
   };
 
+  const handleSubStepBack = () => {
+    handleSubStepChange(-1);
+  }
+
 
   const renderSubStep = (step: number) => {
         switch(step){
             case 0: 
-                return <ClientDetailsStep />;
+                return <ClientDetailsStep onBack={handleSubStepBack}/>;
             case 1: 
-                return <ServiceDetails />;
+                return <ServiceDetails onBack={handleSubStepBack}/>;
+            case 2: 
+              return <BankingDetails onBack={handleSubStepBack}/>;
+
             default:
                 return null;
         }
@@ -70,11 +78,29 @@ export const CreateInvoicePage = () => {
       case 0:
         return <CustomerSelectionStep onAddCustomer={() => handleSubStepChange(0)}   selectedCustomerId={1} handleSelectCustomer={() => {}}/>;
       case 1:
-        return <ServicesProvidedStep services={[]} onAddService={() => handleSubStepChange(1)}   />;
-      case 2:
         return <ShippingDetailsStep />;
+      case 2:
+        return <ServicesProvidedStep services={[
+          {
+            id: '1',
+            name: 'Maggieee',
+            qty: 2,
+            rate: 1500,
+            hsn: '123123',
+          },
+          {
+            id: '2',
+            name: 'Spa',
+            qty: 1,
+            rate: 500,
+            hsn: '34534',
+          }
+        ]} 
+        onAddService={() => handleSubStepChange(1)}   
+        />;
+
       case 3:
-        return <PaymentDetailsStep />;
+        return <BankSelection onAddBank={() => handleSubStepChange(2)}   selectedBankId={1} handleSelectBank={() => {}}/>;
       case 4:
         return <AdditionalDetailsStep />;
       case 5:
@@ -114,10 +140,16 @@ export const CreateInvoicePage = () => {
             sx={{
               height: 'calc(100dvh - var(--header-hight))',
               overflow: 'auto',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              border: 'none',
+              boxShadow: 'none',
+              bgcolor: 'background.default',
             }}
           >
-            <CardContent>
+            <CardContent sx={{
+              bgcolor: 'background.default',
+              boxShadow: 'none',
+              paddingTop: 0,
+            }}>
               {activeSubStep > -1 ? renderSubStep(activeSubStep) : renderStepContent(activeStep)}
             </CardContent>
           </Card>

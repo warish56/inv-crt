@@ -26,13 +26,6 @@ const steps = [
       icon: <PersonIcon />,
       optional: false
     },
-
-    {
-      label: 'Add Services',
-      description: 'Add products or services to invoice',
-      icon: <DescriptionIcon />,
-      optional: false
-    },
     {
       label: 'Shipping Details',
       description: 'Add shipping information',
@@ -40,8 +33,15 @@ const steps = [
       optional: true
     },
     {
-      label: 'Payment Terms',
-      description: 'Set payment method and terms',
+      label: 'Add Services',
+      description: 'Add products or services to invoice',
+      icon: <DescriptionIcon />,
+      optional: false
+    },
+
+    {
+      label: 'Add Bank Details',
+      description: 'Add banking details',
       icon: <PaymentIcon />,
       optional: true
     },

@@ -1,0 +1,54 @@
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
+const {
+    prepareDatabase, 
+    initAppWriteSdk,
+    prepareCustomerCollection,
+    prepareBankCollection
+} = require('./db/index.js')
+
+
+const port = process.env.port || 8001;
+
+const app = express();
+
+// addinf cookie parser to read and set cookies
+app.use(cookieParser())
+
+app.use(cors({
+    origin: [process.env.CLIENT_URL],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+
+//When your app is behind a proxy, req.ip might show the proxy's IP address. To retrieve the original client IP adding this middleware
+app.set('trust proxy', true);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+
+
+const initializeApp = async () => {
+    try{
+        await initAppWriteSdk();
+        await prepareDatabase();
+        await prepareCustomerCollection();
+        await prepareBankCollection();
+    }catch(err){
+        console.log("Failed init Db ===", err)
+    }
+}
+
+
+initializeApp().then(() => {
+    app.listen(port, () => {
+        console.log(`Listening on port ${port} =======`)
+    })
+})
+

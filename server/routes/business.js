@@ -28,7 +28,8 @@ router.post('/create', async (req, res) => {
             address,
             city,
             state,
-            postalCode
+            postalCode,
+            country
         }  = req.body;
 
         const business = await createNewBusinessForUser({
@@ -39,7 +40,8 @@ router.post('/create', async (req, res) => {
             address,
             city,
             state,
-            postalCode
+            postalCode,
+            country
         });
         return sendSuccessResponse(res, {
             business

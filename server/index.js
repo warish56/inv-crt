@@ -42,10 +42,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // App Routes Declared from here ========
-app.use(BankRouter);
-app.use(CustomerRouter);
-app.use(BusinessRouter);
-app.use(InvoiceRouter);
+app.use('/bank', BankRouter);
+app.use('/customer', CustomerRouter);
+app.use('/business', BusinessRouter);
+app.use('/invoice', InvoiceRouter);
 
 
 

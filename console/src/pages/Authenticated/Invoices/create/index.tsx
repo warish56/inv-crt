@@ -17,6 +17,8 @@ import { StepFooter } from './Footer';
 import { ClientDetailsStep } from './SubSteps/ClientDetails';
 import { ServiceDetails } from './SubSteps/ServiceDetails';
 import { BankingDetails } from './SubSteps/BankDetails';
+import { BusinessSelectionStep } from './Steps/BusinessSelection';
+import { BusinessDetailsStep } from './SubSteps/BusinessDetails';
 
 
 
@@ -66,7 +68,8 @@ export const CreateInvoicePage = () => {
                 return <ServiceDetails onBack={handleSubStepBack}/>;
             case 2: 
               return <BankingDetails onBack={handleSubStepBack}/>;
-
+            case 3: 
+              return <BusinessDetailsStep onBack={handleSubStepBack}/>;
             default:
                 return null;
         }
@@ -76,10 +79,12 @@ export const CreateInvoicePage = () => {
   const renderStepContent = (step:number) => {
     switch (step) {
       case 0:
-        return <CustomerSelectionStep onAddCustomer={() => handleSubStepChange(0)}   selectedCustomerId={1} handleSelectCustomer={() => {}}/>;
+        return <BusinessSelectionStep onAddBusiness={() => handleSubStepChange(3)}   selectedBusinessId={1} handleSelectBusiness={() => {}}/>;
       case 1:
-        return <ShippingDetailsStep />;
+        return <CustomerSelectionStep onAddCustomer={() => handleSubStepChange(0)}   selectedCustomerId={1} handleSelectCustomer={() => {}}/>;
       case 2:
+        return <ShippingDetailsStep />;
+      case 3:
         return <ServicesProvidedStep services={[
           {
             id: '1',
@@ -99,11 +104,11 @@ export const CreateInvoicePage = () => {
         onAddService={() => handleSubStepChange(1)}   
         />;
 
-      case 3:
-        return <BankSelection onAddBank={() => handleSubStepChange(2)}   selectedBankId={1} handleSelectBank={() => {}}/>;
       case 4:
-        return <AdditionalDetailsStep />;
+        return <BankSelection onAddBank={() => handleSubStepChange(2)}   selectedBankId={1} handleSelectBank={() => {}}/>;
       case 5:
+        return <AdditionalDetailsStep />;
+      case 6:
         return <InvoicePreview />;
       default:
         return null;

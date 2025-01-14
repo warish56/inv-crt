@@ -16,10 +16,25 @@ const Attributes = {
         type: 'string',
         required: true,
     },
+    country: {
+        name: 'country',
+        type: 'string',
+        required: true,
+    },
     name: {
         name: 'name',
         type: 'string',
         required: true,
+    },
+    gstin: {
+        name: 'gstin',
+        type: 'string',
+        required: false,
+    },
+    pan: {
+        name: 'pan',
+        type: 'string',
+        required: false,
     },
     email: {
         name: 'email',
@@ -56,8 +71,8 @@ const Attributes = {
 
 /**
  * Schema
- *  id      user_id  name     email    phone   address  city    state    postal_code
- *  string  string   string   string   string  string   string  string   string
+ *  id      user_id  name     email    phone   address  city    state    postal_code  country
+ *  string  string   string   string   string  string   string  string   string       string
  */
 
 
@@ -124,18 +139,25 @@ phone,
 address,
 city,
 state,
-postalCode
+postalCode,
+country,
+gstin,
+pan
 }) => {
 
     const dataObj = {
         [Attributes.userId.name]: userId,
         [Attributes.name.name]: name,
+        [Attributes.country.name]: country,
         ...(phone ? {[Attributes.phone.name]: phone} : {}),
         ...(email ? {[Attributes.email.name]: email} : {}),
         ...(address ? {[Attributes.address.name]: address} : {}),
         ...(city ? {[Attributes.city.name]: city} : {}),
         ...(state ? {[Attributes.state.name]: state} : {}),
         ...(postalCode ? {[Attributes.postalCode.name]: postalCode} : {}),
+        ...(gstin ? {[Attributes.gstin.name]: gstin} : {}),
+        ...(pan ? {[Attributes.pan.name]: pan} : {}),
+
     }
 
     const databases = new sdk.Databases(dbValues.client);
@@ -157,7 +179,9 @@ const updateBusiness = async ({
     address,
     city,
     state,
-    postalCode
+    postalCode,
+    gstin,
+    pan
     }) => {
     
         const dataObj = {
@@ -168,6 +192,8 @@ const updateBusiness = async ({
             ...(city ? {[Attributes.city.name]: city} : {}),
             ...(state ? {[Attributes.state.name]: state} : {}),
             ...(postalCode ? {[Attributes.postalCode.name]: postalCode} : {}),
+            ...(gstin ? {[Attributes.gstin.name]: gstin} : {}),
+            ...(pan ? {[Attributes.pan.name]: pan} : {}),
         }
     
         const databases = new sdk.Databases(dbValues.client);

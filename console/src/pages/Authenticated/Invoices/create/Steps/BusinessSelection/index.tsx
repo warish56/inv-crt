@@ -21,30 +21,30 @@ import {
 import { StepHeader } from '../../components/StepHeader';
 
 type Props = {
-  selectedCustomerId: number;
-  onAddCustomer: () => void;
-  handleSelectCustomer: (id: number) => void;
+  selectedBusinessId: number;
+  onAddBusiness: () => void;
+  handleSelectBusiness: (id: number) => void;
 }
 
-export const CustomerSelectionStep = ({
-  selectedCustomerId,
-  handleSelectCustomer,
-  onAddCustomer
+export const BusinessSelectionStep = ({
+  selectedBusinessId,
+  handleSelectBusiness,
+  onAddBusiness
 }: Props) => {
   return (
     <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
 
       <StepHeader 
-        title='Select Customer'
-        description='Choose a customer for your transaction'
-        onBtnClick={onAddCustomer}
-        btnText='New Customer'
+        title='Select Business'
+        description='Choose a business for your transaction'
+        onBtnClick={onAddBusiness}
+        btnText='New Business'
       />
 
       {/* Search Section */}
       <TextField
         fullWidth
-        placeholder="Search customers by name, GSTIN, or location..."
+        placeholder="Search business by name, GSTIN, or location..."
         variant="outlined"
         sx={{ 
           mb: 4,
@@ -75,25 +75,25 @@ export const CustomerSelectionStep = ({
               cursor: 'pointer',
               borderRadius: 2,
               border: '2px solid',
-              borderColor: selectedCustomerId === customer.id ? 'primary.main' : 'transparent',
+              borderColor: selectedBusinessId === customer.id ? 'primary.main' : 'transparent',
               transition: 'all 0.3s ease',
               '&:hover': {
                 transform: 'translateY(-2px)',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               },
             }}
-            onClick={() => handleSelectCustomer(customer.id)}
+            onClick={() => handleSelectBusiness(customer.id)}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Avatar 
                     sx={{ 
-                      bgcolor: selectedCustomerId === customer.id ? 'primary.main' : 'grey.200',
+                      bgcolor: selectedBusinessId === customer.id ? 'primary.main' : 'grey.200',
                       width: 56,
                       height: 56,
                       '& .MuiSvgIcon-root': {
-                        color: selectedCustomerId === customer.id ? 'white' : 'grey.600'
+                        color: selectedBusinessId === customer.id ? 'white' : 'grey.600'
                       }
                     }}
                   >
@@ -133,7 +133,7 @@ export const CustomerSelectionStep = ({
                   </Box>
                 </Box>
                 
-                {selectedCustomerId === customer.id && (
+                {selectedBusinessId === customer.id && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <CheckCircleIcon color="primary" />
                     <Typography variant="body2" color="primary.main" fontWeight={500}>
@@ -178,5 +178,3 @@ export const CustomerSelectionStep = ({
     </Box>
   );
 };
-
-export default CustomerSelectionStep;

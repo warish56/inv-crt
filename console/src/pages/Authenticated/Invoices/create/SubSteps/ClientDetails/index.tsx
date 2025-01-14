@@ -123,7 +123,7 @@ export const ClientDetailsStep= ({onBack}:props) => {
        description='Fill the required client details'
        onBack={onBack}
       />
-      <CardContent>
+       <CardContent>
         <Grid container spacing={3}>
           {/* Required Fields Section */}
           <Grid item xs={12}>
@@ -137,6 +137,26 @@ export const ClientDetailsStep= ({onBack}:props) => {
             >
               Required Information
             </Typography>
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              name="businessName"
+              label="Business Name"
+              value={formData.businessName}
+              onChange={handleChange}
+              error={!!errors.businessName}
+              helperText={errors.businessName}
+              required
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <BusinessIcon sx={{ color: 'primary.main' }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
           </Grid>
 
           <Grid item xs={12} md={6}>
@@ -169,26 +189,6 @@ export const ClientDetailsStep= ({onBack}:props) => {
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              name="businessName"
-              label="Business Name"
-              value={formData.businessName}
-              onChange={handleChange}
-              error={!!errors.businessName}
-              helperText={errors.businessName}
-              required
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <BusinessIcon sx={{ color: 'primary.main' }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
               name="phoneNumber"
               label="Phone Number"
               value={formData.phoneNumber}
@@ -200,26 +200,6 @@ export const ClientDetailsStep= ({onBack}:props) => {
                 startAdornment: (
                   <InputAdornment position="start">
                     <PhoneIcon sx={{ color: 'primary.main' }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              name="postalCode"
-              label="Postal Code"
-              value={formData.postalCode}
-              onChange={handleChange}
-              error={!!errors.postalCode}
-              helperText={errors.postalCode}
-              required
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PostalIcon sx={{ color: 'primary.main' }} />
                   </InputAdornment>
                 ),
               }}
@@ -337,21 +317,42 @@ export const ClientDetailsStep= ({onBack}:props) => {
 
           <Grid item xs={12} md={6}>
             <TextField
-              fullWidth
-              name="email"
-              label="Email"
-              value={formData.email}
-              onChange={handleChange}
-              error={!!errors.email}
-              helperText={errors.email}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailIcon sx={{ color: 'primary.main' }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
+                fullWidth
+                name="postalCode"
+                label="Postal Code"
+                value={formData.postalCode}
+                onChange={handleChange}
+                error={!!errors.postalCode}
+                helperText={errors.postalCode}
+                required
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PostalIcon sx={{ color: 'primary.main' }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+          </Grid>
+
+
+          <Grid item xs={12} md={6}>
+            <TextField
+                fullWidth
+                name="email"
+                label="Email"
+                value={formData.email}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <EmailIcon sx={{ color: 'primary.main' }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
           </Grid>
         </Grid>
       </CardContent>

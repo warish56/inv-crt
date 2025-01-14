@@ -21,7 +21,6 @@ const Attributes = {
         name: 'country',
         type: 'string',
         required: true,
-
     },
     businessName: {
         name: 'business_name',

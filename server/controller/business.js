@@ -20,7 +20,10 @@ const createNewBusinessForUser = async ({
     address,
     city,
     state,
-    postalCode
+    postalCode,
+    country,
+    gstin,
+    pan
 }) => {
     const business = await createBusiness({
         userId,
@@ -30,7 +33,10 @@ const createNewBusinessForUser = async ({
         address,
         city,
         state,
-        postalCode
+        postalCode,
+        country,
+        gstin,
+        pan
     });
 
     return business;
@@ -44,7 +50,9 @@ const updateBusinessDetails = async ({
     address,
     city,
     state,
-    postalCode
+    postalCode,
+    gstin,
+    pan
 }) => {
     const business = await getBusinessWithId(businessId);
     if(!business){
@@ -58,7 +66,9 @@ const updateBusinessDetails = async ({
         address,
         city,
         state,
-        postalCode
+        postalCode,
+        gstin,
+        pan
     });
 
     return updatedBusinessDetails;

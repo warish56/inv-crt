@@ -15,11 +15,19 @@ import {
   Description as DescriptionIcon,
   LocalShipping as ShippingIcon,
   Payment as PaymentIcon,
-  Receipt as ReceiptIcon
+  Receipt as ReceiptIcon,
+  Business as BusinessIcon,
 } from '@mui/icons-material';
 
 
 const steps = [
+    {
+      label: 'Select Business',
+      description: 'Choose existing or add new business',
+      icon: <BusinessIcon />,
+      optional: false
+    },
+
     {
       label: 'Select Customer',
       description: 'Choose existing or add new customer',

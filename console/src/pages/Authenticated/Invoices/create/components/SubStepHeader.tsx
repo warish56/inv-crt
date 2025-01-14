@@ -1,4 +1,4 @@
-import { IconButton } from "@mui/material"
+import { Button, ButtonProps, CircularProgress, IconButton } from "@mui/material"
 import { Typography } from "@mui/material"
 import { Box } from "@mui/material"
 
@@ -8,9 +8,13 @@ type props = {
     title: string;
     description: string;
     onBack: () => void;
+    onActionClick?: () => void;
+    actionBtnText?: string;
+    loading?: boolean;
+    btnProps?: ButtonProps;
 }
 
-export const SubStepHeader = ({title, description, onBack}:props) => {
+export const SubStepHeader = ({title, description, onBack, onActionClick, actionBtnText, loading, btnProps}:props) => {
     return (
         <Box 
         sx={{ 
@@ -39,6 +43,21 @@ export const SubStepHeader = ({title, description, onBack}:props) => {
             {description}
           </Typography>
         </Box>
+        {!!actionBtnText &&
+          <Button
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+            variant="contained"
+            size="medium"
+            onClick={onActionClick}
+            disabled={loading}
+            sx={{
+              marginLeft: 'auto'
+            }}
+            {...btnProps}
+          >
+            {actionBtnText}
+          </Button>
+        }
       </Box>
 
     )

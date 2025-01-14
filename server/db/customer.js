@@ -160,14 +160,14 @@ const createCustomer = async ({
         [Attributes.userId.name]: userId,
         [Attributes.country.name]: country || '',
         [Attributes.businessName.name]: businessName || '',
-        [Attributes.phoneNumber.name]: phoneNumber || '',
-        [Attributes.postalCode.name]: postalCode || '',
-        [Attributes.gstin.name]: gstin || '',
-        [Attributes.pan.name]: pan || '',
-        [Attributes.address.name]: address || '',
-        [Attributes.city.name]: city || '',
-        [Attributes.state.name]: state || '',
-        [Attributes.email.name]: email || '',
+        ...(phoneNumber ? {[Attributes.phoneNumber.name]: phoneNumber} : {}),
+        ...(postalCode ? {[Attributes.postalCode.name]: postalCode} : {}),
+        ...(gstin ? {[Attributes.gstin.name]: gstin} : {}),
+        ...(pan ? {[Attributes.pan.name]: pan} : {}),
+        ...(address ? {[Attributes.address.name]: address} : {}),
+        ...(city ? {[Attributes.city.name]: city} : {}),
+        ...(state ? {[Attributes.state.name]: state} : {}),
+        ...(email ? {[Attributes.email.name]: email} : {}),
     }
 
     const databases = new sdk.Databases(dbValues.client);
@@ -180,11 +180,50 @@ const createCustomer = async ({
     return document;
 }
 
+const updateCustomer = async ({
+    customerId,
+    country,
+    businessName,
+    phoneNumber,
+    postalCode,
+    gstin,
+    pan,
+    address,
+    city,
+    state,
+    email,
+   }) => {
+
+    const dataObj = {
+        [Attributes.country.name]: country || '',
+        [Attributes.businessName.name]: businessName || '',
+        ...(phoneNumber ? {[Attributes.phoneNumber.name]: phoneNumber} : {}),
+        ...(postalCode ? {[Attributes.postalCode.name]: postalCode} : {}),
+        ...(gstin ? {[Attributes.gstin.name]: gstin} : {}),
+        ...(pan ? {[Attributes.pan.name]: pan} : {}),
+        ...(address ? {[Attributes.address.name]: address} : {}),
+        ...(city ? {[Attributes.city.name]: city} : {}),
+        ...(state ? {[Attributes.state.name]: state} : {}),
+        ...(email ? {[Attributes.email.name]: email} : {}),
+    }
+   
+       const databases = new sdk.Databases(dbValues.client);
+       const document = await databases.updateDocument(
+           dbValues.db.$id,
+           collectionData.collection.$id,
+           customerId,
+           dataObj
+       );
+       return document;
+   }
+   
+
 
 module.exports = {
     collectionData,
     prepareCustomerCollection,
     createCustomer,
+    updateCustomer,
     searchCustomersByNameOrEmailOrPhone,
     getCustomerWithId,
     getUserCustomersList

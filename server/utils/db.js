@@ -27,7 +27,7 @@ const createAttributesInDb = async (attributesList, databases, db,  collection) 
                 db.$id,
                 collection.$id,
                 attribute.name,
-                255,
+                attribute.size || 255,
                 attribute.required
             );
         } 
@@ -41,14 +41,6 @@ const createAttributesInDb = async (attributesList, databases, db,  collection) 
             );
         } 
 
-        if(attribute.type === 'number'){
-            await databases.createIntegerAttribute(
-                db.$id,
-                collection.$id,
-                attribute.name,
-                attribute.required
-            );
-        } 
 
         if(attribute.type === 'boolean'){
             await databases.createBooleanAttribute(

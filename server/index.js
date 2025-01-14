@@ -8,8 +8,17 @@ const {
     prepareDatabase, 
     initAppWriteSdk,
     prepareCustomerCollection,
-    prepareBankCollection
+    prepareBankCollection,
+    prepareUserCollection,
+    prepareBusinessCollection,
+    prepareInvoiceCollection
 } = require('./db/index.js')
+
+const BankRouter = require('./routes/bank.js');
+const CustomerRouter = require('./routes/customer.js');
+const BusinessRouter = require('./routes/business.js');
+const InvoiceRouter = require('./routes/invoice.js');
+
 
 
 const port = process.env.port || 8001;
@@ -32,6 +41,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
+// App Routes Declared from here ========
+app.use(BankRouter);
+app.use(CustomerRouter);
+app.use(BusinessRouter);
+app.use(InvoiceRouter);
+
+
+
 
 
 const initializeApp = async () => {
@@ -40,6 +57,9 @@ const initializeApp = async () => {
         await prepareDatabase();
         await prepareCustomerCollection();
         await prepareBankCollection();
+        await prepareUserCollection();
+        await prepareBusinessCollection();
+        await prepareInvoiceCollection();
     }catch(err){
         console.log("Failed init Db ===", err)
     }

@@ -15,23 +15,21 @@ const Attributes = {
         name: 'user_id',
         type: 'string',
         required: true,
-
     },
     bankName: {
         name: 'name',
         type: 'string',
-        required: true,
-
+        required: false,
     },
     accountHolderName: {
         name: 'holder_name',
         type: 'string',
-        required: true,
+        required: false,
     },
     accountNumber: {
         name: 'acc_number',
         type: 'string',
-        required: true,
+        required: false,
     },
     ifscCode: {
         name: 'ifsc',
@@ -77,12 +75,14 @@ const prepareBankCollection = async () => {
 }
 
 
-const searchBanksByNameOrNumber = async (searchText) => {
+const searchBanksByNameOrNumber = async (userId, searchText) => {
     const databases = new sdk.Databases(dbValues.client);
     const result1 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
+        Query.equal(Attributes.userId.name, userId),
         Query.search(Attributes.bankName.name, searchText)
     ]);
     const result2 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
+        Query.equal(Attributes.userId.name, userId),
         Query.search(Attributes.accountNumber.name, searchText)
     ]);
     const totalResults =  [...result1.documents, ...result2.documents];
@@ -118,11 +118,11 @@ const createBank = async ({
 
     const dataObj = {
         [Attributes.userId.name]: userId,
-        [Attributes.accountHolderName.name]: holderName,
-        [Attributes.accountNumber.name]: accountNumber,
-        [Attributes.bankName.name]: bankName,
-        [Attributes.ifscCode.name]: ifscCode || '',
-        ...(accountType ? {[Attributes.type.name]: accountType} : {})
+        ...(bankName ? {[Attributes.bankName.name]: bankName} : {}),
+        ...(accountNumber ? {[Attributes.accountNumber.name]: accountNumber} : {}),
+        ...(holderName ? {[Attributes.accountHolderName.name]: holderName} : {}),
+        ...(ifscCode ? {[Attributes.ifscCode.name]: ifscCode} : {}),
+        ...(accountType ? {[Attributes.type.name]: accountType} : {}),
     }
 
     const databases = new sdk.Databases(dbValues.client);
@@ -136,10 +136,40 @@ const createBank = async ({
 }
 
 
+const updateBank = async ({
+    bankId,
+    accountNumber,
+    bankName,
+    holderName,
+    ifscCode,
+    accountType,
+   }) => {
+   
+       const dataObj = {
+           ...(bankName ? {[Attributes.bankName.name]: bankName} : {}),
+           ...(accountNumber ? {[Attributes.accountNumber.name]: accountNumber} : {}),
+           ...(holderName ? {[Attributes.accountHolderName.name]: holderName} : {}),
+           ...(ifscCode ? {[Attributes.ifscCode.name]: ifscCode} : {}),
+           ...(accountType ? {[Attributes.type.name]: accountType} : {}),
+       }
+   
+       const databases = new sdk.Databases(dbValues.client);
+       const document = await databases.updateDocument(
+           dbValues.db.$id,
+           collectionData.collection.$id,
+           bankId,
+           dataObj
+       );
+       return document;
+   }
+   
+
+
 module.exports = {
     collectionData,
     prepareBankCollection,
     createBank,
+    updateBank,
     searchBanksByNameOrNumber,
     getBankWithId,
     getUserBanksList

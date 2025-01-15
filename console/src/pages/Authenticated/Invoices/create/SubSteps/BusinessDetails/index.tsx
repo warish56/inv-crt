@@ -23,6 +23,7 @@ import { FormField } from './FormField';
 import { Countries, IndianStates } from '@constants/states';
 import { nonEmptyValidator, phoneValidator, validateField } from '@utils/validators';
 import { useCreateBusiness } from './hooks/useCreateBusiness';
+import { useSnackbar } from '@hooks/useSnackbar';
 
 
 const attributes = {
@@ -46,6 +47,7 @@ type props = {
 
 export const BusinessDetailsStep= ({onBack}:props) => {
   const mutation = useCreateBusiness();
+  const {showSnackbar} = useSnackbar();
 
   const form = useForm<BusinessDetails>({
     defaultValues: {
@@ -64,6 +66,14 @@ export const BusinessDetailsStep= ({onBack}:props) => {
       mutation.mutateAsync({
         ...value,
         userId: '1'
+      }).then((res) => {
+          const [_, error] = res;
+          if(error){
+            showSnackbar({message: error, type:'error'});
+          }else{
+            showSnackbar({message: 'Business created successfully', type:'succes'});
+            onBack();
+          }
       });
     }
   })

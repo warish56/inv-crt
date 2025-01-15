@@ -71,8 +71,8 @@ const Attributes = {
 
 /**
  * Schema
- *  id      user_id  name     email    phone   address  city    state    postal_code  country
- *  string  string   string   string   string  string   string  string   string       string
+ *  id      user_id  name     email    phone   address  city    state    postal_code  country gstin
+ *  string  string   string   string   string  string   string  string   string       string  string
  */
 
 

@@ -1,6 +1,7 @@
 import { ApiRoutes } from "@constants/api";
+import { AppQueries } from "@constants/queries";
 import { fetchData } from "@services/Api";
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 type businessPayload = {
     userId:string;
@@ -24,9 +25,15 @@ const createBusiness = (data:businessPayload) => {
 }
 
 export const useCreateBusiness = () => {
+    const queryClient = useQueryClient();
     const mutation = useMutation({
         mutationFn: (data:businessPayload) => {
             return createBusiness(data)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [AppQueries.businessList]
+            })
         },
         onSettled: () => {
 

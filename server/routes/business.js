@@ -8,9 +8,9 @@ const router = express.Router();
 router.post('/list', async (req, res) => {
     try{
         const {userId}  = req.body;
-        const banksList = await getAllBusinessOfUser(userId);
+        const businessList = await getAllBusinessOfUser(userId);
         return sendSuccessResponse(res, {
-            banks: banksList 
+            businesses: businessList 
         })
     }catch(err){
         console.log("==Error in business list ==", err);
@@ -29,7 +29,9 @@ router.post('/create', async (req, res) => {
             city,
             state,
             postalCode,
-            country
+            country,
+            gstin,
+            pan
         }  = req.body;
 
         const business = await createNewBusinessForUser({
@@ -41,7 +43,9 @@ router.post('/create', async (req, res) => {
             city,
             state,
             postalCode,
-            country
+            country,
+            gstin,
+            pan
         });
         return sendSuccessResponse(res, {
             business
@@ -62,7 +66,9 @@ router.put('/update', async (req, res) => {
             address,
             city,
             state,
-            postalCode
+            postalCode,
+            gstin,
+            pan
         }  = req.body;
 
 
@@ -74,7 +80,9 @@ router.put('/update', async (req, res) => {
             address,
             city,
             state,
-            postalCode
+            postalCode,
+            gstin,
+            pan
         });
         return sendSuccessResponse(res, {
             business

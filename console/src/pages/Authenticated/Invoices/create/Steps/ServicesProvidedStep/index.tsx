@@ -30,6 +30,7 @@ import {
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { StepHeader } from '../../components/StepHeader';
+import { useNavigate } from 'react-router';
 
 type SupplyType = 'intraState' | 'interState' | 'unionTerritory';
 type DiscountType = 'percentage' | 'amount';
@@ -43,11 +44,7 @@ type Service = {
 }
 
 
-type Props = {
-    services: Service[];
-    onAddService: () => void;
-    onDeleteService?: (id: string) => void;
-}
+type Props = {}
 
 // Tax calculation helper functions
 const calculateGST = (amount: number, supplyType: SupplyType) => {
@@ -76,11 +73,35 @@ const calculateGST = (amount: number, supplyType: SupplyType) => {
   }
 };
 
-export const ServicesProvidedStep = ({services, onAddService, onDeleteService}: Props) => {
+export const ServicesProvidedStep = ({}: Props) => {
   const [supplyType, setSupplyType] = useState<SupplyType>('intraState');
   const [applyDiscount, setApplyDiscount] = useState(false);
   const [discountType, setDiscountType] = useState<DiscountType>('percentage');
   const [discountValue, setDiscountValue] = useState<number>(0);
+  const navigate = useNavigate();
+
+  const onAddService = () => {
+    navigate('/invoices/create/services/create')
+  }
+  const onEditService = (serviceId:string) => {
+    navigate(`/invoices/create/services/${serviceId}`)
+  }
+
+  const services = [{
+    id: '1',
+    name: 'Maggieee',
+    qty: 2,
+    rate: 1500,
+    hsn: '123123',
+  },
+  {
+    id: '2',
+    name: 'Spa',
+    qty: 1,
+    rate: 500,
+    hsn: '34534',
+  }
+]
 
   const calculateSubTotal = () => 
     services.reduce((sum, service) => sum + (service.qty * service.rate), 0);
@@ -171,7 +192,7 @@ export const ServicesProvidedStep = ({services, onAddService, onDeleteService}: 
                       <TableCell>
                         <IconButton 
                           size="small" 
-                          onClick={() => onDeleteService?.(service.id)}
+                          //onClick={() => onDeleteService?.(service.id)}
                         >
                           <DeleteIcon fontSize="small" />
                         </IconButton>

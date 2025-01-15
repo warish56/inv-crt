@@ -22,13 +22,19 @@ import {
   AccountBalanceWallet as PANIcon
 } from '@mui/icons-material';
 import { SubStepHeader } from '../../components/SubStepHeader';
+import { useNavigate } from 'react-router';
 
 
-type props = {
-  onBack: () => void
-}
+type props = {}
 
-export const ClientDetailsStep= ({onBack}:props) => {
+export const ClientDetailsStep= ({}:props) => {
+
+  const navigate = useNavigate();
+
+  const onBack = () => {
+    navigate(-1);
+  }
+  
   const [formData, setFormData] = useState({
     country: '',
     businessName: '',

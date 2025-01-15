@@ -18,6 +18,7 @@ import { GST_Rates } from '../../constants/gst';
 import { calculateTotalTaxes } from '../../utils/tax';
 import { GoodsType, SupplyType } from '@types/tax';
 import { SubStepHeader } from '../../components/SubStepHeader';
+import { useNavigate } from 'react-router';
 
 
 
@@ -32,11 +33,16 @@ type state = {
   placeOfSupply: string; 
 }
 
-type props = {
-  onBack: () => void;
-}
+type props = {}
 
-export const ServiceDetails = ({onBack}:props) => {
+export const ServiceDetails = ({}:props) => {
+
+  const navigate = useNavigate();
+
+  const onBack = () => {
+    navigate(-1);
+  }
+  
   const [itemDetails, setItemDetails] = useState<state>({
     itemType: '',
     name: '',

@@ -2,6 +2,12 @@ const sdk = require("node-appwrite");
 const {Query} = sdk;
 
 
+const waitFor = (time) =>{
+    return new Promise((res) => {
+        setTimeout(res, time)
+    })
+}
+
 const getExistingCollection = async (db, databases, colelctionName) => {
     const list = await databases.listCollections(
         db.$id,
@@ -68,7 +74,23 @@ const createAttributesInDb = async (attributesList, databases, db,  collection) 
                 attribute.values,
                 attribute.required
             );
-        } 
+        }
+        
+        
+        // checking if index is present or not
+
+        if(attribute.index){
+            await waitFor(1000);
+            await databases.createIndex(
+                db.$id,
+                collection.$id,
+                attribute.indexName, // key
+                attribute.index, // type
+                [attribute.name], // attributes
+            );
+        }
+
+
     }
 }
 
@@ -77,5 +99,6 @@ const createAttributesInDb = async (attributesList, databases, db,  collection) 
 module.exports = {
     getExistingCollection,
     isAttributePresent,
-    createAttributesInDb
+    createAttributesInDb,
+    waitFor
 }

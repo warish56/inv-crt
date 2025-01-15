@@ -29,6 +29,7 @@ import {
     businessTye: 'current' | 'savings';
     selected: boolean;
     onCardClick: (businessId:string) => void;
+    onEditBusiness: (businessId: string) => void;
   }
 export const BusinessCard = ({
     selected, 
@@ -40,7 +41,8 @@ export const BusinessCard = ({
     email,
     address,
     city,
-    state
+    state,
+    onEditBusiness
 }:props) => {
     return(
         <Card
@@ -135,6 +137,7 @@ export const BusinessCard = ({
               </Typography>
             </Box>
             <IconButton 
+            onClick={() => onEditBusiness(id)}
               size="small" 
               sx={{ 
                 color: 'primary.main',

@@ -19,18 +19,23 @@ import {
   Receipt as GSTIcon
 } from '@mui/icons-material';
 import { StepHeader } from '../../components/StepHeader';
+import { useNavigate } from 'react-router';
 
-type Props = {
-  selectedCustomerId: number;
-  onAddCustomer: () => void;
-  handleSelectCustomer: (id: number) => void;
-}
+type Props = {}
 
-export const CustomerSelectionStep = ({
-  selectedCustomerId,
-  handleSelectCustomer,
-  onAddCustomer
-}: Props) => {
+export const CustomerSelectionStep = ({}: Props) => {
+
+  const navigate = useNavigate();
+
+  const onAddCustomer = () => {
+    navigate('/invoices/create/customer/create')
+  }
+  const onEditCustomer = (customerId:string) => {
+    navigate(`/invoices/create/customer/${customerId}`)
+  }
+
+
+
   return (
     <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
 
@@ -75,25 +80,25 @@ export const CustomerSelectionStep = ({
               cursor: 'pointer',
               borderRadius: 2,
               border: '2px solid',
-              borderColor: selectedCustomerId === customer.id ? 'primary.main' : 'transparent',
+              borderColor:  'transparent', //selectedCustomerId === customer.id ? 'primary.main' : 'transparent',
               transition: 'all 0.3s ease',
               '&:hover': {
                 transform: 'translateY(-2px)',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               },
             }}
-            onClick={() => handleSelectCustomer(customer.id)}
+            //onClick={() => handleSelectCustomer(customer.id)}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Avatar 
                     sx={{ 
-                      bgcolor: selectedCustomerId === customer.id ? 'primary.main' : 'grey.200',
+                      bgcolor: 'grey.200' , //selectedCustomerId === customer.id ? 'primary.main' : 'grey.200',
                       width: 56,
                       height: 56,
                       '& .MuiSvgIcon-root': {
-                        color: selectedCustomerId === customer.id ? 'white' : 'grey.600'
+                        color: 'grey.600', //selectedCustomerId === customer.id ? 'white' : 'grey.600'
                       }
                     }}
                   >
@@ -133,14 +138,14 @@ export const CustomerSelectionStep = ({
                   </Box>
                 </Box>
                 
-                {selectedCustomerId === customer.id && (
+                {/* {selectedCustomerId === customer.id && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <CheckCircleIcon color="primary" />
                     <Typography variant="body2" color="primary.main" fontWeight={500}>
                       Selected
                     </Typography>
                   </Box>
-                )}
+                )} */}
               </Box>
 
               <Box 

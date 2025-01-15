@@ -4,6 +4,7 @@ export const ApiRoutes = {
     business: {
         create: '/business/create',
         update: '/business/update',
-        list: '/business/list'
+        list: '/business/list',
+        search: '/business/search'
     }
 }

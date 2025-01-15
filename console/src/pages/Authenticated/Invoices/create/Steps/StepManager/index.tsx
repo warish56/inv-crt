@@ -18,6 +18,7 @@ import {
   Receipt as ReceiptIcon,
   Business as BusinessIcon,
 } from '@mui/icons-material';
+import { useLocation, useNavigate } from 'react-router';
 
 
 const steps = [
@@ -25,56 +26,61 @@ const steps = [
       label: 'Select Business',
       description: 'Choose existing or add new business',
       icon: <BusinessIcon />,
-      optional: false
+      optional: false,
+      path: '/invoices/create/business'
     },
 
     {
       label: 'Select Customer',
       description: 'Choose existing or add new customer',
       icon: <PersonIcon />,
-      optional: false
+      optional: false,
+       path: '/invoices/create/customer'
     },
     {
       label: 'Shipping Details',
       description: 'Add shipping information',
       icon: <ShippingIcon />,
-      optional: true
+      optional: true,
+       path: '/invoices/create/shipping'
     },
     {
       label: 'Add Services',
       description: 'Add products or services to invoice',
       icon: <DescriptionIcon />,
-      optional: false
+      optional: false,
+       path: '/invoices/create/services'
     },
 
     {
       label: 'Add Bank Details',
       description: 'Add banking details',
       icon: <PaymentIcon />,
-      optional: true
+      optional: true,
+       path: '/invoices/create/bank'
     },
     {
       label: 'Additional Details',
       description: 'Add invoice specific information',
       icon: <EditIcon />,
-      optional: false
+      optional: false,
+       path: '/invoices/create/additional'
     },
     {
       label: 'Review & Generate',
       description: 'Preview and generate invoice',
       icon: <ReceiptIcon />,
-      optional: false
+      optional: false,
+       path: '/invoices/create/preview'
     }
 ];
 
 
-type props = {
-    activeStep: number;
-    completed: boolean[];
-    handleStepChange: (index:number) => void
-
-}
-export const StepManager = ({activeStep, completed, handleStepChange}:props) => {
+type props = {}
+export const StepManager = ({}:props) => {
+  const naviagte = useNavigate();
+  const location = useLocation();
+  const activeStep = steps.findIndex(item => location.pathname.includes(item.path))
     return (
         <Card
         sx={{
@@ -97,10 +103,10 @@ export const StepManager = ({activeStep, completed, handleStepChange}:props) => 
               },
             }}
           >
-            {steps.map((step, index) => (
-              <Step key={step.label} completed={completed[index]}>
+            {steps.map((step) => (
+              <Step key={step.label} completed={false}>
                 <StepButton 
-                  onClick={() => handleStepChange(index)}
+                  onClick={() => naviagte(step.path)}
                   optional={
                     step.optional && (
                       <Typography variant="caption" color="text.secondary">
@@ -112,7 +118,7 @@ export const StepManager = ({activeStep, completed, handleStepChange}:props) => 
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Avatar
                       sx={{
-                        bgcolor: activeStep === index ? 'primary.main' : 'grey.300',
+                        bgcolor: location.pathname.includes(step.path) ? 'primary.main' : 'grey.300',
                         mr: 1,
                         width: 40,
                         height: 40

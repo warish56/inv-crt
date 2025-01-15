@@ -22,6 +22,7 @@ import {
   ContentCopy as CopyIcon,
   ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router';
 
 type Bank = {
   id: number;
@@ -32,13 +33,20 @@ type Bank = {
   type: 'Savings' | 'Current';
 }
 
-type Props = {
-  selectedBankId: number;
-  onAddBank: () => void;
-  handleSelectBank: (id: number) => void;
-}
+type Props = {}
 
-export const BankSelection = ({ selectedBankId, onAddBank, handleSelectBank }: Props) => {
+export const BankSelection = ({}: Props) => {
+
+   const navigate = useNavigate();
+
+  const onAddBank = () => {
+    navigate('/invoices/create/bank/create')
+  }
+  const onEditBank = (bankId:string) => {
+    navigate(`/invoices/create/business/${bankId}`)
+  }
+
+
   const formatAccountNumber = (number: string) => {
     return `••••${number.slice(-4)}`;
   };
@@ -126,25 +134,25 @@ export const BankSelection = ({ selectedBankId, onAddBank, handleSelectBank }: P
               cursor: 'pointer',
               borderRadius: 2,
               border: '2px solid',
-              borderColor: selectedBankId === bank.id ? 'primary.main' : 'transparent',
+              borderColor: 'transparent' ,//selectedBankId === bank.id ? 'primary.main' : 'transparent',
               transition: 'all 0.3s ease',
               '&:hover': {
                 transform: 'translateY(-2px)',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               },
             }}
-            onClick={() => handleSelectBank(bank.id)}
+            //onClick={}
           >
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Avatar 
                     sx={{ 
-                      bgcolor: selectedBankId === bank.id ? 'primary.main' : 'grey.200',
+                      bgcolor: 'grey.200', //selectedBankId === bank.id ? 'primary.main' : 'grey.200',
                       width: 56,
                       height: 56,
                       '& .MuiSvgIcon-root': {
-                        color: selectedBankId === bank.id ? 'white' : 'grey.600'
+                        color: 'grey.600', //selectedBankId === bank.id ? 'white' : 'grey.600'
                       }
                     }}
                   >
@@ -182,14 +190,14 @@ export const BankSelection = ({ selectedBankId, onAddBank, handleSelectBank }: P
                   </Box>
                 </Box>
                 
-                {selectedBankId === bank.id && (
+                {/* {selectedBankId === bank.id && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <CheckCircleIcon color="primary" />
                     <Typography variant="body2" color="primary.main" fontWeight={500}>
                       Selected
                     </Typography>
                   </Box>
-                )}
+                )} */}
               </Box>
 
               <Box 

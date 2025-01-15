@@ -25,6 +25,8 @@ const Attributes = {
         name: 'name',
         type: 'string',
         required: true,
+        index: sdk.IndexType.Fulltext,
+        indexName: 'business_name_index'
     },
     gstin: {
         name: 'gstin',
@@ -45,6 +47,8 @@ const Attributes = {
         name: 'phone',
         type: 'string',
         required: false,
+        index: sdk.IndexType.Fulltext,
+        indexName: 'business_phone_index'
     },
     address: {
         name: 'address',
@@ -102,15 +106,22 @@ const prepareBusinessCollection = async () => {
 
 
 
-const searchBusinessByNameOrNumber = async (searchText) => {
+const searchBusinessByNameOrNumber = async (userId, searchText) => {
     const databases = new sdk.Databases(dbValues.client);
+
     const result1 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.search(Attributes.name.name, searchText)
+        Query.search(Attributes.name.name, searchText),
+        Query.equal(Attributes.userId.name, userId)
     ]);
     const result2 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.search(Attributes.phone.name, searchText)
+        Query.search(Attributes.phone.name, searchText),
+        Query.equal(Attributes.userId.name, userId)
     ]);
-    const totalResults =  [...result1.documents, ...result2.documents];
+    const totalResults =  [
+        ...result1.documents, 
+        ...result2.documents
+    ];
+
     const uniqueResults = Array.from(new Map(totalResults.map(result => [result.$id, result])).values())
     return uniqueResults
 }

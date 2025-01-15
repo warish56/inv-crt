@@ -1,13 +1,24 @@
-import { Route, Routes } from "react-router"
+import { Outlet, Route, Routes } from "react-router"
 import { AuthLayout } from "./Layouts/AuthLayout"
 import { LoginPage } from "@pages/NonAuthenticated/Login"
 import { OtpPage } from "@pages/NonAuthenticated/Otp"
 import { DashboardPage } from "@pages/Authenticated/Dashboard"
 import { InvoiceListPage } from "@pages/Authenticated/Invoices/list"
-import { CreateInvoicePage } from "@pages/Authenticated/Invoices/create"
 import { SettingsPage } from "@pages/Authenticated/Settings"
 import { CustomersPage } from "@pages/Authenticated/Customers"
 import { BusinessProfilePage } from "@pages/Authenticated/BusinessProfile"
+import { BusinessSelectionStep } from "@pages/Authenticated/Invoices/create/Steps/BusinessSelection"
+import { CreateInvoiceLayout } from "@pages/Authenticated/Invoices/create/layout"
+import CustomerSelectionStep from "@pages/Authenticated/Invoices/create/Steps/CustomerSelection"
+import { ServicesProvidedStep } from "@pages/Authenticated/Invoices/create/Steps/ServicesProvidedStep"
+import { ShippingDetailsStep } from "@pages/Authenticated/Invoices/create/Steps/ShippingDetails"
+import BankSelection from "@pages/Authenticated/Invoices/create/Steps/BankSelection"
+import { AdditionalDetailsStep } from "@pages/Authenticated/Invoices/create/Steps/AdditionalDetails"
+import { InvoicePreview } from "@pages/Authenticated/Invoices/create/Preview"
+import { BusinessDetailsStep } from "@pages/Authenticated/Invoices/create/SubSteps/BusinessDetails"
+import { ClientDetailsStep } from "@pages/Authenticated/Invoices/create/SubSteps/ClientDetails"
+import { BankingDetails } from "@pages/Authenticated/Invoices/create/SubSteps/BankDetails"
+import { ServiceDetails } from "@pages/Authenticated/Invoices/create/SubSteps/ServiceDetails"
 
 
 
@@ -21,7 +32,43 @@ export const RootRoute = () => {
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/invoices">
                     <Route index element={<InvoiceListPage />} />
-                    <Route path="create" element={<CreateInvoicePage />} />
+                    <Route path="create" element={<CreateInvoiceLayout />} >
+
+
+                        <Route path="business" element={<Outlet />} >
+                             <Route index element={<BusinessSelectionStep />} />
+                            <Route path="create" element={<BusinessDetailsStep />} />
+                            <Route path=":businessId" element={<BusinessDetailsStep />} />
+                        </Route>
+
+
+                        <Route path="customer" element={<Outlet />} >
+                             <Route index element={<CustomerSelectionStep />} />
+                            <Route path="create" element={<ClientDetailsStep />} />
+                            <Route path=":customerId" element={<ClientDetailsStep />} />
+                        </Route>
+
+                        <Route path="bank" element={<Outlet />} >
+                             <Route index element={<BankSelection />} />
+                            <Route path="create" element={<BankingDetails />} />
+                            <Route path=":bankId" element={<BankingDetails />} />
+                        </Route>
+
+                        <Route path="services" element={<Outlet />} >
+                             <Route index element={<ServicesProvidedStep />} />
+                            <Route path="create" element={<ServiceDetails />} />
+                            <Route path=":serviceId" element={<ServiceDetails />} />
+                        </Route>
+
+
+
+                        <Route path="shipping" element={<ShippingDetailsStep />} />
+                        <Route path="additional" element={<AdditionalDetailsStep />} />
+                        <Route path="preview" element={<InvoicePreview />} />
+
+                    </Route>
+
+
                 </Route>
                 <Route path="/business" element={<BusinessProfilePage />} />
                 <Route path="/customers" element={<CustomersPage />} />

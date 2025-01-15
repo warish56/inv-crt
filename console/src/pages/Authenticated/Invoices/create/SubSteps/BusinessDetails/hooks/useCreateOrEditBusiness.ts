@@ -15,6 +15,7 @@ type businessPayload = {
     country:string;
     gstin:string;
     pan:string;
+    businessId?:string;
 }
 
 const createBusiness = (data:businessPayload) => {
@@ -24,11 +25,21 @@ const createBusiness = (data:businessPayload) => {
     })
 }
 
-export const useCreateBusiness = () => {
+const updateBusiness = (data:businessPayload) => {
+    return fetchData(ApiRoutes.business.update, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    })
+}
+
+export const useCreateOrEditBusiness = (type: 'create' | 'edit') => {
     const queryClient = useQueryClient();
     const mutation = useMutation({
         mutationFn: (data:businessPayload) => {
-            return createBusiness(data)
+            if(type === 'create'){
+                return createBusiness(data)
+            }
+            return updateBusiness(data)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({

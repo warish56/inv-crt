@@ -22,8 +22,10 @@ import { useForm } from '@tanstack/react-form';
 import { FormField } from './FormField';
 import { Countries, IndianStates } from '@constants/states';
 import { nonEmptyValidator, phoneValidator, validateField } from '@utils/validators';
-import { useCreateBusiness } from './hooks/useCreateBusiness';
+import { useCreateOrEditBusiness } from './hooks/useCreateOrEditBusiness';
 import { useSnackbar } from '@hooks/useSnackbar';
+import { useNavigate, useParams } from 'react-router';
+import { useBusinessList } from '../../Steps/BusinessSelection/hooks/useBusinessList';
 
 
 const attributes = {
@@ -41,42 +43,55 @@ const attributes = {
 
 type BusinessDetails = Record<keyof typeof attributes, string>
 
-type props = {
-  onBack: () => void
-}
+type props = {}
 
-export const BusinessDetailsStep= ({onBack}:props) => {
-  const mutation = useCreateBusiness();
+export const BusinessDetailsStep= ({}:props) => {
+  const {businessId} = useParams();
+  const navigate = useNavigate();
+  const isEditMode = !!businessId
+
+  const mutation = useCreateOrEditBusiness(isEditMode? 'edit' : 'create');
   const {showSnackbar} = useSnackbar();
+  const {data: businessList} = useBusinessList({userId:'1'})
+
+  const list = (businessList?.[0]?.businesses) ?? [];
+  const businessData = list.find(business => business.$id === businessId)
+
+
+  const onBack = () => {
+    navigate(-1);
+  }
 
   const form = useForm<BusinessDetails>({
     defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      city: '',
-      state: '',
-      postalCode: '',
+      name: businessData?.name ?? '',
+      email: businessData?.email ?? '',
+      phone: businessData?.phone ?? '',
+      address: businessData?.address ?? '',
+      city: businessData?.city ?? '',
+      state: businessData?.state ?? '',
+      postalCode: businessData?.postal_code ?? '',
       country: 'India',
-      gstin: '',
-      pan: ''
+      gstin: businessData?.gstin ?? '',
+      pan: businessData?.pan ?? ''
     },
     onSubmit: ({value}) => {
       mutation.mutateAsync({
         ...value,
+        businessId,
         userId: '1'
       }).then((res) => {
           const [_, error] = res;
           if(error){
             showSnackbar({message: error, type:'error'});
           }else{
-            showSnackbar({message: 'Business created successfully', type:'succes'});
+            showSnackbar({message: `Business ${isEditMode ? 'updated' : 'created'} successfully`, type:'succes'});
             onBack();
           }
       });
     }
   })
+
 
   return (
     <Card 
@@ -95,7 +110,7 @@ export const BusinessDetailsStep= ({onBack}:props) => {
        title='Business details'
        description='Fill the required business details'
        onBack={onBack}
-       actionBtnText={mutation.isPending  ? 'Saving' : 'Save Details'}
+       actionBtnText={mutation.isPending  ? 'Saving' : ( isEditMode ? 'Update Details' : 'Save Details')}
        loading={mutation.isPending}
        btnProps={{
         type:'submit'

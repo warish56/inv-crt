@@ -20,14 +20,18 @@ import {
   AccountBalanceWallet as WalletIcon
 } from '@mui/icons-material';
 import { SubStepHeader } from '../../components/SubStepHeader';
+import { useNavigate } from 'react-router';
 
 
-type props = {
-  onBack: () => void;
-}
+type props = {}
 
-export const BankingDetails= ({onBack}:props) => {
+export const BankingDetails= ({}:props) => {
   const [accountType, setAccountType] = useState('');
+  const navigate = useNavigate();
+
+  const onBack = () => {
+    navigate(-1);
+  }
 
   return (
     <Paper 

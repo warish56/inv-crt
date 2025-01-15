@@ -11,34 +11,52 @@ import { BusinessCard } from './BusinessCard';
 import { useBusinessList } from './hooks/useBusinessList';
 import { BusinessCardSkeleton } from './BusinessCardSkeleton';
 import { useSnackbar } from '@hooks/useSnackbar';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useBusinessSearch } from './hooks/useBusinessSearch';
+import { debounce } from '@utils/time';
+import { useNavigate } from 'react-router';
 
 type Props = {
-  selectedBusinessId: number;
-  onAddBusiness: () => void;
-  handleSelectBusiness: (id: number) => void;
+  // selectedBusinessId: number;
+  // onAddBusiness: () => void;
+  // onEditBusiness: (businessId: string) => void;
+  // handleSelectBusiness: (id: number) => void;
 }
 
-export const BusinessSelectionStep = ({
-  selectedBusinessId,
-  handleSelectBusiness,
-  onAddBusiness
-}: Props) => {
-
-  const {isPending, error, data} = useBusinessList({userId: '1'})
+export const BusinessSelectionStep = ({}: Props) => {
+  const navigate = useNavigate()
+  const [searchText, setSearchText] = useState('');
+  const [serverSearchText, setServerSearchText] = useState('');
+  const {isPending: isFetchingBusinessList, error:listError, data: listData} = useBusinessList({userId: '1'})
+  const {isPending: isSearching, error:searchError, data:searchData} = useBusinessSearch({userId: '1', searchText: serverSearchText})
   const {showSnackbar} = useSnackbar();
+  const debouncedRef = useRef({ set: debounce(setServerSearchText, 500)})
 
+  const handleSearchChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value);
+      debouncedRef.current.set(e.target.value);
+  }
+
+  const onAddBusiness = () => {
+    navigate('/invoices/create/business/create')
+  }
+  const onEditBusiness = (businessId:string) => {
+    navigate(`/invoices/create/business/${businessId}`)
+  }
 
 
   useEffect(() => {
-    if(data?.[1] || error){
+    if(listData?.[1] || listError || searchData?.[1] || searchError){
       showSnackbar({
-        message: data?.[1] || error?.message || '',
+        message: listData?.[1] || listError?.message || searchData?.[1] || searchError?.message ||  '',
         type: 'error'
       })
     }
-  }, [data, error])
+  }, [listData, listError, searchError, searchData])
 
+
+  const list = (searchText ? searchData?.[0]?.businesses : listData?.[0]?.businesses) ?? []
+  const isLoading = (searchText && isSearching) || isFetchingBusinessList;
 
   return (
     <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
@@ -54,12 +72,10 @@ export const BusinessSelectionStep = ({
         fullWidth
         placeholder="Search business by name, GSTIN, or location..."
         variant="outlined"
+        value={searchText}
+        onChange={handleSearchChange}
         sx={{ 
           mb: 4,
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 2,
-            backgroundColor: 'background.paper',
-          }
         }}
         InputProps={{
           startAdornment: (
@@ -72,9 +88,8 @@ export const BusinessSelectionStep = ({
 
      
       <Box sx={{ mt: 2 }}>
-        {isPending && <BusinessCardSkeleton />}
-
-        {data && data[0]?.businesses.map((business) => (
+        {isLoading && <BusinessCardSkeleton />}
+        {!isLoading && list.map((business) => (
           <BusinessCard 
             key={business.$id}
             selected={false} 
@@ -87,6 +102,7 @@ export const BusinessSelectionStep = ({
             address={business.address}
             city={business.city}
             state={business.state}
+            onEditBusiness={onEditBusiness}
           />
         ))}
 

@@ -20,16 +20,22 @@ const Attributes = {
         name: 'name',
         type: 'string',
         required: false,
+        index: sdk.IndexType.Fulltext,
+        indexName: 'bank_name_index'
     },
     accountHolderName: {
         name: 'holder_name',
         type: 'string',
         required: false,
+        index: sdk.IndexType.Fulltext,
+        indexName: 'bank_holder_name_index'
     },
     accountNumber: {
         name: 'acc_number',
         type: 'string',
         required: false,
+        index: sdk.IndexType.Fulltext,
+        indexName: 'bank_account_number_index'
     },
     ifscCode: {
         name: 'ifsc',
@@ -85,7 +91,11 @@ const searchBanksByNameOrNumber = async (userId, searchText) => {
         Query.equal(Attributes.userId.name, userId),
         Query.search(Attributes.accountNumber.name, searchText)
     ]);
-    const totalResults =  [...result1.documents, ...result2.documents];
+    const result3 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
+        Query.equal(Attributes.userId.name, userId),
+        Query.search(Attributes.accountHolderName.name, searchText)
+    ]);
+    const totalResults =  [...result1.documents, ...result2.documents, ...result3.documents];
     const uniqueResults = Array.from(new Map(totalResults.map(result => [result.$id, result])).values())
     return uniqueResults
 }

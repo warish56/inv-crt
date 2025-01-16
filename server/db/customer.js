@@ -26,13 +26,15 @@ const Attributes = {
         name: 'business_name',
         type: 'string',
         required: true,
-
+        index: sdk.IndexType.Fulltext,
+        indexName: 'customer_business_name_index'
     },
     phoneNumber: {
         name: 'phone_number',
         type: 'string',
         required: false,
-
+        index: sdk.IndexType.Fulltext,
+        indexName: 'customer_business_phone_index'
     },
     postalCode: {
         name: 'postal_code',
@@ -74,6 +76,8 @@ const Attributes = {
         name: 'email',
         type: 'string',
         required: false,
+        index: sdk.IndexType.Fulltext,
+        indexName: 'customer_business_email_index'
     }
 }
 
@@ -108,16 +112,19 @@ const prepareCustomerCollection = async () => {
 }
 
 
-const searchCustomersByNameOrEmailOrPhone = async (searchText) => {
+const searchCustomersByNameOrEmailOrPhone = async (userId, searchText) => {
     const databases = new sdk.Databases(dbValues.client);
     const result1 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.search(Attributes.businessName.name, searchText)
+        Query.search(Attributes.businessName.name, searchText),
+        Query.equal(Attributes.userId.name, userId)
     ]);
     const result2 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.search(Attributes.email.name, searchText)
+        Query.search(Attributes.email.name, searchText),
+        Query.equal(Attributes.userId.name, userId)
     ]);
     const result3 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.search(Attributes.phoneNumber.name, searchText)
+        Query.search(Attributes.phoneNumber.name, searchText),
+        Query.equal(Attributes.userId.name, userId)
     ]);
     const totalResults =  [...result1.documents, ...result2.documents, ...result3.documents];
     const uniqueResults = Array.from(new Map(totalResults.map(result => [result.$id, result])).values())

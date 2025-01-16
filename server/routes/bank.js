@@ -59,7 +59,7 @@ router.put('/update', async (req, res) => {
 
 
         const bank = await updateBankDetails({
-            userId,
+            bankId,
             accountNumber,
             bankName,
             holderName,

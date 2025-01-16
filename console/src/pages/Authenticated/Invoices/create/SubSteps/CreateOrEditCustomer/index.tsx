@@ -14,24 +14,24 @@ import {
   Public as PublicIcon,
   LocationCity as LocationCityIcon,
   MarkunreadMailbox as PostalIcon,
-  AccountBalanceWallet as PANIcon,
+  AccountBalanceWallet as PANIcon
 } from '@mui/icons-material';
 import { SubStepHeader } from '../../components/SubStepHeader';
-import { FormHeader } from './FormHeader';
-import { useForm } from '@tanstack/react-form';
-import { FormField } from './FormField';
-import { Countries, IndianStates } from '@constants/states';
-import { nonEmptyValidator, phoneValidator, validateField } from '@utils/validators';
-import { useCreateOrEditBusiness } from './hooks/useCreateOrEditBusiness';
-import { useSnackbar } from '@hooks/useSnackbar';
 import { useNavigate, useParams } from 'react-router';
-import { useBusinessList } from '../../Steps/BusinessSelection/hooks/useBusinessList';
+import { useCreateOrEditCustomer } from './hooks/useCreateOrEditCustomer';
+import { useCustomersList } from '../../Steps/CustomerSelection/hooks/useCustomersList';
+import { useSnackbar } from '@hooks/useSnackbar';
+import { useForm } from '@tanstack/react-form';
+import { FormHeader } from '../common/FormHeader';
+import { FormField } from '../common/FormField';
+import { Countries, IndianStates } from '@constants/states';
+
 
 
 const attributes = {
-  name: 'name',
+  businessName: 'name',
   email: 'email',
-  phone: 'phone',
+  phoneNumber: 'phone',
   address: 'string',
   city: 'city',
   state: 'state',
@@ -41,51 +41,50 @@ const attributes = {
   pan: 'pan'
 }
 
-type BusinessDetails = Record<keyof typeof attributes, string>
-
+type CustomerDetails = Record<keyof typeof attributes, string>
 type props = {}
 
-export const BusinessDetailsStep= ({}:props) => {
-  const {businessId} = useParams();
+export const CreateOrEditCustomer= ({}:props) => {
+  const {customerId} = useParams();
   const navigate = useNavigate();
-  const isEditMode = !!businessId
+  const isEditMode = !!customerId
 
-  const mutation = useCreateOrEditBusiness(isEditMode? 'edit' : 'create');
+  const mutation = useCreateOrEditCustomer(isEditMode? 'edit' : 'create');
   const {showSnackbar} = useSnackbar();
-  const {data: businessList} = useBusinessList({userId:'1'})
+  const {data: businessList} = useCustomersList({userId:'1'})
 
-  const list = (businessList?.[0]?.businesses) ?? [];
-  const businessData = list.find(business => business.$id === businessId)
+  const list = (businessList?.[0]?.customers) ?? [];
+  const customerData = list.find(customer => customer.$id === customerId)
 
 
   const onBack = () => {
     navigate(-1);
   }
 
-  const form = useForm<BusinessDetails>({
+  const form = useForm<CustomerDetails>({
     defaultValues: {
-      name: businessData?.name ?? '',
-      email: businessData?.email ?? '',
-      phone: businessData?.phone ?? '',
-      address: businessData?.address ?? '',
-      city: businessData?.city ?? '',
-      state: businessData?.state ?? '',
-      postalCode: businessData?.postal_code ?? '',
+      businessName: customerData?.business_name ?? '',
+      email: customerData?.email ?? '',
+      phoneNumber: customerData?.phone_number ?? '',
+      address: customerData?.address ?? '',
+      city: customerData?.city ?? '',
+      state: customerData?.state ?? '',
+      postalCode: customerData?.postal_code ?? '',
       country: 'India',
-      gstin: businessData?.gstin ?? '',
-      pan: businessData?.pan ?? ''
+      gstin: customerData?.gstin ?? '',
+      pan: customerData?.pan ?? ''
     },
     onSubmit: ({value}) => {
       mutation.mutateAsync({
         ...value,
-        businessId,
+        customerId,
         userId: '1'
       }).then((res) => {
           const [_, error] = res;
           if(error){
             showSnackbar({message: error, type:'error'});
           }else{
-            showSnackbar({message: `Business ${isEditMode ? 'updated' : 'created'} successfully`, type:'succes'});
+            showSnackbar({message: `Customer ${isEditMode ? 'updated' : 'created'} successfully`, type:'succes'});
             onBack();
           }
       });
@@ -103,12 +102,12 @@ export const BusinessDetailsStep= ({}:props) => {
       sx={{ 
         borderRadius: 2,
         boxShadow: 'none',
-        bgcolor: 'background.default',
+        bgcolor: 'background.default'
       }}
     >
       <SubStepHeader 
-       title='Business details'
-       description='Fill the required business details'
+       title='Client details'
+       description='Fill the required client details'
        onBack={onBack}
        actionBtnText={mutation.isPending  ? 'Saving' : ( isEditMode ? 'Update Details' : 'Save Details')}
        loading={mutation.isPending}
@@ -116,34 +115,13 @@ export const BusinessDetailsStep= ({}:props) => {
         type:'submit'
        }}
       />
-      <CardContent>
+
+       <CardContent>
         <Grid container spacing={3}>
           <FormHeader title='Required Information'/>
 
           <Grid item xs={12}>
-            <form.Field name='name'
-            validators={{
-              onChange: ({value, fieldApi}) => {
-                const validators = [
-                  {
-                    validator: nonEmptyValidator,
-                    errorMessage: 'Business name is required'
-                  }
-                ]
-                fieldApi.setErrorMap({onBlur: ''})
-                return validateField(value, validators);
-              },
-              onBlur: ({value}) => {
-                  const validators = [
-                    {
-                      validator: nonEmptyValidator,
-                      errorMessage: 'Business name is required'
-                    }
-                  ]
-                  return validateField(value, validators);
-              }
-            }}
-            >
+            <form.Field name='businessName'>
               {(field) => (
                   <FormField 
                   fullWidth
@@ -157,53 +135,27 @@ export const BusinessDetailsStep= ({}:props) => {
 
           <Grid item xs={12} md={6}>
             <form.Field name='country'>
-                {(field) => (
-                    <FormField 
-                    select
-                    fullWidth
-                    label="Country"
-                    disabled
-                    field={field}
-                    icon={<PublicIcon sx={{ color: 'primary.main' }} />}
-                    >
-                      {Countries.map(country => (
+              {(field) => (
+                  <FormField 
+                  select
+                  fullWidth
+                  label="Country"
+                  field={field}
+                  disabled
+                  icon={<PublicIcon sx={{ color: 'primary.main' }} />}
+                  >
+                     {Countries.map(country => (
                         <MenuItem key={country} value={country}>
                           {country}
                         </MenuItem>
                       ))}
-                    </FormField>
-                )}
+                  </FormField>
+              )}
             </form.Field>
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <form.Field name='phone'
-              validators={{
-                onChange: ({value, fieldApi}) => {
-                  const validators = [
-                    {
-                      validator: nonEmptyValidator,
-                      errorMessage: 'Phone number is required'
-                    },
-                    {
-                      validator: phoneValidator,
-                      errorMessage: 'Invalid phone number'
-                    }
-                  ];
-                  fieldApi.setErrorMap({onBlur: ''})
-                  return validateField(value, validators);
-                },
-                onBlur: ({value}) => {
-                    const validators = [
-                      {
-                        validator: nonEmptyValidator,
-                        errorMessage: 'Phone number is required'
-                      },
-                    ]
-                    return validateField(value, validators);
-                }
-              }}
-            >
+            <form.Field name='phoneNumber'>
               {(field) => (
                   <FormField 
                   fullWidth
@@ -224,15 +176,17 @@ export const BusinessDetailsStep= ({}:props) => {
                   fullWidth
                   label="GSTIN"
                   field={field}
-                  icon={ <BadgeIcon sx={{ color: 'primary.main' }} />}
+                  onChange={(e) => {
+                    return e.target.value.toUpperCase();
+                  }}
+                  icon={<BadgeIcon sx={{ color: 'primary.main' }} />}
                   />
               )}
             </form.Field>
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <form.Field name='pan'
-            >
+            <form.Field name='pan'>
               {(field) => (
                   <FormField 
                   fullWidth
@@ -241,7 +195,7 @@ export const BusinessDetailsStep= ({}:props) => {
                   onChange={(e) => {
                     return e.target.value.toUpperCase();
                   }}
-                  icon={ <PANIcon sx={{ color: 'primary.main' }} />}
+                  icon={<PANIcon sx={{ color: 'primary.main' }} />}
                   />
               )}
             </form.Field>
@@ -252,15 +206,16 @@ export const BusinessDetailsStep= ({}:props) => {
               {(field) => (
                   <FormField 
                   fullWidth
-                  label="Address"
-                  field={field}
                   multiline
                   rows={3}
+                  label="Address"
+                  field={field}
                   icon={<LocationIcon sx={{ color: 'primary.main' }} />}
                   />
               )}
             </form.Field>
           </Grid>
+
 
           <Grid item xs={12} md={6}>
             <form.Field name='state'>
@@ -282,6 +237,7 @@ export const BusinessDetailsStep= ({}:props) => {
             </form.Field>
           </Grid>
 
+
           <Grid item xs={12} md={6}>
             <form.Field name='city'>
               {(field) => (
@@ -289,13 +245,14 @@ export const BusinessDetailsStep= ({}:props) => {
                   fullWidth
                   label="City"
                   field={field}
+                  onChange={(e) => {
+                    return e.target.value.toUpperCase();
+                  }}
                   icon={ <LocationCityIcon sx={{ color: 'primary.main' }} />}
                   />
               )}
             </form.Field>
           </Grid>
-
-
 
           <Grid item xs={12} md={6}>
             <form.Field name='postalCode'>
@@ -312,7 +269,7 @@ export const BusinessDetailsStep= ({}:props) => {
 
 
           <Grid item xs={12} md={6}>
-          <form.Field name='email'>
+            <form.Field name='email'>
               {(field) => (
                   <FormField 
                   fullWidth
@@ -322,7 +279,8 @@ export const BusinessDetailsStep= ({}:props) => {
                   />
               )}
             </form.Field>
-          </Grid>          
+          </Grid>
+
         </Grid>
       </CardContent>
     </Card>

@@ -15,9 +15,9 @@ import { ShippingDetailsStep } from "@pages/Authenticated/Invoices/create/Steps/
 import BankSelection from "@pages/Authenticated/Invoices/create/Steps/BankSelection"
 import { AdditionalDetailsStep } from "@pages/Authenticated/Invoices/create/Steps/AdditionalDetails"
 import { InvoicePreview } from "@pages/Authenticated/Invoices/create/Preview"
-import { BusinessDetailsStep } from "@pages/Authenticated/Invoices/create/SubSteps/BusinessDetails"
-import { ClientDetailsStep } from "@pages/Authenticated/Invoices/create/SubSteps/ClientDetails"
-import { BankingDetails } from "@pages/Authenticated/Invoices/create/SubSteps/BankDetails"
+import { CreateOrEditBusiness } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditBusiness"
+import { CreateOrEditCustomer } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditCustomer"
+import { CreateOrEditBank } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditBank"
 import { ServiceDetails } from "@pages/Authenticated/Invoices/create/SubSteps/ServiceDetails"
 
 
@@ -36,26 +36,26 @@ export const RootRoute = () => {
 
 
                         <Route path="business" element={<Outlet />} >
-                             <Route index element={<BusinessSelectionStep />} />
-                            <Route path="create" element={<BusinessDetailsStep />} />
-                            <Route path=":businessId" element={<BusinessDetailsStep />} />
+                            <Route index element={<BusinessSelectionStep />} />
+                            <Route path="create" element={<CreateOrEditBusiness />} />
+                            <Route path=":businessId" element={<CreateOrEditBusiness />} />
                         </Route>
 
 
                         <Route path="customer" element={<Outlet />} >
-                             <Route index element={<CustomerSelectionStep />} />
-                            <Route path="create" element={<ClientDetailsStep />} />
-                            <Route path=":customerId" element={<ClientDetailsStep />} />
+                            <Route index element={<CustomerSelectionStep />} />
+                            <Route path="create" element={<CreateOrEditCustomer />} />
+                            <Route path=":customerId" element={<CreateOrEditCustomer />} />
                         </Route>
 
                         <Route path="bank" element={<Outlet />} >
-                             <Route index element={<BankSelection />} />
-                            <Route path="create" element={<BankingDetails />} />
-                            <Route path=":bankId" element={<BankingDetails />} />
+                            <Route index element={<BankSelection />} />
+                            <Route path="create" element={<CreateOrEditBank />} />
+                            <Route path=":bankId" element={<CreateOrEditBank />} />
                         </Route>
 
                         <Route path="services" element={<Outlet />} >
-                             <Route index element={<ServicesProvidedStep />} />
+                            <Route index element={<ServicesProvidedStep />} />
                             <Route path="create" element={<ServiceDetails />} />
                             <Route path=":serviceId" element={<ServiceDetails />} />
                         </Route>

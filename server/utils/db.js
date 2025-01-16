@@ -88,6 +88,7 @@ const createAttributesInDb = async (attributesList, databases, db,  collection) 
                 attribute.index, // type
                 [attribute.name], // attributes
             );
+            await waitFor(1000);
         }
 
 

@@ -17,6 +17,7 @@ import { useBanksList } from './hooks/useBanksList';
 import { useBankSearch } from './hooks/useBankSearch';
 import { BankCardSkeleton } from './BankCardSkeleton';
 import { StepHeader } from '../../components/StepHeader';
+import { useSelectionAtom } from '../../hooks/useSelectionAtom';
 
 type Props = {}
 
@@ -28,6 +29,8 @@ export const BankSelection = ({}: Props) => {
   const {isPending: isSearching, error:searchError, data:searchData} = useBankSearch({userId: '1', searchText: serverSearchText})
   const {showSnackbar} = useSnackbar();
   const debouncedRef = useRef({ set: debounce(setServerSearchText, 500)})
+  const {selectBank, selectionDetails} = useSelectionAtom();
+
 
   const handleSearchChange = (e:React.ChangeEvent<HTMLInputElement>) => {
       setSearchText(e.target.value);
@@ -95,8 +98,8 @@ export const BankSelection = ({}: Props) => {
             ifscCode={bank.ifsc}
             accountType={bank.type}
             accountNumber={bank.acc_number}
-            selected={false} 
-            onCardClick={() => {}}  
+            selected={selectionDetails.selectedBankId === bank.$id} 
+            onCardClick={selectBank} 
             onEditBank={onEditBank}   
           />
         ))}

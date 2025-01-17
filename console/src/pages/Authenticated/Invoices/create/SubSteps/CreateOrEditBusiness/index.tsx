@@ -17,9 +17,9 @@ import {
   AccountBalanceWallet as PANIcon,
 } from '@mui/icons-material';
 import { SubStepHeader } from '../../components/SubStepHeader';
-import { FormHeader } from '../common/FormHeader';
+import { FormHeader } from '../../common/FormHeader';
 import { useForm } from '@tanstack/react-form';
-import { FormField } from '../common/FormField';
+import { FormField } from '../../common/FormField';
 import { Countries, IndianStates } from '@constants/states';
 import { nonEmptyValidator, phoneValidator, validateField } from '@utils/validators';
 import { useCreateOrEditBusiness } from './hooks/useCreateOrEditBusiness';
@@ -310,6 +310,10 @@ export const CreateOrEditBusiness= ({}:props) => {
                   fullWidth
                   label="Postal Code"
                   field={field}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    return isNaN(Number(value)) ? value.substring(0, value.length-1) : value
+                  }}
                   icon={ <PostalIcon sx={{ color: 'primary.main' }} />}
                   />
               )}

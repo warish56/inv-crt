@@ -17,6 +17,7 @@ import { useSnackbar } from '@hooks/useSnackbar';
 import { debounce } from '@utils/time';
 import { useCustomersList } from './hooks/useCustomersList';
 import { useCustomerSearch } from './hooks/useCustomerSearch';
+import { useSelectionAtom } from '../../hooks/useSelectionAtom';
 
 type Props = {}
 
@@ -29,6 +30,8 @@ export const CustomerSelectionStep = ({}: Props) => {
   const {isPending: isSearching, error:searchError, data:searchData} = useCustomerSearch({userId: '1', searchText: serverSearchText})
   const {showSnackbar} = useSnackbar();
   const debouncedRef = useRef({ set: debounce(setServerSearchText, 500)})
+  const {selectCustomer, selectionDetails} = useSelectionAtom();
+
 
 
   const onAddCustomer = () => {
@@ -94,8 +97,8 @@ export const CustomerSelectionStep = ({}: Props) => {
         {!isLoading && list.map((customer) => (
           <CustomerCard 
             key={customer.$id}
-            selected={false} 
-            onCardClick={() => {}} 
+            selected={selectionDetails.selectedCustomerId === customer.$id} 
+            onCardClick={selectCustomer} 
             id={customer.$id}
             businessName={customer.business_name}
             businessTye='Corporate'

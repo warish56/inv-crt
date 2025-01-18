@@ -19,7 +19,7 @@ import { useCreateOrEditBank } from './hooks/useCreateOrEditBank';
 import { useSnackbar } from '@hooks/useSnackbar';
 import { useBanksList } from '../../Steps/BankSelection/hooks/useBanksList';
 import { useForm } from '@tanstack/react-form';
-import { FormField } from '../common/FormField';
+import { FormField } from '../../common/FormField';
 
 
 const attributes = {
@@ -146,7 +146,8 @@ export const CreateOrEditBank= ({}:props) => {
                     placeholder="Enter your account number"
                     field={field}
                     onChange={(e) => {
-                      return e.target.value.toUpperCase();
+                      const value = e.target.value
+                      return isNaN(Number(value)) ? value.substring(0, value.length-1) : value
                     }}
                     icon={ <CardIcon fontSize="small" sx={{ color: 'text.secondary' }} />}
                     />

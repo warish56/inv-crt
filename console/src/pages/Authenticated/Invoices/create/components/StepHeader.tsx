@@ -1,4 +1,4 @@
-import { Button } from "@mui/material"
+import { Button, ButtonProps, CircularProgress } from "@mui/material"
 import { Typography } from "@mui/material"
 import { Box } from "@mui/material"
 
@@ -11,9 +11,12 @@ type props = {
     description: string;
     btnText?: string;
     onBtnClick?: () => void;
+    loading?: boolean;
+    btnProps?: ButtonProps;
+    isSaveBtn?: boolean
 }
 
-export const StepHeader = ({title, description, btnText, onBtnClick}:props) => {
+export const StepHeader = ({title, description, btnText, onBtnClick, loading, btnProps, isSaveBtn}:props) => {
     return (
         <Box 
         sx={{ 
@@ -38,12 +41,26 @@ export const StepHeader = ({title, description, btnText, onBtnClick}:props) => {
             {description}
           </Typography>
         </Box>
-        {!!btnText &&
+        {!!btnText && !isSaveBtn &&
           <Button
             startIcon={<AddIcon />}
             variant="contained"
             size="medium"
             onClick={onBtnClick}
+            {...btnProps}
+          >
+            {btnText}
+          </Button>
+        }
+
+          {!!btnText && isSaveBtn &&
+          <Button
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+            variant="contained"
+            size="medium"
+            onClick={onBtnClick}
+            disabled={loading}
+            {...btnProps}
           >
             {btnText}
           </Button>

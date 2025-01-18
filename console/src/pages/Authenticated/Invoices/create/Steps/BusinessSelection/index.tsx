@@ -15,13 +15,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useBusinessSearch } from './hooks/useBusinessSearch';
 import { debounce } from '@utils/time';
 import { useNavigate } from 'react-router';
+import { useSelectionAtom } from '../../hooks/useSelectionAtom';
 
-type Props = {
-  // selectedBusinessId: number;
-  // onAddBusiness: () => void;
-  // onEditBusiness: (businessId: string) => void;
-  // handleSelectBusiness: (id: number) => void;
-}
+type Props = {}
 
 export const BusinessSelectionStep = ({}: Props) => {
   const navigate = useNavigate()
@@ -31,6 +27,7 @@ export const BusinessSelectionStep = ({}: Props) => {
   const {isPending: isSearching, error:searchError, data:searchData} = useBusinessSearch({userId: '1', searchText: serverSearchText})
   const {showSnackbar} = useSnackbar();
   const debouncedRef = useRef({ set: debounce(setServerSearchText, 500)})
+  const {selectBusiness, selectionDetails} = useSelectionAtom();
 
   const handleSearchChange = (e:React.ChangeEvent<HTMLInputElement>) => {
       setSearchText(e.target.value);
@@ -92,8 +89,8 @@ export const BusinessSelectionStep = ({}: Props) => {
         {!isLoading && list.map((business) => (
           <BusinessCard 
             key={business.$id}
-            selected={false} 
-            onCardClick={() => {}} 
+            selected={selectionDetails.selectedBusinessId === business.$id} 
+            onCardClick={selectBusiness} 
             id={business.$id}
             businessName={business.name}
             businessTye={'current'}

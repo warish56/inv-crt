@@ -22,8 +22,8 @@ import { useCreateOrEditCustomer } from './hooks/useCreateOrEditCustomer';
 import { useCustomersList } from '../../Steps/CustomerSelection/hooks/useCustomersList';
 import { useSnackbar } from '@hooks/useSnackbar';
 import { useForm } from '@tanstack/react-form';
-import { FormHeader } from '../common/FormHeader';
-import { FormField } from '../common/FormField';
+import { FormHeader } from '../../common/FormHeader';
+import { FormField } from '../../common/FormField';
 import { Countries, IndianStates } from '@constants/states';
 
 
@@ -261,6 +261,10 @@ export const CreateOrEditCustomer= ({}:props) => {
                   fullWidth
                   label="Postal Code"
                   field={field}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    return isNaN(Number(value)) ? value.substring(0, value.length-1) : value
+                  }}
                   icon={ <PostalIcon sx={{ color: 'primary.main' }} />}
                   />
               )}

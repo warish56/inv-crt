@@ -1,168 +1,176 @@
-import React from 'react';
+import { useState } from 'react';
 import {
   Box,
-  Typography,
-  Grid,
-  TextField,
-  InputAdornment,
-  Paper,
-  FormControlLabel,
-  Checkbox,
-  Button,
 } from '@mui/material';
 import { 
   LocalShipping, 
   PlaceOutlined,
-  Business,
-  LocationCity,
-  MarkunreadMailbox,
-  LocationOn
 } from '@mui/icons-material';
+
 import { StepHeader } from '../../components/StepHeader';
+import { useForm } from '@tanstack/react-form';
+import { ShippingDetailsForm } from './Form';
+import { ShippingExtraDetails } from './ShippingExtraDetails';
+import { useShippingAtom } from '../../hooks/useShippingAtom';
+import { useSelectionAtom } from '../../hooks/useSelectionAtom';
+import { useBusinessList } from '../BusinessSelection/hooks/useBusinessList';
+import { useCustomersList } from '../CustomerSelection/hooks/useCustomersList';
+import { useSnackbar } from '@hooks/useSnackbar';
 
-type ShippingDetails = {
-  shipFrom: {
-    businessAddress: string;
+type shippingDetails = {
+    address: string;
     city: string;
-    postCode: string;
+    postalCode: string;
     state: string;
-  };
-  shipTo: {
-    businessAddress: string;
-    city: string;
-    postCode: string;
-    state: string;
-  };
-  shippingMethod: string;
-  shippingCost: number;
-};
+}
 
-type Props = {
-  onSave?: (data: ShippingDetails) => void;
-  initialData?: Partial<ShippingDetails>;
-};
+type extraDetails = {
+    method: string,
+    cost: string
+}
 
-export const ShippingDetailsStep = ({ onSave, initialData }: Props) => {
-  const [saveToClient, setSaveToClient] = React.useState(false);
+type Props = {};
 
-  const AddressField = ({ 
-    label, 
-    icon, 
-    multiline = false,
-    ...props 
-  }: { 
-    label: string; 
-    icon: React.ReactNode;
-    multiline?: boolean;
-    [key: string]: any;
-  }) => (
-    <TextField
-      fullWidth
-      label={label}
-      variant="outlined"
-      multiline={multiline}
-      rows={multiline ? 3 : 1}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start" sx={{ color: 'primary.main' }}>
-            {icon}
-          </InputAdornment>
-        ),
-      }}
-      {...props}
-    />
-  );
+export const ShippingDetailsStep = ({}: Props) => {
+  const {
+    updateShippingExtraDetails, 
+    updateShippingFromAddress,
+    updateShippingToAddress,
+    setSameAddress,
+    shippingData
+  } = useShippingAtom()
 
-  const AddressSection = ({ 
-    title, 
-    icon, 
-    prefix,
-    bgColor = 'grey.50'
-  }: { 
-    title: string; 
-    icon: React.ReactNode; 
-    prefix: 'shipFrom' | 'shipTo';
-    bgColor?: string;
-  }) => (
-    <Paper 
-      elevation={0}
-      sx={{ 
-        p: 3, 
-        mb: 3,
-        bgcolor: bgColor,
-        borderRadius: 2,
-        border: '1px solid',
-        borderColor: 'grey.200'
-      }}
-    >
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        mb: 3,
-        pb: 2,
-        borderBottom: '2px solid',
-        borderColor: 'primary.light'
-      }}>
-        <Box sx={{ 
-          mr: 2, 
-          display: 'flex', 
-          alignItems: 'center', 
-          color: 'primary.main',
-          bgcolor: 'primary.lighter',
-          p: 1,
-          borderRadius: 1
-        }}>
-          {icon}
-        </Box>
-        <Typography variant="h6" color="primary.main" fontWeight="600">
-          {title}
-        </Typography>
-      </Box>
-      
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <AddressField
-            label="Business Address"
-            icon={<Business />}
-            multiline
-            defaultValue={initialData?.[prefix]?.businessAddress}
-            name={`${prefix}.businessAddress`}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <AddressField
-            label="City"
-            icon={<LocationCity />}
-            defaultValue={initialData?.[prefix]?.city}
-            name={`${prefix}.city`}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <AddressField
-            label="Post/ZIP Code"
-            icon={<MarkunreadMailbox />}
-            defaultValue={initialData?.[prefix]?.postCode}
-            name={`${prefix}.postCode`}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <AddressField
-            label="State"
-            icon={<LocationOn />}
-            defaultValue={initialData?.[prefix]?.state}
-            name={`${prefix}.state`}
-          />
-        </Grid>
-      </Grid>
-    </Paper>
-  );
+  const {selectionDetails} = useSelectionAtom();
+  const [checkBoxes, setCheckBoxesData] = useState({
+    fromDetailsSameAsSelectedBusinessDetails: shippingData.fromDetailsSameAsSelectedBusinessDetails ,
+    toDetailsSameAsSelectedCustomerDetails: shippingData.toDetailsSameAsSelectedCustomerDetails
+  })
+
+  const {data: businessResponse} = useBusinessList({userId: '1'});
+  const {data: customerResponse} = useCustomersList({userId: '1'});
+  const {showSnackbar} = useSnackbar();
+
+  const businessData = businessResponse?.[0]?.businesses.find(business => business.$id === selectionDetails.selectedBusinessId);
+  const customerData = customerResponse?.[0]?.customers.find(customer => customer.$id === selectionDetails.selectedCustomerId);
+
+
+
+  const getDefaultFormValues = (type: 'from' | 'to') => {
+    let defaults = {
+      address: shippingData[type].address ?? '',
+      city: shippingData[type].city ?? '',
+      postalCode: shippingData[type].postalCode ?? '',
+      state: shippingData[type].state ?? '',
+    }
+
+    if(type === 'from' && checkBoxes.fromDetailsSameAsSelectedBusinessDetails){
+      defaults={
+        address: businessData?.address ?? '',
+        city: businessData?.city ?? '',
+        postalCode: businessData?.postal_code ?? '',
+        state: businessData?.state ?? '',
+      }
+
+    }else if(type === 'to' && checkBoxes.toDetailsSameAsSelectedCustomerDetails){
+      defaults={
+        address: customerData?.address ?? '',
+        city: customerData?.city ?? '',
+        postalCode: customerData?.postal_code ?? '',
+        state: customerData?.state ?? '',
+      }
+    }
+
+    return defaults;
+  }
+
+  const shipFromForm = useForm<shippingDetails>({
+    defaultValues: getDefaultFormValues('from'),
+    onSubmit: ({value}) => {
+        updateShippingFromAddress(value);
+    }
+  })
+
+  const shipToForm = useForm<shippingDetails>({
+    defaultValues:getDefaultFormValues('to'),
+    onSubmit: ({value}) => {
+      updateShippingToAddress(value);
+    }
+  })
+
+  const extraDetailsFrom = useForm<extraDetails>({
+    defaultValues: {
+      method: shippingData.method ?? '',
+      cost: shippingData.cost ?? ''
+    },
+    onSubmit: ({value}) => {
+        updateShippingExtraDetails(value);
+    }
+  })
+
+  const updateFields = (type: 'from' | 'to', data: shippingDetails) => {
+    const form = type === 'from' ? shipFromForm : shipToForm;
+    Object.keys(data).forEach((key) => {
+      form.setFieldValue(key as keyof shippingDetails, data[key as keyof shippingDetails])
+    })
+  }
+  
+  
+  const toggleCheckBox = (type: 'from' | 'to', value: boolean) => {
+    setCheckBoxesData((prev) => ({
+      ...prev,
+      [ type === 'from' ? 'fromDetailsSameAsSelectedBusinessDetails': 'toDetailsSameAsSelectedCustomerDetails'] : value
+    }))
+
+    if(type === 'from'){
+      if(value){
+        updateFields('from',{
+          address: businessData?.address ?? '',
+          city: businessData?.city ?? '',
+          postalCode: businessData?.postal_code ?? '',
+          state: businessData?.state ?? ''
+        })
+      }else{
+        updateFields('from',{
+          address:  '',
+          city:  '',
+          postalCode:  '',
+          state:  '',
+        })
+      }
+
+    }else if(type === 'to'){
+      if(value){
+        updateFields('to',{
+          address: customerData?.address ?? '',
+          city: customerData?.city ?? '',
+          postalCode: customerData?.postal_code ?? '',
+          state: customerData?.state ?? ''
+        })
+      }else{
+        updateFields('to',{
+          address: '',
+          city: '',
+          postalCode: '',
+          state: '',
+        })
+      }
+    }
+  }
 
   return (
     <Box 
       component="form" 
       onSubmit={(e) => {
         e.preventDefault();
-        // Form submission logic here
+        shipFromForm.handleSubmit();
+        shipToForm.handleSubmit();
+        extraDetailsFrom.handleSubmit();
+        const totalErrors = [...shipFromForm.state.errors, ...shipToForm.state.errors, ...extraDetailsFrom.state.errors]
+        if(totalErrors.length === 0){
+          setSameAddress('from', checkBoxes.fromDetailsSameAsSelectedBusinessDetails);
+          setSameAddress('to', checkBoxes.toDetailsSameAsSelectedCustomerDetails)
+        }
+        showSnackbar({message: 'Shipping details saved successfully', type: 'succes'})
       }}
       sx={{ 
         bgcolor: 'background.default',
@@ -173,108 +181,44 @@ export const ShippingDetailsStep = ({ onSave, initialData }: Props) => {
       <StepHeader 
         title='Shipping Information'
         description='Add the required shipping details'
-      />
-
-      
-      <AddressSection 
-        title="Ship From" 
-        icon={<LocalShipping fontSize="medium" />} 
-        prefix="shipFrom"
-        bgColor="background.paper"
-      />
-      
-      <AddressSection 
-        title="Ship To" 
-        icon={<PlaceOutlined fontSize="medium" />} 
-        prefix="shipTo"
-        bgColor="background.paper"
-      />
-
-      <Paper 
-        elevation={0}
-        sx={{ 
-          p: 3, 
-          mb: 3,
-          bgcolor: 'background.paper',
-          borderRadius: 2,
-          border: '1px solid',
-          borderColor: 'grey.200'
+        btnText='Save Details'
+        onBtnClick={() => {}}
+        btnProps={{
+          type: 'submit'
         }}
-      >
-        <Typography 
-          variant="subtitle1" 
-          sx={{ 
-            mb: 3,
-            fontWeight: 600,
-            color: 'text.primary'
-          }}
-        >
-          Shipping Details
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Shipping Method"
-              variant="outlined"
-              defaultValue={initialData?.shippingMethod}
-              name="shippingMethod"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Shipping Cost"
-              type="number"
-              variant="outlined"
-              defaultValue={initialData?.shippingCost}
-              name="shippingCost"
-              InputProps={{
-                startAdornment: <InputAdornment position="start">₹</InputAdornment>,
-              }}
-            />
-          </Grid>
-        </Grid>
-      </Paper>
+      />
+      
 
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        mt: 4,
-        pt: 3,
-        borderTop: '1px solid',
-        borderColor: 'grey.200'
-      }}>
-        <FormControlLabel
-          control={
-            <Checkbox 
-              checked={saveToClient} 
-              onChange={(e) => setSaveToClient(e.target.checked)}
-              color="primary"
-            />
-          }
-          label={
-            <Typography color="text.secondary">
-              Save shipping details to client profile
-            </Typography>
-          }
-        />
-        <Button 
-          variant="contained" 
-          size="large"
-          type="submit"
-          sx={{ 
-            px: 4,
-            py: 1.5,
-            borderRadius: 2,
-            textTransform: 'none',
-            fontWeight: 600
-          }}
-        >
-          Save Details
-        </Button>
-      </Box>
+      
+      <ShippingDetailsForm 
+        title="Ship From" 
+        type='from'
+        formDisabled={checkBoxes.fromDetailsSameAsSelectedBusinessDetails}
+        showCheckBox={!!selectionDetails.selectedBusinessId}
+        checkboxChecked={checkBoxes.fromDetailsSameAsSelectedBusinessDetails}
+        onCheckBoxToggled={(val) => toggleCheckBox('from', val)}
+        icon={<LocalShipping fontSize="medium" />} 
+        bgColor="background.paper"
+        form={shipFromForm}
+      />
+      
+      <ShippingDetailsForm 
+        title="Ship To" 
+        type='to'
+        formDisabled={checkBoxes.toDetailsSameAsSelectedCustomerDetails}
+        showCheckBox={!!selectionDetails.selectedCustomerId}
+        checkboxChecked={checkBoxes.toDetailsSameAsSelectedCustomerDetails}
+        onCheckBoxToggled={(val) => toggleCheckBox('to', val)}
+        icon={<PlaceOutlined fontSize="medium" />} 
+        bgColor="background.paper"
+        form={shipToForm}
+      /> 
+
+
+      <ShippingExtraDetails 
+        form={extraDetailsFrom}
+      />
+
     </Box>
   );
 };

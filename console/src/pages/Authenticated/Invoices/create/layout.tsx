@@ -57,6 +57,7 @@ export const CreateInvoiceLayout = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
         mb: 4,
+        paddingRight: '30px'
       }}>
         <Typography
           variant="h4"
@@ -83,6 +84,7 @@ export const CreateInvoiceLayout = () => {
               border: 'none',
               boxShadow: 'none',
               bgcolor: 'background.default',
+              paddingRight: '30px'
             }}
           >
             <CardContent sx={{

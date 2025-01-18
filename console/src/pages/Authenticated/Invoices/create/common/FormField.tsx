@@ -6,12 +6,12 @@ type props = {
     icon: React.ReactNode;
     field: {
         state: {
-            value: string;
+            value: any;
             meta: {
                 errors: ValidationError[]
             }
         },
-        handleChange: (value:string) => void;
+        handleChange: (value:any) => void;
         handleBlur: () => void;
     }
 } & TextFieldProps

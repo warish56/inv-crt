@@ -8,6 +8,9 @@ export const useServiceAtom = () => {
     const addService = (service: typeof data[0]) => {
         setServices((services) => [...services, service])
     }
+    const updateService = (existingService: typeof data[0]) => {
+        setServices((services) => services.map(( service) => service.id === existingService.id ? existingService: service))
+    }
 
     const removeService = (id:string) => {
         setServices((services) => services.filter(service => service.id !== id))
@@ -15,6 +18,7 @@ export const useServiceAtom = () => {
 
     return {
         addService,
+        updateService,
         removeService,
         services: data
     }

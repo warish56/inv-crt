@@ -7,22 +7,25 @@ type Service = {
     name: string;
     description: string;
     code: string;
-    price: number;
-    gst: number;
+    price: string;
+    gst: string;
+    qty: string;
 }
 
 export const servicesAtom = atom<Service[]>([])
 
 type Billing = {
-    supplyType: 'intraState' | 'interState' | 'unionTerritory'| '';
+    discountApplied: boolean;
+    supplyType: 'intraState' | 'interState' | 'unionTerritory';
     discountType: 'percentage'| 'fixed' | '';
-    discountValue: number;
+    discountValue: string;
     services: Service[];
 }
 
 export const billingAtom = atom<Billing>({
-    supplyType: '',
+    discountApplied: false,
+    supplyType: 'intraState',
     discountType: '',
-    discountValue: 0,
+    discountValue: '',
     services: []
 })

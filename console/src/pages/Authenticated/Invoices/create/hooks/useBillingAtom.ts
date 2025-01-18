@@ -12,8 +12,9 @@ export const useBillingAtom = () => {
             supplyType: value
         }))
     }
+    
 
-    const updateDiscount = (type: typeof data['discountType'], value: number) => {
+    const updateDiscount = (type: typeof data['discountType'], value: string) => {
         setBillingDetails((prev) => ({
             ...prev,
             discountType: type,
@@ -21,9 +22,18 @@ export const useBillingAtom = () => {
         }))
     }
 
+
+    const toggleDiscount = (value: boolean) => {
+        setBillingDetails((prev) => ({
+            ...prev,
+            discountApplied: value,
+        }))
+    }
+
     return {
         updateDiscount,
         updateBillingType,
+        toggleDiscount,
         billingDetails: data
     }
 }

@@ -18,7 +18,7 @@ import { InvoicePreview } from "@pages/Authenticated/Invoices/create/Preview"
 import { CreateOrEditBusiness } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditBusiness"
 import { CreateOrEditCustomer } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditCustomer"
 import { CreateOrEditBank } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditBank"
-import { ServiceDetails } from "@pages/Authenticated/Invoices/create/SubSteps/ServiceDetails"
+import { CreateOrEditService } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditService"
 
 
 
@@ -56,8 +56,8 @@ export const RootRoute = () => {
 
                         <Route path="services" element={<Outlet />} >
                             <Route index element={<ServicesProvidedStep />} />
-                            <Route path="create" element={<ServiceDetails />} />
-                            <Route path=":serviceId" element={<ServiceDetails />} />
+                            <Route path="create" element={<CreateOrEditService />} />
+                            <Route path=":serviceId" element={<CreateOrEditService />} />
                         </Route>
 
 

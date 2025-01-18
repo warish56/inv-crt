@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Card,
@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { StepManager } from './Steps/StepManager';
 import { StepFooter } from './Footer';
-import { Outlet } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
 import AutoSaveIndicator from './common/AutoSaveIndicator';
 
 
@@ -17,6 +17,16 @@ import AutoSaveIndicator from './common/AutoSaveIndicator';
 export const CreateInvoiceLayout = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState<boolean[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const location = useLocation()
+
+  useEffect(() => {
+    if(!scrollContainerRef.current){
+      return
+    }
+
+    scrollContainerRef.current.scrollTo(0, -Infinity);
+  }, [location.pathname])
 
 
 
@@ -41,8 +51,6 @@ export const CreateInvoiceLayout = () => {
   const handleBack = () => {
     handleStep((currentStep) => currentStep - 1);
   };
-
-
 
 
 
@@ -78,6 +86,7 @@ export const CreateInvoiceLayout = () => {
 
         <Grid item xs={12} md={8}>
           <Card
+            ref={scrollContainerRef}
             sx={{
               height: 'calc(100dvh - var(--header-hight))',
               overflow: 'auto',

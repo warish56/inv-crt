@@ -46,6 +46,7 @@ export const BusinessCard = ({
 }:props) => {
     return(
         <Card
+        data-business-id={id}  
         sx={{
           mb: 2,
           cursor: 'pointer',
@@ -137,7 +138,10 @@ export const BusinessCard = ({
               </Typography>
             </Box>
             <IconButton 
-            onClick={() => onEditBusiness(id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEditBusiness(id)
+            }}
               size="small" 
               sx={{ 
                 color: 'primary.main',

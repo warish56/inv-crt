@@ -111,11 +111,13 @@ const searchBusinessByNameOrNumber = async (userId, searchText) => {
 
     const result1 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
         Query.search(Attributes.name.name, searchText),
-        Query.equal(Attributes.userId.name, userId)
+        Query.equal(Attributes.userId.name, userId),
+        Query.orderDesc('$createdAt')
     ]);
     const result2 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
         Query.search(Attributes.phone.name, searchText),
-        Query.equal(Attributes.userId.name, userId)
+        Query.equal(Attributes.userId.name, userId),
+        Query.orderDesc('$createdAt')
     ]);
     const totalResults =  [
         ...result1.documents, 
@@ -123,7 +125,7 @@ const searchBusinessByNameOrNumber = async (userId, searchText) => {
     ];
 
     const uniqueResults = Array.from(new Map(totalResults.map(result => [result.$id, result])).values())
-    return uniqueResults
+    return uniqueResults[0].$createdAt
 }
 
 const getBusinessWithId = async (businessId) => {
@@ -135,7 +137,8 @@ const getBusinessWithId = async (businessId) => {
 const getUserBusinessList = async (userId) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.equal(Attributes.userId.name, userId)
+        Query.equal(Attributes.userId.name, userId),
+        Query.orderDesc('$createdAt')
     ]);
     return result.documents;
 }

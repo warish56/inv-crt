@@ -24,7 +24,7 @@ export const AppDrawer = () => {
 
   const primaryNavLinks = [
     { title: 'Dashboard', icon: <Dashboard />, path: '/' },
-    { title: 'Create Invoice', icon: <Analytics />, path: '/invoices/create' },
+    { title: 'Create Invoice', icon: <Analytics />, path: '/invoices/create/business' },
     { title: 'Manage Invoices', icon: <Schedule />, path: '/invoices' },
     { title: 'Customers', icon: <Folder />, path: '/customers' },
   ];

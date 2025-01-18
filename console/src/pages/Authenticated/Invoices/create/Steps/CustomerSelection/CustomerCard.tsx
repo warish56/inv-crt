@@ -46,6 +46,7 @@ export const CustomerCard = ({
 }:props) => {
     return(
         <Card
+        data-customer-id={id}  
         sx={{
           mb: 2,
           cursor: 'pointer',
@@ -137,7 +138,10 @@ export const CustomerCard = ({
               </Typography>
             </Box>
             <IconButton 
-            onClick={() => onEditCustomer(id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEditCustomer(id)
+            }}
               size="small" 
               sx={{ 
                 color: 'primary.main',

@@ -141,7 +141,7 @@ export const PricebreakDown = () => {
     }), {cgst: 0, igst: 0, sgst: 0, utgst:0})
 
     return {
-      totalAmount: totalAmount,
+      totalAmount: Math.max(totalAmount, 0),
       totalBillTaxes
     }
   }, [allTaxes, subTotal, billingDetails, shippingData.cost])

@@ -1,20 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Card,
   CardContent,
   Typography,
   Grid,
+  Stack,
 } from '@mui/material';
 import { StepManager } from './Steps/StepManager';
 import { StepFooter } from './Footer';
-import { Outlet } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
+import AutoSaveIndicator from './common/AutoSaveIndicator';
 
 
 
 export const CreateInvoiceLayout = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState<boolean[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const location = useLocation()
+
+  useEffect(() => {
+    if(!scrollContainerRef.current){
+      return
+    }
+
+    scrollContainerRef.current.scrollTo(0, -Infinity);
+  }, [location.pathname])
 
 
 
@@ -42,23 +54,30 @@ export const CreateInvoiceLayout = () => {
 
 
 
-
-
   return (
     <Box sx={{ 
         p: 3 ,
         "--header-hight": '200px'
     }}>
-      <Typography
-        variant="h4"
-        sx={{
-          fontWeight: 600,
-          mb: 4,
-          color: 'primary.main'
-        }}
-      >
-        Create New Invoice
-      </Typography>
+      <Stack 
+      direction="row"
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        mb: 4,
+        paddingRight: '30px'
+      }}>
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 600,
+            color: 'primary.main'
+          }}
+        >
+          Create New Invoice
+        </Typography>
+        <AutoSaveIndicator />
+      </Stack>
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
@@ -67,18 +86,20 @@ export const CreateInvoiceLayout = () => {
 
         <Grid item xs={12} md={8}>
           <Card
+            ref={scrollContainerRef}
             sx={{
               height: 'calc(100dvh - var(--header-hight))',
               overflow: 'auto',
               border: 'none',
               boxShadow: 'none',
               bgcolor: 'background.default',
+              paddingRight: '30px'
             }}
           >
             <CardContent sx={{
               bgcolor: 'background.default',
               boxShadow: 'none',
-              paddingTop: 0,
+              padding: 0,
             }}>
               <Outlet />
             </CardContent>

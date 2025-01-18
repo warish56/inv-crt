@@ -18,6 +18,7 @@ import { useBankSearch } from './hooks/useBankSearch';
 import { BankCardSkeleton } from './BankCardSkeleton';
 import { StepHeader } from '../../components/StepHeader';
 import { useSelectionAtom } from '../../hooks/useSelectionAtom';
+import { SelectedAlert } from '../../common/SelectedAlert';
 
 type Props = {}
 
@@ -30,6 +31,7 @@ export const BankSelection = ({}: Props) => {
   const {showSnackbar} = useSnackbar();
   const debouncedRef = useRef({ set: debounce(setServerSearchText, 500)})
   const {selectBank, selectionDetails} = useSelectionAtom();
+  const lastSelectedRef = useRef<string | null>(null);
 
 
   const handleSearchChange = (e:React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +48,25 @@ export const BankSelection = ({}: Props) => {
   }
 
 
+  const handleBankSelect = (bankId: string) => {
+    lastSelectedRef.current = bankId;
+    selectBank(bankId);
+  }
+
+  const scrollToSelected = (isInitial = false) => {
+    if (selectionDetails.selectedBankId) {
+      const element = document.querySelector(`[data-bank-id="${selectionDetails.selectedBankId}"]`);
+      if (element) {
+        element.scrollIntoView({
+          behavior: isInitial ? 'auto' : 'smooth',
+          block: 'center'
+        });
+      }
+    }
+  };
+
+
+
 
   useEffect(() => {
     if(listData?.[1] || listError || searchData?.[1] || searchError){
@@ -59,6 +80,7 @@ export const BankSelection = ({}: Props) => {
 
   const list = (searchText ? searchData?.[0]?.banks : listData?.[0]?.banks) ?? []
   const isLoading = (searchText && isSearching) || isFetchingBanksList;
+  const selectedBank = list.find(b => b.$id === selectionDetails.selectedBankId);
 
 
   return (
@@ -69,6 +91,15 @@ export const BankSelection = ({}: Props) => {
         onBtnClick={onAddBank}
         btnText='Add Bank'
       />
+
+
+      {selectedBank && !searchText && (
+        <SelectedAlert 
+         name={selectedBank.name}
+         onLocate={() => scrollToSelected()}
+        />
+      )}
+
 
       <TextField
         fullWidth
@@ -99,7 +130,7 @@ export const BankSelection = ({}: Props) => {
             accountType={bank.type}
             accountNumber={bank.acc_number}
             selected={selectionDetails.selectedBankId === bank.$id} 
-            onCardClick={selectBank} 
+            onCardClick={handleBankSelect} 
             onEditBank={onEditBank}   
           />
         ))}

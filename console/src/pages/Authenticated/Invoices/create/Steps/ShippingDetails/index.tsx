@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Box,
 } from '@mui/material';
@@ -15,7 +14,6 @@ import { useShippingAtom } from '../../hooks/useShippingAtom';
 import { useSelectionAtom } from '../../hooks/useSelectionAtom';
 import { useBusinessList } from '../BusinessSelection/hooks/useBusinessList';
 import { useCustomersList } from '../CustomerSelection/hooks/useCustomersList';
-import { useSnackbar } from '@hooks/useSnackbar';
 
 type shippingDetails = {
     address: string;
@@ -24,16 +22,11 @@ type shippingDetails = {
     state: string;
 }
 
-type extraDetails = {
-    method: string,
-    cost: string
-}
 
 type Props = {};
 
 export const ShippingDetailsStep = ({}: Props) => {
   const {
-    updateShippingExtraDetails, 
     updateShippingFromAddress,
     updateShippingToAddress,
     setSameAddress,
@@ -41,46 +34,19 @@ export const ShippingDetailsStep = ({}: Props) => {
   } = useShippingAtom()
 
   const {selectionDetails} = useSelectionAtom();
-  const [checkBoxes, setCheckBoxesData] = useState({
-    fromDetailsSameAsSelectedBusinessDetails: shippingData.fromDetailsSameAsSelectedBusinessDetails ,
-    toDetailsSameAsSelectedCustomerDetails: shippingData.toDetailsSameAsSelectedCustomerDetails
-  })
-
   const {data: businessResponse} = useBusinessList({userId: '1'});
   const {data: customerResponse} = useCustomersList({userId: '1'});
-  const {showSnackbar} = useSnackbar();
 
   const businessData = businessResponse?.[0]?.businesses.find(business => business.$id === selectionDetails.selectedBusinessId);
   const customerData = customerResponse?.[0]?.customers.find(customer => customer.$id === selectionDetails.selectedCustomerId);
 
-
-
   const getDefaultFormValues = (type: 'from' | 'to') => {
-    let defaults = {
+    return {
       address: shippingData[type].address ?? '',
       city: shippingData[type].city ?? '',
       postalCode: shippingData[type].postalCode ?? '',
       state: shippingData[type].state ?? '',
     }
-
-    if(type === 'from' && checkBoxes.fromDetailsSameAsSelectedBusinessDetails){
-      defaults={
-        address: businessData?.address ?? '',
-        city: businessData?.city ?? '',
-        postalCode: businessData?.postal_code ?? '',
-        state: businessData?.state ?? '',
-      }
-
-    }else if(type === 'to' && checkBoxes.toDetailsSameAsSelectedCustomerDetails){
-      defaults={
-        address: customerData?.address ?? '',
-        city: customerData?.city ?? '',
-        postalCode: customerData?.postal_code ?? '',
-        state: customerData?.state ?? '',
-      }
-    }
-
-    return defaults;
   }
 
   const shipFromForm = useForm<shippingDetails>({
@@ -97,15 +63,6 @@ export const ShippingDetailsStep = ({}: Props) => {
     }
   })
 
-  const extraDetailsFrom = useForm<extraDetails>({
-    defaultValues: {
-      method: shippingData.method ?? '',
-      cost: shippingData.cost ?? ''
-    },
-    onSubmit: ({value}) => {
-        updateShippingExtraDetails(value);
-    }
-  })
 
   const updateFields = (type: 'from' | 'to', data: shippingDetails) => {
     const form = type === 'from' ? shipFromForm : shipToForm;
@@ -116,11 +73,7 @@ export const ShippingDetailsStep = ({}: Props) => {
   
   
   const toggleCheckBox = (type: 'from' | 'to', value: boolean) => {
-    setCheckBoxesData((prev) => ({
-      ...prev,
-      [ type === 'from' ? 'fromDetailsSameAsSelectedBusinessDetails': 'toDetailsSameAsSelectedCustomerDetails'] : value
-    }))
-
+    setSameAddress(type , value);
     if(type === 'from'){
       if(value){
         updateFields('from',{
@@ -159,19 +112,6 @@ export const ShippingDetailsStep = ({}: Props) => {
 
   return (
     <Box 
-      component="form" 
-      onSubmit={(e) => {
-        e.preventDefault();
-        shipFromForm.handleSubmit();
-        shipToForm.handleSubmit();
-        extraDetailsFrom.handleSubmit();
-        const totalErrors = [...shipFromForm.state.errors, ...shipToForm.state.errors, ...extraDetailsFrom.state.errors]
-        if(totalErrors.length === 0){
-          setSameAddress('from', checkBoxes.fromDetailsSameAsSelectedBusinessDetails);
-          setSameAddress('to', checkBoxes.toDetailsSameAsSelectedCustomerDetails)
-        }
-        showSnackbar({message: 'Shipping details saved successfully', type: 'succes'})
-      }}
       sx={{ 
         bgcolor: 'background.default',
         borderRadius: 3
@@ -181,11 +121,6 @@ export const ShippingDetailsStep = ({}: Props) => {
       <StepHeader 
         title='Shipping Information'
         description='Add the required shipping details'
-        btnText='Save Details'
-        onBtnClick={() => {}}
-        btnProps={{
-          type: 'submit'
-        }}
       />
       
 
@@ -193,9 +128,9 @@ export const ShippingDetailsStep = ({}: Props) => {
       <ShippingDetailsForm 
         title="Ship From" 
         type='from'
-        formDisabled={checkBoxes.fromDetailsSameAsSelectedBusinessDetails}
+        formDisabled={shippingData.fromDetailsSameAsSelectedBusinessDetails}
         showCheckBox={!!selectionDetails.selectedBusinessId}
-        checkboxChecked={checkBoxes.fromDetailsSameAsSelectedBusinessDetails}
+        checkboxChecked={shippingData.fromDetailsSameAsSelectedBusinessDetails}
         onCheckBoxToggled={(val) => toggleCheckBox('from', val)}
         icon={<LocalShipping fontSize="medium" />} 
         bgColor="background.paper"
@@ -205,20 +140,16 @@ export const ShippingDetailsStep = ({}: Props) => {
       <ShippingDetailsForm 
         title="Ship To" 
         type='to'
-        formDisabled={checkBoxes.toDetailsSameAsSelectedCustomerDetails}
+        formDisabled={shippingData.toDetailsSameAsSelectedCustomerDetails}
         showCheckBox={!!selectionDetails.selectedCustomerId}
-        checkboxChecked={checkBoxes.toDetailsSameAsSelectedCustomerDetails}
+        checkboxChecked={shippingData.toDetailsSameAsSelectedCustomerDetails}
         onCheckBoxToggled={(val) => toggleCheckBox('to', val)}
         icon={<PlaceOutlined fontSize="medium" />} 
         bgColor="background.paper"
         form={shipToForm}
       /> 
-
-
-      <ShippingExtraDetails 
-        form={extraDetailsFrom}
-      />
-
+      
+      <ShippingExtraDetails />
     </Box>
   );
 };

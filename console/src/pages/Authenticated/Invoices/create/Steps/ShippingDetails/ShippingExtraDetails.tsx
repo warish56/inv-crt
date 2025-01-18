@@ -1,23 +1,45 @@
-import { LocationCity } from "@mui/icons-material"
-import { InputAdornment } from "@mui/material"
-import { Grid, TextField } from "@mui/material"
+
+import { Grid } from "@mui/material"
 import { Typography } from "@mui/material"
 import { Paper } from "@mui/material"
-import { ReactFormExtendedApi } from "@tanstack/react-form"
+import { useForm } from "@tanstack/react-form"
 import { FormField } from "../../common/FormField"
+import { useShippingAtom } from "../../hooks/useShippingAtom"
+import { useAutoSaveAtom } from "../../hooks/useAutoSaveAtom"
 
 type extraDetails = {
     method: string,
     cost: string
 }
 
-type props = {
-    form: ReactFormExtendedApi<extraDetails, undefined>
-}
-export const ShippingExtraDetails = ({form}:props) => {
+type props = {}
+export const ShippingExtraDetails = ({}:props) => {
+
+  const {
+    updateShippingExtraDetails, 
+    shippingData
+  } = useShippingAtom()
+  const {triggerAutoSave} = useAutoSaveAtom();
+
+  const form = useForm<extraDetails>({
+    defaultValues: {
+      method: shippingData.method ?? '',
+      cost: shippingData.cost ?? ''
+    },
+    onSubmit: ({value}) => {
+        updateShippingExtraDetails(value);
+    }
+  })
+
+  
     return (
         <Paper 
         elevation={0}
+        component="form"
+        onBlur={() => {
+          form.handleSubmit();
+          triggerAutoSave();
+        }}
         sx={{ 
           p: 3, 
           mb: 3,

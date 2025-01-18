@@ -135,7 +135,8 @@ const getInvoiceWithId = async (invoice) => {
 const getUserInvoicesList = async (userId) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.equal(Attributes.userId.name, userId)
+        Query.equal(Attributes.userId.name, userId),
+        Query.orderDesc('$createdAt')
     ]);
     return result.documents;
 }

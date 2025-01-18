@@ -85,15 +85,18 @@ const searchBanksByNameOrNumber = async (userId, searchText) => {
     const databases = new sdk.Databases(dbValues.client);
     const result1 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
         Query.equal(Attributes.userId.name, userId),
-        Query.search(Attributes.bankName.name, searchText)
+        Query.search(Attributes.bankName.name, searchText),
+        Query.orderDesc('$createdAt')
     ]);
     const result2 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
         Query.equal(Attributes.userId.name, userId),
-        Query.search(Attributes.accountNumber.name, searchText)
+        Query.search(Attributes.accountNumber.name, searchText),
+        Query.orderDesc('$createdAt')
     ]);
     const result3 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
         Query.equal(Attributes.userId.name, userId),
-        Query.search(Attributes.accountHolderName.name, searchText)
+        Query.search(Attributes.accountHolderName.name, searchText),
+        Query.orderDesc('$createdAt')
     ]);
     const totalResults =  [...result1.documents, ...result2.documents, ...result3.documents];
     const uniqueResults = Array.from(new Map(totalResults.map(result => [result.$id, result])).values())
@@ -109,7 +112,8 @@ const getBankWithId = async (bankId) => {
 const getUserBanksList = async (userId) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.equal(Attributes.userId.name, userId)
+        Query.equal(Attributes.userId.name, userId),
+        Query.orderDesc('$createdAt')
     ]);
     return result.documents;
 }

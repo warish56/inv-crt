@@ -1,23 +1,48 @@
 import {
-  Typography,
   Grid,
-  TextField,
   Card,
   CardContent,
-  InputAdornment,
 } from '@mui/material';
 import {
-  Receipt as ReceiptIcon,
   Numbers as NumbersIcon,
   CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
 import { StepHeader } from '../../components/StepHeader';
+import { useForm } from '@tanstack/react-form';
+import { useExtraDetailsAtom } from '../../hooks/useExtraDetailsAtom';
+import { FormField } from '../../common/FormField';
+import { useAutoSaveAtom } from '../../hooks/useAutoSaveAtom';
+
+type formState = {
+  invoiceId: string;
+  invoiceDate: string;
+  dueDate: string;
+  notes: string;
+}
 
 export const AdditionalDetailsStep = () => {
-  const currentDate = new Date().toISOString().split('T')[0];
+  const {extraDetails, updateExtraDetails} = useExtraDetailsAtom();
+  const {triggerAutoSave} = useAutoSaveAtom();
+  const form = useForm<formState>({
+    defaultValues: {
+      invoiceId: extraDetails.invoiceId ?? '',
+      invoiceDate: extraDetails.invoiceDate ?? '',
+      dueDate: extraDetails.dueDate ?? '',
+      notes: extraDetails.notes ?? '',
+    },
+    onSubmit: ({value}) => {
+      updateExtraDetails(value);
+      triggerAutoSave();
+    }
+  })
 
   return (
-    <Card sx={{ 
+    <Card 
+    component="form"
+    onBlur={() => {
+      form.handleSubmit();
+    }}
+    sx={{ 
       bgcolor: 'background.default',
       boxShadow: 'none'
     }}>
@@ -31,67 +56,67 @@ export const AdditionalDetailsStep = () => {
         />
 
         <Grid container spacing={3}>
+
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Invoice Number"
-              variant="outlined"
-              placeholder="INV-0001"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <NumbersIcon sx={{ color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <form.Field name='invoiceId'>
+                {(field) => (
+                    <FormField 
+                    fullWidth
+                    label="Invoice Number"
+                    placeholder="INV-0001"
+                    field={field}
+                    onChange={(e) => {
+                      return e.target.value.toUpperCase();
+                    }}
+                    icon={ <NumbersIcon sx={{ color: 'text.secondary' }} />}
+                    />
+                )}
+            </form.Field>
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Invoice Date"
-              type="date"
-              defaultValue={currentDate}
-              InputLabelProps={{ shrink: true }}
-              variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <CalendarIcon sx={{ color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <form.Field name='invoiceDate'>
+                {(field) => (
+                    <FormField 
+                    fullWidth
+                    label="Invoice Date"
+                    InputLabelProps={{ shrink: true }}
+                    field={field}
+                    icon={ <CalendarIcon sx={{ color: 'text.secondary' }} />}
+                    />
+                )}
+            </form.Field>
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Due Date"
-              type="date"
-              defaultValue={currentDate}
-              InputLabelProps={{ shrink: true }}
-              variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <CalendarIcon sx={{ color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <form.Field name='dueDate'>
+                {(field) => (
+                    <FormField 
+                    fullWidth
+                    label="Due Date"
+                    InputLabelProps={{ shrink: true }}
+                    field={field}
+                    icon={ <CalendarIcon sx={{ color: 'text.secondary' }} />}
+                    />
+                )}
+            </form.Field>
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Notes"
-              multiline
-              rows={4}
-              variant="outlined"
-              placeholder="Add any additional notes, terms, or conditions..."
-            />
+            <form.Field name='notes'>
+                {(field) => (
+                    <FormField 
+                    fullWidth
+                    label="Notes"
+                    multiline
+                    rows={4}
+                    placeholder="Add any additional notes, terms, or conditions..."
+                    InputLabelProps={{ shrink: true }}
+                    field={field}
+                    icon={null}
+                    />
+                )}
+            </form.Field>
           </Grid>
         </Grid>
       </CardContent>

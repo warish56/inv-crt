@@ -20,6 +20,7 @@ import {
 import { FormField } from '../../common/FormField';
 import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { IndianStates } from '@constants/states';
+import { useAutoSaveAtom } from '../../hooks/useAutoSaveAtom';
 
 type shippingDetails = {
     address: string;
@@ -50,9 +51,15 @@ export const ShippingDetailsForm = ({
     showCheckBox=false,
     type
 }:props) => {
+    const {triggerAutoSave} = useAutoSaveAtom();
     return (
         <Paper 
         elevation={0}
+        component="form"
+        onBlur={() => {
+          form.handleSubmit();
+          triggerAutoSave();
+        }}
         sx={{ 
           p: 3, 
           mb: 3,

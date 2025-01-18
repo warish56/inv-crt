@@ -20,10 +20,9 @@ type formState = {
   
   type props = {
     form: ReactFormExtendedApi<formState, undefined>;
-    onFieldBlur: () => void;
   }
 
-export const DiscountForm = ({form, onFieldBlur}:props) => {
+export const DiscountForm = ({form}:props) => {
     return (
         <Box 
         sx={{ 
@@ -45,10 +44,6 @@ export const DiscountForm = ({form, onFieldBlur}:props) => {
                  value={field.state.value}
                  label="Discount Type"
                  onChange={(e) => field.handleChange(e.target.value as DiscountType)}
-                 onBlur={() => {
-                  field.handleBlur();
-                  onFieldBlur();
-                 }}
                  sx={{
                    bgcolor: 'background.paper',
                    '& .MuiOutlinedInput-notchedOutline': {
@@ -89,10 +84,6 @@ export const DiscountForm = ({form, onFieldBlur}:props) => {
                       const value = e.target.value
                       field.handleChange(isNaN(Number(value)) ? value.substring(0, value.length-1) : value);
                     }}
-                    onBlur={() => {
-                      field.handleBlur();
-                      onFieldBlur();
-                     }}
                     InputProps={{
                         startAdornment: (
                         <InputAdornment position="start">

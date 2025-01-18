@@ -6,6 +6,7 @@ import { DiscountHeader } from './DiscountHeader';
 import { DiscountForm } from './DiscountForm';
 import { useForm } from '@tanstack/react-form';
 import { useBillingAtom } from '../../../hooks/useBillingAtom';
+import { useAutoSaveAtom } from '../../../hooks/useAutoSaveAtom';
 
 const ActiveBackground = () => {
     return (
@@ -34,6 +35,7 @@ type props = {}
 
 export const Discount = () => {
   const {toggleDiscount, updateDiscount, billingDetails} = useBillingAtom();
+  const {triggerAutoSave} = useAutoSaveAtom();
   const form = useForm<formState>({
     defaultValues: {
       discountType: billingDetails.discountType ?? 'percentage',
@@ -41,14 +43,19 @@ export const Discount = () => {
     },
   })
 
-  const onFieldBlur = () => {
-        updateDiscount(form.getFieldValue('discountType'),form.getFieldValue('discountValue') )
+  const onFormBlur = () => {
+        updateDiscount(form.getFieldValue('discountType'),form.getFieldValue('discountValue') );
+        triggerAutoSave();
   }
 
     const discountApplied = billingDetails.discountApplied;
     return (
         <Paper 
         elevation={0}
+        component='form'
+        onBlur={() => {
+          onFormBlur();
+        }}
         sx={{ 
           p: 3,
           mb: 3,
@@ -67,7 +74,7 @@ export const Discount = () => {
         discountApplied={discountApplied}
         handleToggleDiscount={toggleDiscount}
         />
-        {discountApplied && <DiscountForm onFieldBlur={onFieldBlur} form={form}/>}
+        {discountApplied && <DiscountForm form={form}/>}
         </Paper>
     )
 }

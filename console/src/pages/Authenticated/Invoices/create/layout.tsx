@@ -5,10 +5,13 @@ import {
   CardContent,
   Typography,
   Grid,
+  Stack,
+  CircularProgress,
 } from '@mui/material';
 import { StepManager } from './Steps/StepManager';
 import { StepFooter } from './Footer';
 import { Outlet } from 'react-router';
+import AutoSaveIndicator from './common/AutoSaveIndicator';
 
 
 
@@ -49,16 +52,24 @@ export const CreateInvoiceLayout = () => {
         p: 3 ,
         "--header-hight": '200px'
     }}>
-      <Typography
-        variant="h4"
-        sx={{
-          fontWeight: 600,
-          mb: 4,
-          color: 'primary.main'
-        }}
-      >
-        Create New Invoice
-      </Typography>
+      <Stack 
+      direction="row"
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        mb: 4,
+      }}>
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 600,
+            color: 'primary.main'
+          }}
+        >
+          Create New Invoice
+        </Typography>
+        <AutoSaveIndicator />
+      </Stack>
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
@@ -78,7 +89,7 @@ export const CreateInvoiceLayout = () => {
             <CardContent sx={{
               bgcolor: 'background.default',
               boxShadow: 'none',
-              paddingTop: 0,
+              padding: 0,
             }}>
               <Outlet />
             </CardContent>

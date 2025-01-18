@@ -59,6 +59,7 @@ export const BankCard = ({
 
     return(
       <Card
+        data-bank-id={id}  
         sx={{
           mb: 2,
           cursor: 'pointer',
@@ -146,7 +147,10 @@ export const BankCard = ({
             </Typography>
             <IconButton 
               size="small" 
-              onClick={() => onEditBank(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditBank(id)
+              }}
               sx={{ 
                 color: 'primary.main',
                 bgcolor: 'primary.lighter',

@@ -18,6 +18,7 @@ import { debounce } from '@utils/time';
 import { useCustomersList } from './hooks/useCustomersList';
 import { useCustomerSearch } from './hooks/useCustomerSearch';
 import { useSelectionAtom } from '../../hooks/useSelectionAtom';
+import { SelectedAlert } from '../../common/SelectedAlert';
 
 type Props = {}
 
@@ -29,9 +30,10 @@ export const CustomerSelectionStep = ({}: Props) => {
   const {isPending: isFetchingCustomersList, error:listError, data: listData} = useCustomersList({userId: '1'})
   const {isPending: isSearching, error:searchError, data:searchData} = useCustomerSearch({userId: '1', searchText: serverSearchText})
   const {showSnackbar} = useSnackbar();
-  const debouncedRef = useRef({ set: debounce(setServerSearchText, 500)})
-  const {selectCustomer, selectionDetails} = useSelectionAtom();
+  const debouncedRef = useRef({ set: debounce(setServerSearchText, 500)});
+  const lastSelectedRef = useRef<string | null>(null);
 
+  const {selectCustomer, selectionDetails} = useSelectionAtom();
 
 
   const onAddCustomer = () => {
@@ -47,6 +49,24 @@ export const CustomerSelectionStep = ({}: Props) => {
       debouncedRef.current.set(e.target.value);
   }
 
+  const handleCustomerSelect = (customerId: string) => {
+    lastSelectedRef.current = customerId;
+    selectCustomer(customerId);
+  }
+
+  const scrollToSelected = (isInitial = false) => {
+    if (selectionDetails.selectedCustomerId) {
+      const element = document.querySelector(`[data-customer-id="${selectionDetails.selectedCustomerId}"]`);
+      if (element) {
+        element.scrollIntoView({
+          behavior: isInitial ? 'auto' : 'smooth',
+          block: 'center'
+        });
+      }
+    }
+  };
+
+
 
   useEffect(() => {
     if(listData?.[1] || listError || searchData?.[1] || searchError){
@@ -60,6 +80,7 @@ export const CustomerSelectionStep = ({}: Props) => {
 
   const list = (searchText ? searchData?.[0]?.customers : listData?.[0]?.customers) ?? []
   const isLoading = (searchText && isSearching) || isFetchingCustomersList;
+  const selectedCustomer = list.find(b => b.$id === selectionDetails.selectedCustomerId);
 
 
 
@@ -72,6 +93,15 @@ export const CustomerSelectionStep = ({}: Props) => {
         onBtnClick={onAddCustomer}
         btnText='New Customer'
       />
+
+      {selectedCustomer && !searchText && (
+        <SelectedAlert 
+         name={selectedCustomer.business_name}
+         onLocate={() => scrollToSelected()}
+        />
+      )}
+
+
 
       {/* Search Section */}
       <TextField
@@ -98,7 +128,7 @@ export const CustomerSelectionStep = ({}: Props) => {
           <CustomerCard 
             key={customer.$id}
             selected={selectionDetails.selectedCustomerId === customer.$id} 
-            onCardClick={selectCustomer} 
+            onCardClick={handleCustomerSelect} 
             id={customer.$id}
             businessName={customer.business_name}
             businessTye='Corporate'

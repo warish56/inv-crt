@@ -6,7 +6,6 @@ import {
   Typography,
   Grid,
   Stack,
-  CircularProgress,
 } from '@mui/material';
 import { StepManager } from './Steps/StepManager';
 import { StepFooter } from './Footer';

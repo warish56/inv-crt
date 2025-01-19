@@ -9,6 +9,7 @@ import {
     TableRow,
     IconButton,
     Paper,
+    Stack,
   } from '@mui/material';
   
   import {
@@ -18,10 +19,12 @@ import {
 import { useServiceAtom } from '../../hooks/useServiceAtom';
 import { useNavigate } from 'react-router';
 import { useBillingAtom } from '../../hooks/useBillingAtom';
+import { useTaxManager } from '../../hooks/useTaxManager';
   
 export const ServicesList = () => {
     const {services, removeService} = useServiceAtom();
     const {billingDetails} = useBillingAtom();
+    const {calculateTaxableAmountAfterGstForService} = useTaxManager()
 
     const navigate = useNavigate();
 
@@ -39,45 +42,46 @@ export const ServicesList = () => {
       if(supplyType === 'intraState'){
         return (
           <>
-            <TableCell align="left">CGST</TableCell>
-            <TableCell align="left">SGST</TableCell>
+            <TableCell align="left" sx={{fontWeight: 'bold'}}>CGST (₹)</TableCell>
+            <TableCell align="left" sx={{fontWeight: 'bold'}}>SGST (₹)</TableCell>
           </>
         )
       }else if(supplyType === 'interState'){
         return (
-          <TableCell align="left">IGST</TableCell>
+          <TableCell align="left" sx={{fontWeight: 'bold'}}>IGST (₹)</TableCell>
         )
       }else{
         return(
           <>
-            <TableCell align="left">CGST</TableCell>
-            <TableCell align="left">UTGST</TableCell>
+            <TableCell align="left" sx={{fontWeight: 'bold'}}>CGST (₹)</TableCell>
+            <TableCell align="left" sx={{fontWeight: 'bold'}}>UTGST (₹)</TableCell>
           </>
         )
       }
     }
 
-    const getGstRowValues = (gst: string) => {
+    const getGstRowValues = (qty:string, price:string, gst: string) => {
       const {supplyType} = billingDetails;
+      const gstRate = Number(gst);
+      const value = calculateTaxableAmountAfterGstForService(qty, price, gst);
+
       if(supplyType === 'intraState'){
-        const gstRate = Number(gst)/2;
         return (
           <>
-            <TableCell align="left">{gstRate} %</TableCell>
-            <TableCell align="left">{gstRate} %</TableCell>
+            <TableCell align="left">{`${value/2} (${gstRate/2}%)`}</TableCell>
+            <TableCell align="left">{`${value/2} (${gstRate/2}%)`}</TableCell>
           </>
         )
       }else if(supplyType === 'interState'){
-        const gstRate = Number(gst);
         return (
-          <TableCell align="left">{gstRate} %</TableCell>
+          <TableCell align="left">{`${value} (${gstRate}%)`}</TableCell>
         )
       }else{
         const gstRate = Number(gst) /2;
         return(
           <>
-            <TableCell align="left">{gstRate} %</TableCell>
-            <TableCell align="left">{gstRate} %</TableCell>
+            <TableCell align="left">{`${value/2} (${gstRate/2}%)`}</TableCell>
+            <TableCell align="left">{`${value/2} (${gstRate/2}%)`}</TableCell>
           </>
         )
       }
@@ -85,17 +89,17 @@ export const ServicesList = () => {
     
     return (
         <TableContainer component={Paper}>
-        <Table>
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Item</TableCell>
-              <TableCell>HSN/SAC</TableCell>
-              <TableCell align="right">Qty</TableCell>
-              <TableCell align="right">Rate</TableCell>
-              <TableCell align="left">GST</TableCell>
+              <TableCell sx={{fontWeight: 'bold'}}>Item</TableCell>
+              {/* <TableCell>HSN/SAC</TableCell> */}
+              <TableCell align="left" sx={{fontWeight: 'bold'}}>Qty</TableCell>
+              <TableCell align="left" sx={{fontWeight: 'bold'}}>Price (₹)</TableCell>
+              <TableCell align="left" sx={{fontWeight: 'bold'}}>GST (%)</TableCell>
               {getGstHeadings()}
-              <TableCell align="right">Amount</TableCell>
-              <TableCell></TableCell>
+              <TableCell align="right" sx={{fontWeight: 'bold'}}>Total (₹)</TableCell>
+              {/* <TableCell></TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -111,16 +115,31 @@ export const ServicesList = () => {
                 services.map((service) => {
                   const amount = Number(service.qty) * Number(service.price);
                   return (
-                    <TableRow key={service.id}>
+                    <TableRow key={service.id} sx={{
+                      position: 'relative',
+                      '&:hover .actions':{
+                        display: 'flex'
+                      }
+                    }}>
                       <TableCell>{service.name}</TableCell>
-                      <TableCell>{service.code}</TableCell>
-                      <TableCell align="right">{service.qty}</TableCell>
-                      <TableCell align="right">₹{service.price}</TableCell>
-                      <TableCell align="left">{service.gst} %</TableCell>
-                      {getGstRowValues(service.gst)}
-                      <TableCell align="right">₹{amount}</TableCell>
+                      {/* <TableCell>{service.code}</TableCell> */}
+                      <TableCell align="left">{service.qty}</TableCell>
+                      <TableCell align="left">{service.price}</TableCell>
+                      <TableCell align="left">{service.gst}</TableCell>
+                      {getGstRowValues(service.qty, service.price, service.gst)}
+                      <TableCell align="right">{amount+ calculateTaxableAmountAfterGstForService(service.qty, service.price, service.gst)}</TableCell>
+                      
 
-                      <TableCell>
+                      <Stack direction="row" className='actions' sx={{
+                        alignItems: 'center',
+                        gap: '10px',
+                        position: 'absolute',
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                        display: 'none',
+                        backgroundColor: 'background.paper'
+                      }}>
                       <IconButton 
                           size="small" 
                           onClick={() => onEditService(service.id)}
@@ -133,7 +152,7 @@ export const ServicesList = () => {
                         >
                           <DeleteIcon fontSize="small" />
                         </IconButton>
-                      </TableCell>
+                      </Stack>
                     </TableRow>
                   );
                 })

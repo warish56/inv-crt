@@ -19,10 +19,12 @@ import {
 import { useServiceAtom } from '../../hooks/useServiceAtom';
 import { useNavigate } from 'react-router';
 import { useBillingAtom } from '../../hooks/useBillingAtom';
+import { useTaxManager } from '../../hooks/useTaxManager';
   
 export const ServicesList = () => {
     const {services, removeService} = useServiceAtom();
     const {billingDetails} = useBillingAtom();
+    const {calculateTaxableAmountAfterGstForService} = useTaxManager()
 
     const navigate = useNavigate();
 
@@ -58,18 +60,10 @@ export const ServicesList = () => {
       }
     }
 
-    const calculateTaxableAmountAfterGst = (qty:string, price:string, gst: string) => {
-      const quantity = Number(qty);
-      const goodsPrice = Number(price);
-      const taxablePrice = quantity * goodsPrice;
-      const gstRate = Number(gst);
-      return taxablePrice * (gstRate/100);
-    }
-
     const getGstRowValues = (qty:string, price:string, gst: string) => {
       const {supplyType} = billingDetails;
       const gstRate = Number(gst);
-      const value = calculateTaxableAmountAfterGst(qty, price, gst);
+      const value = calculateTaxableAmountAfterGstForService(qty, price, gst);
 
       if(supplyType === 'intraState'){
         return (
@@ -133,7 +127,7 @@ export const ServicesList = () => {
                       <TableCell align="left">{service.price}</TableCell>
                       <TableCell align="left">{service.gst}</TableCell>
                       {getGstRowValues(service.qty, service.price, service.gst)}
-                      <TableCell align="right">{amount+ calculateTaxableAmountAfterGst(service.qty, service.price, service.gst)}</TableCell>
+                      <TableCell align="right">{amount+ calculateTaxableAmountAfterGstForService(service.qty, service.price, service.gst)}</TableCell>
                       
 
                       <Stack direction="row" className='actions' sx={{

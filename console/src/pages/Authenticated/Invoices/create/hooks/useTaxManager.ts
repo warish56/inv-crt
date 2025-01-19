@@ -14,6 +14,17 @@ export const useTaxManager = () => {
         ? (subTotal * Number(discountValue)) / 100 
         : Number(discountValue);
     };
+
+
+    const calculateTaxableAmountAfterGstForService = (qty:string, price:string, gst: string) => {
+      const quantity = Number(qty);
+      const goodsPrice = Number(price);
+      const taxablePrice = quantity * goodsPrice;
+      const gstRate = Number(gst);
+      return taxablePrice * (gstRate/100);
+    }
+
+
   
   
     const subTotal = useMemo(() => 
@@ -106,16 +117,33 @@ export const useTaxManager = () => {
   
       return {
         totalAmount: Math.max(totalAmount, 0),
-        totalBillTaxes,
+        totalBillTaxes: {
+          cgst: totalBillTaxes.cgst.toFixed(2), 
+          igst: totalBillTaxes.igst.toFixed(2),   
+          sgst: totalBillTaxes.sgst.toFixed(2),  
+          utgst: totalBillTaxes.utgst.toFixed(2), 
+        },
       }
     }, [allTaxes, taxableAmountAfterDiscount , billingDetails, shippingGstValue]);
 
 
-    return {
+    console.log({
         totalAmount,
         totalBillTaxes,
         subTotal,
         discount,
-        shippingGstValue,
+        shippingGstValue, 
+        services,
+        invoiceData
+
+    })
+
+    return {
+        totalAmount: totalAmount.toFixed(2),
+        totalBillTaxes,
+        subTotal: subTotal.toFixed(2),
+        discount: discount.toFixed(2),
+        shippingGstValue: shippingGstValue,
+        calculateTaxableAmountAfterGstForService
     }
 }

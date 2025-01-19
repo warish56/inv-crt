@@ -19,7 +19,6 @@ type Billing = {
     supplyType: 'intraState' | 'interState' | 'unionTerritory';
     discountType: 'percentage'| 'fixed' | '';
     discountValue: string;
-    services: Service[];
 }
 
 export const billingAtom = atom<Billing>({
@@ -27,5 +26,4 @@ export const billingAtom = atom<Billing>({
     supplyType: 'intraState',
     discountType: '',
     discountValue: '',
-    services: []
 })

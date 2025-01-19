@@ -79,14 +79,14 @@ export const InvoiceTemplateA = () => {
           <Grid item xs={6} sx={{ textAlign: 'right' }}>
             <Typography variant="h4" sx={{ mb: 2, color: 'text.primary' }}>INVOICE</Typography>
             <Typography variant="body1" sx={{ mb: 1 }}>
-              Invoice No: <strong>{extraDetails.invoiceId}</strong>
+              Invoice No: <strong>{extraDetails.invoiceId || '---'}</strong>
             </Typography>
             <Typography variant="body1" sx={{ mb: 1 }}>
-              Date: <strong>{extraDetails.invoiceDate}</strong>
+              Date: <strong>{extraDetails.invoiceDate || '---'}</strong>
             </Typography>
             {extraDetails.dueDate && (
               <Typography variant="body1" sx={{ mb: 1 }}>
-                Due Date: <strong>{extraDetails.dueDate}</strong>
+                Due Date: <strong>{extraDetails.dueDate || '---'}</strong>
               </Typography>
             )}
           </Grid>
@@ -95,109 +95,121 @@ export const InvoiceTemplateA = () => {
 
       {/* Business Details */}
       <Grid container spacing={4} sx={{ mb: 4 }}>
-        <Grid item xs={6}>
-          <Box>
-            <Typography variant="h6" sx={{ 
-              mb: 2,
-              fontSize: '1rem',
-              fontWeight: 600,
-              borderBottom: '1px solid',
-              borderColor: 'grey.300',
-              pb: 1
-            }}>
-              Bill From
-            </Typography>
-            {businessData && (
-              <Box sx={{ pl: 1 }}>
-                <Typography variant="body1" sx={{ 
-                  mb: 2,
-                  fontWeight: 500,
-                  lineHeight: 1.5
-                }}>
-                  {businessData.address}<br />
-                  {businessData.city}, {businessData.state} {businessData.postal_code}<br />
-                  {businessData.country}
-                </Typography>
 
-                {businessData.phone && (
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    Tel: {businessData.phone}
+        { selectedDetails.selectedBusinessId &&
+          <Grid item xs={6}>
+            <Box>
+              <Typography variant="h6" sx={{ 
+                mb: 2,
+                fontSize: '1rem',
+                fontWeight: 600,
+                borderBottom: '1px solid',
+                borderColor: 'grey.300',
+                pb: 1
+              }}>
+                Bill From
+              </Typography>
+              {businessData && (
+                <Box sx={{ pl: 1 }}>
+                  <Typography variant="body1" sx={{ 
+                    mb: 2,
+                    fontWeight: 500,
+                    lineHeight: 1.5
+                  }}>
+                    {businessData.address}<br />
+                    {businessData.city}, {businessData.state} {businessData.postal_code}<br />
+                    {businessData.country}
                   </Typography>
-                )}
-                
-                {businessData.email && (
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    Email: {businessData.email}
+
+                  {businessData.phone && (
+                    <Typography variant="body2" sx={{ mb: 0.5 }}>
+                      Tel: {businessData.phone}
+                    </Typography>
+                  )}
+                  
+                  {businessData.email && (
+                    <Typography variant="body2" sx={{ mb: 0.5 }}>
+                      Email: {businessData.email}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+            </Box>
+          </Grid>
+        }
+
+       { selectedDetails.selectedCustomerId &&
+          <Grid item xs={6}>
+            <Box>
+              <Typography variant="h6" sx={{ 
+                mb: 2,
+                fontSize: '1rem',
+                fontWeight: 600,
+                borderBottom: '1px solid',
+                borderColor: 'grey.300',
+                pb: 1
+              }}>
+                Bill To
+              </Typography>
+              {customerData && (
+                <Box sx={{ pl: 1 }}>
+                  <Typography variant="subtitle1" sx={{ 
+                    mb: 1,
+                    fontWeight: 600
+                  }}>
+                    {customerData.business_name}
                   </Typography>
-                )}
-              </Box>
-            )}
-          </Box>
-        </Grid>
 
-        <Grid item xs={6}>
-          <Box>
-            <Typography variant="h6" sx={{ 
-              mb: 2,
-              fontSize: '1rem',
-              fontWeight: 600,
-              borderBottom: '1px solid',
-              borderColor: 'grey.300',
-              pb: 1
-            }}>
-              Bill To
-            </Typography>
-            {customerData && (
-              <Box sx={{ pl: 1 }}>
-                <Typography variant="subtitle1" sx={{ 
-                  mb: 1,
-                  fontWeight: 600
-                }}>
-                  {customerData.business_name}
-                </Typography>
+                  <Typography variant="body2" sx={{ mb: 1 }}>
+                    GSTIN: {customerData.gstin}
+                    {customerData.pan && <span> | PAN: {customerData.pan}</span>}
+                  </Typography>
 
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  GSTIN: {customerData.gstin}
-                  {customerData.pan && <span> | PAN: {customerData.pan}</span>}
-                </Typography>
+                  <Typography variant="body1" sx={{ 
+                    mb: 2,
+                    lineHeight: 1.5
+                  }}>
+                    {customerData.address}<br />
+                    {customerData.city}, {customerData.state} {customerData.postal_code}<br />
+                    {customerData.country}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </Grid>
+       }
 
-                <Typography variant="body1" sx={{ 
-                  mb: 2,
-                  lineHeight: 1.5
-                }}>
-                  {customerData.address}<br />
-                  {customerData.city}, {customerData.state} {customerData.postal_code}<br />
-                  {customerData.country}
-                </Typography>
-              </Box>
-            )}
-          </Box>
-        </Grid>
       </Grid>
 
       {/* Shipping Details */}
-      {shippingDetails && (
+      {(shippingDetails.from.address || shippingDetails.to.address) && (
         <Box sx={{ mb: 6 }}>
-          <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>Shipping Details</Typography>
+          <Typography variant="h6" sx={{ mb: 2, color: 'primary.main', fontWeight: '800' }}>Shipping Details</Typography>
           <Grid container spacing={4}>
-            <Grid item xs={6}>
-              <Box sx={{ p: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>From:</Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>{shippingDetails.from.address}</Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  {shippingDetails.from.city}, {shippingDetails.from.state} {shippingDetails.from.postalCode}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={6}>
-              <Box sx={{ p: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>To:</Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>{shippingDetails.to.address}</Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  {shippingDetails.to.city}, {shippingDetails.to.state} {shippingDetails.to.postalCode}
-                </Typography>
-              </Box>
-            </Grid>
+            {shippingDetails.from.address &&
+              <Grid item xs={6}>
+                <Box sx={{ p: 3, bgcolor: 'grey.200', borderRadius: 2 }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>From:</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>{shippingDetails.from.address}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    {shippingDetails.from.city}, {shippingDetails.from.state} {shippingDetails.from.postalCode}
+                  </Typography>
+                </Box>
+              </Grid>
+            }
+
+            {shippingDetails.to.address &&
+              <Grid item xs={6}>
+                <Box sx={{ p: 3, bgcolor: 'grey.200', borderRadius: 2 }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>To:</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>{shippingDetails.to.address}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    {shippingDetails.to.city}, {shippingDetails.to.state} {shippingDetails.to.postalCode}
+                  </Typography>
+                </Box>
+              </Grid>
+            }
+
           </Grid>
         </Box>
       )}
@@ -217,7 +229,7 @@ export const InvoiceTemplateA = () => {
               color: 'white',
               fontWeight: 'bold',
               fontSize: '1rem'
-            }}>Code</TableCell>
+            }}>HSN/SAC</TableCell>
             <TableCell align="right" sx={{ 
               bgcolor: 'primary.main', 
               color: 'white',
@@ -374,32 +386,91 @@ export const InvoiceTemplateA = () => {
       {/* Bank Details */}
       {selectedDetails.selectedBankId && bankData && (
         <Box sx={{ 
+          mt: 2,
           mb: 4,
-          p: 3,
-          bgcolor: 'grey.50',
-          borderRadius: 2
+          border: `1px solid ${theme.palette.grey[300]}`,
+          borderRadius: 2,
+          overflow: 'hidden',
+          bgcolor: 'background.paper',
+          '@media print': {
+            breakInside: 'avoid'
+          }
         }}>
-          <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>Bank Details</Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={4}>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Bank Name:</strong><br />
-                {bankData.name}
-              </Typography>
+          {/* Header */}
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            px: 3,
+            py: 2,
+            borderBottom: `1px solid ${theme.palette.grey[200]}`,
+            bgcolor: 'grey.50'
+          }}>
+            <Typography variant="subtitle1" sx={{ 
+              fontWeight: 600,
+              color: 'text.primary'
+            }}>
+              Payment Information
+            </Typography>
+          </Box>
+
+          {/* Details */}
+          <Box sx={{ p: 3 }}>
+            <Grid container spacing={4}>
+              {/* Bank Name */}
+              <Grid item xs={12} sm={6} md={3}>
+                <Typography variant="body2" sx={{ 
+                  color: 'text.secondary',
+                  mb: 1
+                }}>
+                  Bank Name
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                  {bankData.name}
+                </Typography>
+              </Grid>
+
+              {/* Account Holder */}
+              <Grid item xs={12} sm={6} md={3}>
+                <Typography variant="body2" sx={{ 
+                  color: 'text.secondary',
+                  mb: 1
+                }}>
+                  Account Holder
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                  {bankData.holder_name}
+                </Typography>
+              </Grid>
+
+              {/* Account Number */}
+              {bankData.acc_number && (
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography variant="body2" sx={{ 
+                    color: 'text.secondary',
+                    mb: 1
+                  }}>
+                    Account Number
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                    {bankData.acc_number}
+                  </Typography>
+                </Grid>
+              )}
+
+              {/* IFSC Code */}
+              <Grid item xs={12} sm={6} md={3}>
+                <Typography variant="body2" sx={{ 
+                  color: 'text.secondary',
+                  mb: 1
+                }}>
+                  IFSC Code
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                  {bankData.ifsc}
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs={4}>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Account Holder:</strong><br />
-                {bankData.holder_name}
-              </Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>IFSC Code:</strong><br />
-                {bankData.ifsc}
-              </Typography>
-            </Grid>
-          </Grid>
+          </Box>
         </Box>
       )}
 

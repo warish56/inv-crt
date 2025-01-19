@@ -142,8 +142,9 @@ export const useTaxManager = () => {
         totalAmount: totalAmount.toFixed(2),
         totalBillTaxes,
         subTotal: subTotal.toFixed(2),
-        discount: discount.toFixed(2),
+        discount: discount,
         shippingGstValue: shippingGstValue,
+        shippingCost,
         calculateTaxableAmountAfterGstForService
     }
 }

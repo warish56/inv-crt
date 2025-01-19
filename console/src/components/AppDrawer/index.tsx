@@ -17,7 +17,7 @@ import { Header } from './Header';
 import { NavLinks } from './NavLinks';
 import { UserProfile } from './UserProfile';
 
-const DRAWER_WIDTH = 280;
+const DRAWER_WIDTH = 250;
 
 export const AppDrawer = () => {
   const [open, setOpen] = useState(true);

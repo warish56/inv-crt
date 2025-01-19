@@ -18,7 +18,7 @@ import { useShippingAtom } from '../../hooks/useShippingAtom';
 
 type tax = {
   name: string;
-  amt: number;
+  amt: string;
 }
 
 const TaxGroup = ({taxes}:{taxes: tax[]}) => {
@@ -46,16 +46,36 @@ const TaxGroup = ({taxes}:{taxes: tax[]}) => {
     )
 }
 
+type priceItemProps = {
+  title: string;
+  value: number|string;
+  type?: 'add' | 'discount' | ''
+}
+
+const PriceItem = ({title, value, type=''}:priceItemProps) => {
+  return (
+    <Box sx={{ 
+      display: 'flex', 
+      justifyContent: 'space-between',
+      px: 2,
+      bgcolor: 'grey.50',
+      borderRadius: 1
+    }}>
+      <Typography variant="body1" color="text.secondary">
+        {title}
+      </Typography>
+      <Typography variant="body1" fontWeight="medium">
+        {type === 'add' && '+ '}₹{value}
+      </Typography>
+    </Box>
+  )
+}
+
 export const PricebreakDown = () => {
 
-    const {services} = useServiceAtom();
-    const {billingDetails} = useBillingAtom();
-    const {shippingData} = useShippingAtom();
-
-  const subTotal = useMemo(() => 
-    services.reduce((sum, service) => sum + (Number(service.qty) * Number(service.price)), 0)
-  , [services])
-
+  const {services} = useServiceAtom();
+  const {billingDetails} = useBillingAtom();
+  const {shippingData} = useShippingAtom();
 
   const calculateDiscount = (subTotal: number) => {
     const {discountApplied, discountType, discountValue} = billingDetails;
@@ -68,6 +88,22 @@ export const PricebreakDown = () => {
   const getFixedValue = (val:number)=> val.toFixed(2)
 
 
+  const subTotal = useMemo(() => 
+    services.reduce((sum, service) => sum + (Number(service.qty) * Number(service.price)), 0)
+  , [services])
+
+
+  const shippingCost = Number(shippingData.cost || 0);
+  // shipping cost is be included on the total value of the bill
+  const taxableAmountBeforeDiscount = subTotal+ shippingCost;
+  // discount is provide on the total taxable price
+  const discount = calculateDiscount(taxableAmountBeforeDiscount);
+  const taxableAmountAfterDiscount = Math.max(taxableAmountBeforeDiscount - discount, 0);
+  const maximumGst = services.reduce((prevValue,currService) => Math.max(prevValue, Number(currService.gst)) , 0)
+  const shippingProportionalValue = (Number(shippingData.cost ?? 0)/taxableAmountBeforeDiscount)*taxableAmountAfterDiscount;
+  const shippingGstValue = Math.max(shippingProportionalValue * (maximumGst/100), 0);
+
+
 
 
   // calculates all the taxes according to thr gst rates given for each item
@@ -77,33 +113,40 @@ export const PricebreakDown = () => {
       sgst: number; 
       igst: number; 
       utgst:number; 
-
     }[] = [];
+
     services.forEach(({gst, qty, price:amount}) => {
       let data;
       const totaPrice =  Number(amount) * Number(qty);
+      /**
+       * Proportional value means
+       * 1. item a is 20% of the total price before discounting then it should be also 20% of the total price after discounting
+       */
+      const proportionalValue = (totaPrice/taxableAmountBeforeDiscount)*taxableAmountAfterDiscount;
+      const gstValue = proportionalValue * ((Number(gst))/100);
+
       switch (billingDetails.supplyType) {
         case 'intraState':
           data = { 
-            cgst: totaPrice* ((Number(gst)/2)/100), 
-            sgst: totaPrice * ((Number(gst)/2)/100), 
+            cgst: Math.max(gstValue/2, 0), 
+            sgst: Math.max(gstValue/2, 0), 
             igst: 0, 
-            utgst:0 
+            utgst:0 ,
           };
           break;
         case 'interState':
           data = { 
             cgst: 0, 
             sgst: 0, 
-            igst: totaPrice * (Number(gst)/ 100),  
-            utgst:0  
+            igst: Math.max(gstValue,0),  
+            utgst:0,
           };
           break;
         case 'unionTerritory':
           data = {  
             sgst: 0, 
-            cgst: totaPrice * ((Number(gst)/2)/100), 
-            utgst: totaPrice * ((Number(gst)/2)/100), 
+            cgst: Math.max(gstValue/2), 
+            utgst: Math.max(gstValue/2), 
             igst: 0, 
           };
           break;
@@ -112,7 +155,7 @@ export const PricebreakDown = () => {
     })   
     
     return taxes;
-},[billingDetails.supplyType, services])
+},[billingDetails.supplyType, shippingData.cost , services, taxableAmountBeforeDiscount, taxableAmountAfterDiscount])
 
 
 
@@ -123,28 +166,20 @@ export const PricebreakDown = () => {
  * 2. calculates total CGST, SGST, IGST, UTGST tax in the current bill
  */
   const {totalAmount,  totalBillTaxes} = useMemo(() => {
-    const shippingCost = Number(shippingData.cost || 0);
-    const totalCost = subTotal+ shippingCost;
-    // shipping cost cannot be included while calculating the discount
-    const discount = calculateDiscount(subTotal);
-    const amountAfterDiscount = totalCost - discount;
-    let totalAmount =  amountAfterDiscount;
-    allTaxes.forEach((taxes) => {
-      totalAmount +=  taxes.cgst + taxes.sgst + taxes.igst + taxes.utgst
-    })
-
     const totalBillTaxes = allTaxes.reduce((prev, currentVal)=> ({
       cgst: currentVal.cgst + prev.cgst, 
       igst: currentVal.igst + prev.igst,  
       sgst: currentVal.sgst + prev.sgst,  
-      utgst: currentVal.utgst + prev.utgst, 
+      utgst: currentVal.utgst + prev.utgst,
     }), {cgst: 0, igst: 0, sgst: 0, utgst:0})
+
+    const totalAmount =  taxableAmountAfterDiscount + totalBillTaxes.cgst + totalBillTaxes.sgst + totalBillTaxes.igst + totalBillTaxes.utgst + shippingGstValue;
 
     return {
       totalAmount: Math.max(totalAmount, 0),
-      totalBillTaxes
+      totalBillTaxes,
     }
-  }, [allTaxes, subTotal, billingDetails, shippingData.cost])
+  }, [allTaxes, taxableAmountAfterDiscount , billingDetails, shippingGstValue])
   
     return(
         <Paper 
@@ -175,43 +210,18 @@ export const PricebreakDown = () => {
 
         {/* Price Summary */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between',
-            p: 2,
-            bgcolor: 'grey.50',
-            borderRadius: 1
-          }}>
-            <Typography variant="body1" color="text.secondary">
-              Sub Total
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              ₹{subTotal}
-            </Typography>
-          </Box>
+          <PriceItem title='Sub Total' value={subTotal}/>
 
-          {shippingData.cost && Number(shippingData.cost) > 0 &&
-           <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between',
-            p: 2,
-            bgcolor: 'grey.50',
-            borderRadius: 1
-          }}>
-            <Typography variant="body1" color="text.secondary">
-              Shipping cost
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              ₹{shippingData.cost}
-            </Typography>
-          </Box>
+          {shippingData.method && shippingData.cost && Number(shippingData.cost) > 0 &&
+            <PriceItem title='Shipping cost' value={shippingData.cost} type='add'/>
           }
+
 
           {billingDetails.discountApplied && Number(billingDetails.discountValue || 0) > 0 && (
             <Box sx={{ 
               display: 'flex', 
               justifyContent: 'space-between',
-              p: 2,
+              px: 2,
               bgcolor: 'secondary.lighter',
               borderRadius: 1,
               color: 'secondary.dark'
@@ -220,7 +230,7 @@ export const PricebreakDown = () => {
                 Discount {billingDetails.discountType === 'percentage' ? `(${billingDetails.discountValue}%)` : ''}
               </Typography>
               <Typography variant="body1" fontWeight="medium">
-                - ₹{calculateDiscount(subTotal)}
+                - ₹{calculateDiscount(taxableAmountBeforeDiscount)}
               </Typography>
             </Box>
           )}
@@ -230,8 +240,9 @@ export const PricebreakDown = () => {
             {billingDetails.supplyType  === 'intraState' && ( 
               <TaxGroup 
                taxes={[
-                {name: 'CGST', amt: totalBillTaxes.cgst},
-                {name: 'SGST', amt: totalBillTaxes.sgst}
+                {name: 'SGST', amt: getFixedValue(totalBillTaxes.sgst)},
+                {name: 'CGST', amt: getFixedValue(totalBillTaxes.cgst)},
+                ...(shippingGstValue > 0 ? [{name: 'Shipping GST', amt: getFixedValue(shippingGstValue)}]: []),
                ]}
               />
             )}
@@ -239,7 +250,8 @@ export const PricebreakDown = () => {
             {billingDetails.supplyType  === 'interState' && (
               <TaxGroup 
                 taxes={[
-                  {name: 'IGST', amt: totalBillTaxes.igst},
+                  {name: 'IGST', amt: getFixedValue(totalBillTaxes.igst)},
+                  ...(shippingGstValue > 0 ? [{name: 'Shipping GST', amt: getFixedValue(shippingGstValue)}]: []),
                 ]}
               />
             )}
@@ -247,12 +259,16 @@ export const PricebreakDown = () => {
             {billingDetails.supplyType  === 'unionTerritory' && (
               <TaxGroup 
                 taxes={[
-                {name: 'CGST', amt: totalBillTaxes.cgst},
-                {name: 'UTGST', amt: totalBillTaxes.utgst}
+                {name: 'CGST', amt: getFixedValue(totalBillTaxes.cgst)},
+                {name: 'UTGST', amt: getFixedValue(totalBillTaxes.utgst)},
+                ...(shippingGstValue > 0 ? [{name: 'Shipping GST', amt: getFixedValue(shippingGstValue)}]: []),
                 ]}
               />
             )}
-          </Box>
+         </Box>
+
+
+          {/* <PriceItem title='Taxable amount' value={taxableAmountAfterDiscount} /> */}
 
           <Divider sx={{ my: 1 }} />
 
@@ -269,7 +285,7 @@ export const PricebreakDown = () => {
               Total Amount
             </Typography>
             <Typography variant="h6">
-              ₹{totalAmount}
+              ₹{getFixedValue(totalAmount)}
             </Typography>
           </Box>
         </Box>

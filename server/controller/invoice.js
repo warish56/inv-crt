@@ -1,4 +1,6 @@
 const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice } = require("../db/invoice");
+const { deleteShippingWithId } = require("../db/shipping");
+const { createShippingData, updateShippingData } = require("./shipings");
 
 
 const getAllInvoicesOfUser = async (userId) => {
@@ -11,7 +13,6 @@ const createNewInvoiceForUser = async ({
     userId,
     bankId,
     businessId,
-    shippingId,
     customerId,
     invoiceNumber,
     invoiceDate,
@@ -21,35 +22,51 @@ const createNewInvoiceForUser = async ({
     discountType,
     discountAmt,
     servicesList,
+    shippingFromDetails,
+    shippingToDetails,
     shippingMethod,
     shippingAmt
 }) => {
-    const invoice = await createInvoice({
-        userId,
-        bankId,
-        businessId,
-        shippingId,
-        customerId,
-        invoiceNumber,
-        invoiceDate,
-        invoiceDueDate,
-        notes,
-        supplyType,
-        discountType,
-        discountAmt,
-        servicesList,
-        shippingMethod,
-        shippingAmt
-    });
-
-    return invoice;
+    let shipping;
+    let invoice;
+    try{
+        shipping = await createShippingData({
+            fromAddressDetails: shippingFromDetails,
+            toAddressDetails: shippingToDetails,
+            shippingMethod,
+            shippingAmt,
+        })
+        invoice = await createInvoice({
+            userId,
+            bankId,
+            businessId,
+            customerId,
+            invoiceNumber,
+            invoiceDate,
+            invoiceDueDate,
+            notes,
+            supplyType,
+            discountType,
+            discountAmt,
+            servicesList,
+            shippingId: shipping.$id
+        });
+        return {
+            ...invoice,
+            ...shipping
+        };
+    }catch(err){
+        if(shipping && !invoice){
+            await deleteShippingWithId(shipping.$id);
+        }
+        throw err
+    }
 }
 
 const updateInvoiceDetails = async ({
     invoiceId,
     bankId,
     businessId,
-    shippingId,
     customerId,
     invoiceNumber,
     invoiceDate,
@@ -59,6 +76,8 @@ const updateInvoiceDetails = async ({
     discountType,
     discountAmt,
     servicesList,
+    shippingFromDetails,
+    shippingToDetails,
     shippingMethod,
     shippingAmt
 }) => {
@@ -66,11 +85,22 @@ const updateInvoiceDetails = async ({
     if(!invoice){
         throw {message: 'Invoice not found', status: 404}
     }
+    const shippingId = invoice.shippingId;
+
+    // first update the shipping details
+    const updatedShippingData  =  await updateShippingData({
+        shippingId,
+        fromAddressDetails: shippingFromDetails,
+        toAddressDetails: shippingToDetails,
+        shippingMethod,
+        shippingAmt,
+    })
+
+    // 2nd update the actual invoice details
     const updatedInvoiceDetails = await updateInvoice({
         invoiceId,
         bankId,
         businessId,
-        shippingId,
         customerId,
         invoiceNumber,
         invoiceDate,
@@ -80,11 +110,12 @@ const updateInvoiceDetails = async ({
         discountType,
         discountAmt,
         servicesList,
-        shippingMethod,
-        shippingAmt
     });
 
-    return updatedInvoiceDetails;
+    return {
+        ...updatedInvoiceDetails,
+        ...updatedShippingData
+    };
 }
 
 module.exports = {

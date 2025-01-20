@@ -6,5 +6,6 @@ export const AppQueries = {
     customerList: 'customer_list',
     customerSearch: 'customer_search',
     bankList: 'bank_list',
+    invoiceList: 'invoice_list',
     bankSearch: 'bank_search',
 }

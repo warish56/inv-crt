@@ -1,3 +1,4 @@
+import { generateUniquId } from "@utils/common";
 import { atom } from "jotai";
 
 
@@ -9,7 +10,7 @@ type extraDetails = {
 }
 
 export const extraDetailsAtom = atom<extraDetails>({
-    invoiceId: '',
+    invoiceId: `INV-${generateUniquId()}`,
     invoiceDate: '',
     dueDate: '',
     notes: ''

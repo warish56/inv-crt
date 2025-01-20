@@ -24,7 +24,6 @@ router.post('/create', async (req, res) => {
             userId,
             bankId,
             businessId,
-            shippingId,
             customerId,
             invoiceNumber,
             invoiceDate,
@@ -34,6 +33,8 @@ router.post('/create', async (req, res) => {
             discountType,
             discountAmt,
             servicesList,
+            shippingFromDetails,
+            shippingToDetails,
             shippingMethod,
             shippingAmt
         }  = req.body;
@@ -42,7 +43,6 @@ router.post('/create', async (req, res) => {
             userId,
             bankId,
             businessId,
-            shippingId,
             customerId,
             invoiceNumber,
             invoiceDate,
@@ -52,6 +52,8 @@ router.post('/create', async (req, res) => {
             discountType,
             discountAmt,
             servicesList,
+            shippingFromDetails,
+            shippingToDetails,
             shippingMethod,
             shippingAmt
         });
@@ -70,7 +72,6 @@ router.put('/update', async (req, res) => {
             invoiceId,
             bankId,
             businessId,
-            shippingId,
             customerId,
             invoiceNumber,
             invoiceDate,
@@ -80,6 +81,8 @@ router.put('/update', async (req, res) => {
             discountType,
             discountAmt,
             servicesList,
+            shippingFromDetails,
+            shippingToDetails,
             shippingMethod,
             shippingAmt
         }  = req.body;
@@ -89,7 +92,6 @@ router.put('/update', async (req, res) => {
             invoiceId,
             bankId,
             businessId,
-            shippingId,
             customerId,
             invoiceNumber,
             invoiceDate,
@@ -99,6 +101,8 @@ router.put('/update', async (req, res) => {
             discountType,
             discountAmt,
             servicesList,
+            shippingFromDetails,
+            shippingToDetails,
             shippingMethod,
             shippingAmt
         });

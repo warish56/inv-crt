@@ -11,7 +11,8 @@ const {
     prepareBankCollection,
     prepareUserCollection,
     prepareBusinessCollection,
-    prepareInvoiceCollection
+    prepareInvoiceCollection,
+    prepareShippingCollection
 } = require('./db/index.js')
 
 const BankRouter = require('./routes/bank.js');
@@ -60,6 +61,7 @@ const initializeApp = async () => {
         await prepareUserCollection();
         await prepareBusinessCollection();
         await prepareInvoiceCollection();
+        await prepareShippingCollection();
     }catch(err){
         console.log("Failed init Db ===", err)
     }

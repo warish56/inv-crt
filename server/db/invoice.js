@@ -36,7 +36,6 @@ const Attributes = {
         type: 'string',
         required: false,
     },
-
     invoiceNumber: {
         name: 'invoice_number',
         type: 'string',
@@ -74,16 +73,6 @@ const Attributes = {
         type: 'number',
         required: false, 
     },
-    shippingMethod: {
-        name: 'shipping_method',
-        type: 'string',
-        required: false, 
-    },
-    shippingAmt: {
-        name: 'shipping_amt',
-        type: 'number',
-        required: false, 
-    },
     servicesList: {
         name: 'services_list',
         type: 'string',
@@ -95,8 +84,8 @@ const Attributes = {
 
 /**
  * Schema
- *  id      user_id  bank_id     business_id    customer_id   shipping_id  invoice_number  invoice_date   invoice_due_date   notes    supply_type  discount_type  discount_amt  services_list  shipping_method  shipping_amt
- *  string  string   string      string         string        string       string          date          date                string   enum         enum           number        string         string           number
+ *  id      user_id  bank_id     business_id    customer_id   shipping_id  invoice_number  invoice_date   invoice_due_date   notes    supply_type  discount_type  discount_amt  services_list  
+ *  string  string   string      string         string        string       string          date          date                string   enum         enum           number        string       
  */
 
 
@@ -147,8 +136,8 @@ const createInvoice = async ({
 userId,
 bankId,
 businessId,
-shippingId,
 customerId,
+shippingId,
 invoiceNumber,
 invoiceDate,
 invoiceDueDate,
@@ -157,26 +146,22 @@ supplyType,
 discountType,
 discountAmt,
 servicesList,
-shippingMethod,
-shippingAmt
 }) => {
 
     const dataObj = {
         [Attributes.userId.name]: userId,
-        ...(invoiceNumber ? {[Attributes.invoiceNumber.name]: invoiceNumber} : {}),
+        [Attributes.invoiceNumber.name]: invoiceNumber,
         ...(bankId ? {[Attributes.bankId.name]: bankId} : {}),
         ...(businessId ? {[Attributes.businessId.name]: businessId} : {}),
-        ...(shippingId ? {[Attributes.shippingId.name]: shippingId} : {}),
         ...(customerId ? {[Attributes.customerId.name]: customerId} : {}),
         ...(invoiceDate ? {[Attributes.invoiceDate.name]: invoiceDate} : {}),
         ...(invoiceDueDate ? {[Attributes.invoiceDueDate.name]: invoiceDueDate} : {}),
         ...(notes ? {[Attributes.notes.name]: notes} : {}),
         ...(discountType ? {[Attributes.discountType.name]: discountType} : {}),
         ...(supplyType ? {[Attributes.supplyType.name]: supplyType} : {}),
-        ...(discountAmt ? {[Attributes.discountAmt.name]: discountAmt} : {}),
+        ...(discountAmt ? {[Attributes.discountAmt.name]: Number(discountAmt || 0)} : {}),
         ...(servicesList ? {[Attributes.servicesList.name]: servicesList} : {}),
-        ...(shippingMethod ? {[Attributes.shippingMethod.name]: shippingMethod} : {}),
-        ...(shippingAmt ? {[Attributes.shippingAmt.name]: shippingAmt} : {}),
+        ...(shippingId ? {[Attributes.shippingId.name]: shippingId} : {}),
     }
 
     const databases = new sdk.Databases(dbValues.client);
@@ -194,7 +179,6 @@ const updateInvoice = async ({
     invoiceId,
     bankId,
     businessId,
-    shippingId,
     customerId,
     invoiceNumber,
     invoiceDate,
@@ -204,25 +188,20 @@ const updateInvoice = async ({
     discountType,
     discountAmt,
     servicesList,
-    shippingMethod,
-    shippingAmt
     }) => {
     
         const dataObj = {
-            ...(invoiceNumber ? {[Attributes.invoiceNumber.name]: invoiceNumber} : {}),
+               [Attributes.invoiceNumber.name]: invoiceNumber,
             ...(bankId ? {[Attributes.bankId.name]: bankId} : {}),
             ...(businessId ? {[Attributes.businessId.name]: businessId} : {}),
-            ...(shippingId ? {[Attributes.shippingId.name]: shippingId} : {}),
             ...(customerId ? {[Attributes.customerId.name]: customerId} : {}),
             ...(invoiceDate ? {[Attributes.invoiceDate.name]: invoiceDate} : {}),
             ...(invoiceDueDate ? {[Attributes.invoiceDueDate.name]: invoiceDueDate} : {}),
             ...(notes ? {[Attributes.notes.name]: notes} : {}),
             ...(discountType ? {[Attributes.discountType.name]: discountType} : {}),
             ...(supplyType ? {[Attributes.supplyType.name]: supplyType} : {}),
-            ...(discountAmt ? {[Attributes.discountAmt.name]: discountAmt} : {}),
+            ...(discountAmt ? {[Attributes.discountAmt.name]: Number(discountAmt || 0)} : {}),
             ...(servicesList ? {[Attributes.servicesList.name]: servicesList} : {}),
-            ...(shippingMethod ? {[Attributes.shippingMethod.name]: shippingMethod} : {}),
-            ...(shippingAmt ? {[Attributes.shippingAmt.name]: shippingAmt} : {}),
         }
     
         const databases = new sdk.Databases(dbValues.client);

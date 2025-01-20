@@ -115,7 +115,10 @@ export const AppTheme = createTheme({
                       backgroundColor: 'grey.50',
                       borderRadius: '8px',
                       minHeight: '56px',
-                      '&:hover fieldset': {
+                      '&.Mui-disabled fieldset': {
+                        borderColor: 'grey.200',
+                      },
+                      '&:hover:not(.Mui-disabled) fieldset': {
                         borderColor: 'primary.main',
                       },
                       '& fieldset': {

@@ -1,77 +1,37 @@
 import {
-  Box,
   Button,
+  Stack,
 } from '@mui/material';
 
-
 type props = {
-    activeStep: number;
-    handleBack: () => void;
-    handleNext: () => void;
-    totalSteps: number;
-    handleComplete: () => void
-
+    allStepsCompleted: boolean;
+    onSave: () => void;
+    isLoading: boolean;
 }
 
 export const StepFooter = ({
-    activeStep, 
-    handleBack, 
-    totalSteps,
-    handleNext,
-    handleComplete
+  allStepsCompleted,
+  onSave,
+  isLoading
 }:props) => {
+
+  if(!allStepsCompleted){
+    return
+  }
+  
     return (
-        <Box
+        <Stack
+        direction="row"
         sx={{
           mt: 3,
-          display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
+          alignItems:'center'
         }}
       >
-        <Button
-          disabled={activeStep === 0}
-          onClick={handleBack}
-          sx={{
-            px: 4,
-            py: 1.5,
-          }}
-        >
-          Back
+
+        <Button onClick={onSave} disabled={isLoading} variant="contained">
+          Save Invoice
         </Button>
-        <Box>
-          {activeStep !== totalSteps && (
-            <Button
-              variant="contained"
-              onClick={handleComplete}
-              sx={{
-                px: 4,
-                py: 1.5,
-                mr: 1,
-                bgcolor: 'success.main',
-                '&:hover': {
-                  bgcolor: 'success.dark',
-                },
-              }}
-            >
-              Complete Step
-            </Button>
-          )}
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            disabled={activeStep === totalSteps}
-            sx={{
-              px: 4,
-              py: 1.5,
-              bgcolor: 'primary.main',
-              '&:hover': {
-                bgcolor: 'primary.dark',
-              },
-            }}
-          >
-            {activeStep === totalSteps ? 'Generate Invoice' : 'Next'}
-          </Button>
-        </Box>
-      </Box>
+      </Stack>
     )
 }

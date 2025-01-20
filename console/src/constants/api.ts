@@ -19,4 +19,8 @@ export const ApiRoutes = {
         list: '/bank/list',
         search: '/bank/search'
     },
+    invoice: {
+        create: '/invoice/create',
+        update: '/invoice/update',
+    },
 }

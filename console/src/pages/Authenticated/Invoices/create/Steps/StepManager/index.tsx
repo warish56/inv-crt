@@ -19,10 +19,13 @@ import {
   Business as BusinessIcon,
 } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router';
+import { useStepsStatusTracker } from '../../hooks/useStepsStatusTracker';
+import { Step as StepType } from '../../types/common';
 
 
-const steps = [
+const steps:StepType[] = [
     {
+      id: 'business_selection',
       label: 'Select Business',
       description: 'Choose existing or add new business',
       icon: <BusinessIcon />,
@@ -31,6 +34,7 @@ const steps = [
     },
 
     {
+      id: 'customer_selection',
       label: 'Select Customer',
       description: 'Choose existing or add new customer',
       icon: <PersonIcon />,
@@ -38,6 +42,7 @@ const steps = [
        path: '/invoices/create/customer'
     },
     {
+      id: 'shipping_details',
       label: 'Shipping Details',
       description: 'Add shipping information',
       icon: <ShippingIcon />,
@@ -45,6 +50,7 @@ const steps = [
        path: '/invoices/create/shipping'
     },
     {
+      id: 'service_addition',
       label: 'Add Services',
       description: 'Add products or services to invoice',
       icon: <DescriptionIcon />,
@@ -53,6 +59,7 @@ const steps = [
     },
 
     {
+      id: 'bank_selection',
       label: 'Add Bank Details',
       description: 'Add banking details',
       icon: <PaymentIcon />,
@@ -60,6 +67,7 @@ const steps = [
        path: '/invoices/create/bank'
     },
     {
+      id: 'additional_details',
       label: 'Additional Details',
       description: 'Add invoice specific information',
       icon: <EditIcon />,
@@ -67,6 +75,7 @@ const steps = [
        path: '/invoices/create/additional'
     },
     {
+      id: 'preview',
       label: 'Review & Generate',
       description: 'Preview and generate invoice',
       icon: <ReceiptIcon />,
@@ -80,7 +89,12 @@ type props = {}
 export const StepManager = ({}:props) => {
   const naviagte = useNavigate();
   const location = useLocation();
-  const activeStep = steps.findIndex(item => location.pathname.includes(item.path))
+  const {isStepCompleted} = useStepsStatusTracker()
+
+  const activeStep = steps.findIndex(item => location.pathname.includes(item.path));
+
+ 
+
     return (
         <Card
         sx={{
@@ -103,39 +117,42 @@ export const StepManager = ({}:props) => {
               },
             }}
           >
-            {steps.map((step) => (
-              <Step key={step.label} completed={false}>
-                <StepButton 
-                  onClick={() => naviagte(step.path)}
-                  optional={
-                    step.optional && (
-                      <Typography variant="caption" color="text.secondary">
-                        Optional
-                      </Typography>
-                    )
-                  }
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar
-                      sx={{
-                        bgcolor: location.pathname.includes(step.path) ? 'primary.main' : 'grey.300',
-                        mr: 1,
-                        width: 40,
-                        height: 40
-                      }}
-                    >
-                      {step.icon}
-                    </Avatar>
-                    <Box>
-                      <Typography sx={{ fontWeight: 500 }}>{step.label}</Typography>
-                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        {step.description}
-                      </Typography>
+            {steps.map((step) => {
+              const completed = isStepCompleted(step.id)
+              return (
+                <Step key={step.id} completed={completed}>
+                  <StepButton 
+                    onClick={() => naviagte(step.path)}
+                    optional={
+                      step.optional && (
+                        <Typography variant="caption" color="text.secondary">
+                          Optional
+                        </Typography>
+                      )
+                    }
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Avatar
+                        sx={{
+                          bgcolor: location.pathname.includes(step.path) ? 'primary.main' : completed ? 'success.main' : 'grey.300',
+                          mr: 1,
+                          width: 40,
+                          height: 40
+                        }}
+                      >
+                        {step.icon}
+                      </Avatar>
+                      <Box>
+                        <Typography sx={{ fontWeight: 500 }}>{step.label}</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          {step.description}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
-                </StepButton>
-              </Step>
-            ))}
+                  </StepButton>
+                </Step>
+              )
+            })}
           </Stepper>
         </CardContent>
       </Card>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   Box,
   Card,
@@ -9,16 +9,42 @@ import {
 } from '@mui/material';
 import { StepManager } from './Steps/StepManager';
 import { StepFooter } from './Footer';
-import { Outlet, useLocation } from 'react-router';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
 import AutoSaveIndicator from './common/AutoSaveIndicator';
+import { useStepsStatusTracker } from './hooks/useStepsStatusTracker';
+import { useCreateOrEditInvoice } from './hooks/useCreateOrEditInvoice';
+import { useInvoiceAtom } from './hooks/useInvoiceAtom';
+import { useSnackbar } from '@hooks/useSnackbar';
 
 
 
 export const CreateInvoiceLayout = () => {
-  const [activeStep, setActiveStep] = useState(0);
-  const [completed, setCompleted] = useState<boolean[]>([]);
+  const {allRequiredStepsCompleted} = useStepsStatusTracker()
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const location = useLocation()
+  const location = useLocation();
+  const {invoiceId} = useParams();
+  const navigate= useNavigate()
+  const {getInvoicePayloadForServer} = useInvoiceAtom();
+  const {showSnackbar} = useSnackbar()
+  const isEditMode = !!invoiceId;
+
+  const mutation = useCreateOrEditInvoice(isEditMode ? 'edit': 'create');
+
+  const handleInvoiceSave = () => {
+      mutation.mutateAsync({
+        userId: '1',
+        ...getInvoicePayloadForServer()
+      }).then(res => {
+        const [_, error] = res;
+        if(error){
+          showSnackbar({message: error, type:'error'});
+        }else{
+          showSnackbar({message: `Invoice ${isEditMode ? 'updated' : 'created'} successfully`, type:'succes'});
+          navigate('/');
+        }
+      })
+  }
+
 
   useEffect(() => {
     if(!scrollContainerRef.current){
@@ -27,31 +53,6 @@ export const CreateInvoiceLayout = () => {
 
     scrollContainerRef.current.scrollTo(0, -Infinity);
   }, [location.pathname])
-
-
-
-  const handleStep = (step: number | ((prev: number) => number) ) => {
-    setActiveStep(step);
-  };
-
-
-  const handleComplete = () => {
-    setCompleted((prev) =>  {
-        const newList = [...prev];
-        newList[activeStep] = true;
-        return newList
-    });
-    handleNext();
-  };
-
-  const handleNext = () => {
-    handleStep((currentStep) => currentStep + 1);
-  };
-
-  const handleBack = () => {
-    handleStep((currentStep) => currentStep - 1);
-  };
-
 
 
   return (
@@ -104,15 +105,19 @@ export const CreateInvoiceLayout = () => {
               <Outlet />
             </CardContent>
           </Card>
+        </Grid>
 
+
+        <Grid item xs={12} sx={{
+          paddingInline: '30px'
+        }}>
           <StepFooter 
-           activeStep={activeStep}
-           handleBack={handleBack}
-           totalSteps={6}
-           handleNext={handleNext}
-           handleComplete={handleComplete}
+           allStepsCompleted={allRequiredStepsCompleted}
+           onSave={handleInvoiceSave}
+           isLoading={mutation.isPending}
           />
         </Grid>
+
       </Grid>
     </Box>
   );

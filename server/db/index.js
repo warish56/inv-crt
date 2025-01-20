@@ -5,6 +5,8 @@ const customerExports = require('./customer');
 const userExports = require('./user');
 const businessExports = require('./businessDetails');
 const invoiceExports = require('./invoice');
+const shippingExports = require('./shipping');
+
 
 
 
@@ -16,5 +18,6 @@ module.exports = {
     ...customerExports,
     ...userExports,
     ...businessExports,
-    ...invoiceExports
+    ...invoiceExports,
+    ...shippingExports
 }

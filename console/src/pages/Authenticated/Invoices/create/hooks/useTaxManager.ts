@@ -28,7 +28,7 @@ export const useTaxManager = () => {
   
   
     const subTotal = useMemo(() => 
-      services.reduce((sum, service) => sum + (Number(service.qty) * Number(service.price)), 0)
+      services.reduce((sum, service) => sum + (Number(service.qty || 0) * Number(service.price || 0)), 0)
     , [services])
   
   
@@ -40,10 +40,8 @@ export const useTaxManager = () => {
     const taxableAmountAfterDiscount = Math.max(taxableAmountBeforeDiscount - discount, 0);
     const maximumGst = services.reduce((prevValue,currService) => Math.max(prevValue, Number(currService.gst)) , 0)
     const shippingProportionalValue = (Number(shippingData.cost ?? 0)/taxableAmountBeforeDiscount)*taxableAmountAfterDiscount;
-    const shippingGstValue = Math.max(shippingProportionalValue * (maximumGst/100), 0);
-  
-  
-  
+    const shippingGstValue = Math.max((isNaN(shippingProportionalValue) ? 0 : shippingProportionalValue ) * (maximumGst/100), 0);
+
   
     // calculates all the taxes according to thr gst rates given for each item
     const allTaxes = useMemo(() =>{
@@ -57,7 +55,7 @@ export const useTaxManager = () => {
   
       services.forEach(({gst, qty, price:amount}) => {
         let data;
-        const totaPrice =  Number(amount) * Number(qty);
+        const totaPrice =  Number(amount || 0) * Number(qty || 0);
         /**
          * Proportional value means
          * 1. item a is 20% of the total price before discounting then it should be also 20% of the total price after discounting
@@ -99,8 +97,6 @@ export const useTaxManager = () => {
   
   
   
-  
-  
   /**
    * 1. calculates the total amount after deducting discount and addign all the taxes
    * 2. calculates total CGST, SGST, IGST, UTGST tax in the current bill
@@ -125,18 +121,6 @@ export const useTaxManager = () => {
         },
       }
     }, [allTaxes, taxableAmountAfterDiscount , billingDetails, shippingGstValue]);
-
-
-    console.log({
-        totalAmount,
-        totalBillTaxes,
-        subTotal,
-        discount,
-        shippingGstValue, 
-        services,
-        invoiceData
-
-    })
 
     return {
         totalAmount: totalAmount.toFixed(2),

@@ -63,6 +63,7 @@ export const AdditionalDetailsStep = () => {
                     <FormField 
                     fullWidth
                     label="Invoice Number"
+                    disabled
                     placeholder="INV-0001"
                     field={field}
                     onChange={(e) => {

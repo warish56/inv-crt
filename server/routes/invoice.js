@@ -1,7 +1,7 @@
 
 const express = require('express');
 const { sendFailureResponse, sendSuccessResponse } = require('../utils/response');
-const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails } = require('../controller/invoice');
+const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb } = require('../controller/invoice');
 const router = express.Router();
 
 
@@ -25,6 +25,7 @@ router.post('/create', async (req, res) => {
             bankId,
             businessId,
             customerId,
+            invoiceName,
             invoiceNumber,
             invoiceDate,
             invoiceDueDate,
@@ -44,6 +45,7 @@ router.post('/create', async (req, res) => {
             bankId,
             businessId,
             customerId,
+            invoiceName,
             invoiceNumber,
             invoiceDate,
             invoiceDueDate,
@@ -73,6 +75,7 @@ router.put('/update', async (req, res) => {
             bankId,
             businessId,
             customerId,
+            invoiceName,
             invoiceNumber,
             invoiceDate,
             invoiceDueDate,
@@ -93,6 +96,7 @@ router.put('/update', async (req, res) => {
             bankId,
             businessId,
             customerId,
+            invoiceName,
             invoiceNumber,
             invoiceDate,
             invoiceDueDate,
@@ -112,6 +116,27 @@ router.put('/update', async (req, res) => {
     }catch(err){
         console.log("==Error in updating  invoice ==", err);
         return sendFailureResponse(res, err, 'Something went wrong in invoice updation')
+    }
+})
+
+router.put('/update_status', async (req, res) => {
+    try{
+        const {
+            invoiceId,
+            status,
+        }  = req.body;
+
+
+        const invoice = await updateInvoiceStatusInDb({
+            invoiceId,
+            status,
+        });
+        return sendSuccessResponse(res, {
+            invoice
+        })
+    }catch(err){
+        console.log("==Error in updating  invoice ==", err);
+        return sendFailureResponse(res, err, 'Something went wrong in invoice status updation')
     }
 })
 

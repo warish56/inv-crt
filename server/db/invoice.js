@@ -10,10 +10,27 @@ const  collectionData = {
     collection: undefined
 };
 
+const InvoiceStatus = {
+    paid: 'paid',
+    pending: 'pending',
+    overdue: 'overdue'
+}
+
 const Attributes = {
     userId: {
         name: 'user_id',
         type: 'string',
+        required: true,
+    },
+    invoiceName: {
+        name: 'invoice_name',
+        type: 'string',
+        required: true,
+    },
+    status: {
+        name: 'invoice_status',
+        type: 'enum',
+        values: ['paid', 'pending', 'overdue'],
         required: true,
     },
     bankId: {
@@ -84,8 +101,8 @@ const Attributes = {
 
 /**
  * Schema
- *  id      user_id  bank_id     business_id    customer_id   shipping_id  invoice_number  invoice_date   invoice_due_date   notes    supply_type  discount_type  discount_amt  services_list  
- *  string  string   string      string         string        string       string          date          date                string   enum         enum           number        string       
+ *  id      user_id  bank_id  status    business_id    customer_id   shipping_id  invoice_number  invoice_date   invoice_due_date   notes    supply_type  discount_type  discount_amt  services_list  
+ *  string  string   string   enum      string         string        string       string          date          date                string   enum         enum           number        string       
  */
 
 
@@ -112,9 +129,6 @@ const prepareInvoiceCollection = async () => {
 }
 
 
-
-
-
 const getInvoiceWithId = async (invoice) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.getDocument(dbValues.db.$id, collectionData.collection.$id, invoice);
@@ -138,6 +152,7 @@ bankId,
 businessId,
 customerId,
 shippingId,
+invoiceName,
 invoiceNumber,
 invoiceDate,
 invoiceDueDate,
@@ -150,7 +165,9 @@ servicesList,
 
     const dataObj = {
         [Attributes.userId.name]: userId,
+        [Attributes.invoiceName.name]: invoiceName,
         [Attributes.invoiceNumber.name]: invoiceNumber,
+        [Attributes.status.name]: InvoiceStatus.pending,
         ...(bankId ? {[Attributes.bankId.name]: bankId} : {}),
         ...(businessId ? {[Attributes.businessId.name]: businessId} : {}),
         ...(customerId ? {[Attributes.customerId.name]: customerId} : {}),
@@ -178,6 +195,7 @@ servicesList,
 const updateInvoice = async ({
     invoiceId,
     bankId,
+    invoiceName,
     businessId,
     customerId,
     invoiceNumber,
@@ -192,6 +210,7 @@ const updateInvoice = async ({
     
         const dataObj = {
                [Attributes.invoiceNumber.name]: invoiceNumber,
+               [Attributes.invoiceName.name]: invoiceName,
             ...(bankId ? {[Attributes.bankId.name]: bankId} : {}),
             ...(businessId ? {[Attributes.businessId.name]: businessId} : {}),
             ...(customerId ? {[Attributes.customerId.name]: customerId} : {}),
@@ -214,12 +233,32 @@ const updateInvoice = async ({
         return document;
     }
 
+    const updateInvoiceStatus = async ({
+        invoiceId,
+        status
+        }) => {
+        
+            const dataObj = {
+                [Attributes.status.name]: status
+            }
+        
+            const databases = new sdk.Databases(dbValues.client);
+            const document = await databases.updateDocument(
+                dbValues.db.$id,
+                collectionData.collection.$id,
+                invoiceId,
+                dataObj
+            );
+            return document;
+        }
+
 
 module.exports = {
     collectionData,
     prepareInvoiceCollection,
     createInvoice,
     updateInvoice,
+    updateInvoiceStatus,
     getUserInvoicesList,
     getInvoiceWithId,
 }

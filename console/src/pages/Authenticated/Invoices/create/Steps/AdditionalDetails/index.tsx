@@ -12,9 +12,12 @@ import { useForm } from '@tanstack/react-form';
 import { useExtraDetailsAtom } from '../../hooks/useExtraDetailsAtom';
 import { FormField } from '../../common/FormField';
 import { useAutoSaveAtom } from '../../hooks/useAutoSaveAtom';
+import { nonEmptyValidator } from '@utils/validators';
+import { validateField } from '@utils/validators';
 
 type formState = {
   invoiceId: string;
+  invoiceName: string;
   invoiceDate: string;
   dueDate: string;
   notes: string;
@@ -27,8 +30,10 @@ export const AdditionalDetailsStep = () => {
     defaultValues: {
       invoiceId: extraDetails.invoiceId ?? '',
       invoiceDate: extraDetails.invoiceDate ?? '',
+      invoiceName: extraDetails.invoiceName ?? '',
       dueDate: extraDetails.dueDate ?? '',
       notes: extraDetails.notes ?? '',
+      
     },
     onSubmit: ({value}) => {
       updateExtraDetails(value);
@@ -70,6 +75,33 @@ export const AdditionalDetailsStep = () => {
                       return e.target.value.toUpperCase();
                     }}
                     icon={ <NumbersIcon sx={{ color: 'text.secondary' }} />}
+                    />
+                )}
+            </form.Field>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <form.Field 
+            name='invoiceName'
+            validators={{
+              onBlur: ({value}) => {
+                const validators = [
+                  {
+                    validator: nonEmptyValidator,
+                    errorMessage: 'Invoice name is required'
+                  },
+                ]
+                return validateField(value, validators);
+            }
+            }}
+            >
+                {(field) => (
+                    <FormField 
+                    fullWidth
+                    label="Invoice Name"
+                    InputLabelProps={{ shrink: true }}
+                    field={field}
+                    icon={ <CalendarIcon sx={{ color: 'text.secondary' }} />}
                     />
                 )}
             </form.Field>

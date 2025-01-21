@@ -1,12 +1,6 @@
+import { ShippingDetail } from "@types/db";
 import { atom } from "jotai";
 
-
-type ShippingDetail = {
-    address: string;
-    city: string;
-    postalCode: string;
-    state: string;
-}
 
 type ShippingData = {
     fromDetailsSameAsSelectedBusinessDetails: boolean;

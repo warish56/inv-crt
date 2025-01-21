@@ -9,6 +9,7 @@ export const useInvoiceAtom = () => {
     const getInvoicePayloadForServer = () => {
         const {selectedDetails, shippingDetails, extraDetails, billingDetails} = data
         return {
+            invoiceName: extraDetails.invoiceName,
             bankId: selectedDetails.selectedBankId,
             businessId: selectedDetails.selectedBusinessId,
             customerId: selectedDetails.selectedCustomerId,

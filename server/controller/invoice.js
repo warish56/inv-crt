@@ -1,4 +1,4 @@
-const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice } = require("../db/invoice");
+const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice, updateInvoiceStatus } = require("../db/invoice");
 const { deleteShippingWithId } = require("../db/shipping");
 const { createShippingData, updateShippingData } = require("./shipings");
 
@@ -14,6 +14,7 @@ const createNewInvoiceForUser = async ({
     bankId,
     businessId,
     customerId,
+    invoiceName,
     invoiceNumber,
     invoiceDate,
     invoiceDueDate,
@@ -41,6 +42,7 @@ const createNewInvoiceForUser = async ({
             bankId,
             businessId,
             customerId,
+            invoiceName,
             invoiceNumber,
             invoiceDate,
             invoiceDueDate,
@@ -68,6 +70,7 @@ const updateInvoiceDetails = async ({
     bankId,
     businessId,
     customerId,
+    invoiceName,
     invoiceNumber,
     invoiceDate,
     invoiceDueDate,
@@ -102,6 +105,7 @@ const updateInvoiceDetails = async ({
         bankId,
         businessId,
         customerId,
+        invoiceName,
         invoiceNumber,
         invoiceDate,
         invoiceDueDate,
@@ -118,8 +122,30 @@ const updateInvoiceDetails = async ({
     };
 }
 
+
+
+const updateInvoiceStatusInDb = async ({
+    invoiceId,
+    status,
+}) => {
+    const invoice = await getInvoiceWithId(invoiceId);
+    if(!invoice){
+        throw {message: 'Invoice not found', status: 404}
+    }
+
+    const updatedInvoiceDetails = await updateInvoiceStatus({
+        invoiceId,
+        status,
+    });
+
+    return {
+        ...updatedInvoiceDetails,
+    };
+}
+
 module.exports = {
     getAllInvoicesOfUser,
     createNewInvoiceForUser,
     updateInvoiceDetails,
+    updateInvoiceStatusInDb
 }

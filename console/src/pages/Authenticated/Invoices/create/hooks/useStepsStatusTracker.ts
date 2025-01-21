@@ -19,7 +19,7 @@ export const useStepsStatusTracker = () => {
           return invoiceData.billingDetails.services.length > 0
         },
         'additional_details': () => {
-          return !!invoiceData.extraDetails.invoiceDate
+          return !!invoiceData.extraDetails.invoiceName
         },
         'shipping_details': () => {
           return !!(invoiceData.shippingDetails.from.address || invoiceData.shippingDetails.to.address)

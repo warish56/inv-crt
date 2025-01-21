@@ -29,7 +29,7 @@ export const RootRoute = () => {
             <Route path="/otp" element={<OtpPage />} />
 
             <Route element={<AuthLayout/>}>
-                <Route path="/" element={<DashboardPage />} />
+                <Route path="/" element={<InvoiceListPage />} />
 
                 <Route path="/invoices">
                     <Route index element={<InvoiceListPage />} />
@@ -104,8 +104,6 @@ export const RootRoute = () => {
                         <Route path="preview" element={<InvoicePreview />} />
 
                     </Route>
-
-
                 </Route>
                 
                 <Route path="/business" element={<BusinessProfilePage />} />

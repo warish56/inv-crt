@@ -10,10 +10,12 @@ type extraDetails = {
     notes: string;
 }
 
-export const extraDetailsAtom = atom<extraDetails>({
+export const initialExtraData = {
     invoiceId: `INV-${generateUniquId()}`,
     invoiceName: '',
     invoiceDate: '',
     dueDate: '',
     notes: ''
-})
+}
+
+export const extraDetailsAtom = atom<extraDetails>(initialExtraData)

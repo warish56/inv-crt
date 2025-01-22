@@ -70,7 +70,7 @@ const Attributes = {
     },
     invoiceTotalAmount: {
         name: 'invoice_total_amount',
-        type: 'number',
+        type: 'float',
         required: false, 
     },
     notes: {

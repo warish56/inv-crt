@@ -6,8 +6,10 @@ type ownState = {
     selectedBankId: string;
 }
 
-export const selectionAtom = atom<ownState>({
+export const initialSelectionData = {
     selectedBusinessId: '',
     selectedCustomerId: '',
     selectedBankId: '',
-})
+}
+
+export const selectionAtom = atom<ownState>(initialSelectionData)

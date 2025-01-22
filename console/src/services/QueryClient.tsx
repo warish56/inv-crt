@@ -3,7 +3,14 @@ import React from "react";
 
 
 
-export const AppQueryClient = new QueryClient();
+export const AppQueryClient = new QueryClient({
+    defaultOptions:{
+        queries: {
+            staleTime: 1000 * 60 * 5, // 5 min,
+            refetchOnMount: true
+        }
+    }
+});
 
 type props = {
     children: React.ReactNode

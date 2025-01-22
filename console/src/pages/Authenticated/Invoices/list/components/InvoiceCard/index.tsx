@@ -4,11 +4,14 @@ import {
     Card,
     CardContent,
     Typography,
-    LinearProgress
+    LinearProgress,
+    Stack,
+    Button
   } from '@mui/material';
   import { STATUS_OPTIONS } from '../../constants';
   import {  PartialInvoice } from '@types/db';
 import { Header } from './Header';
+import { useNavigate } from 'react-router';
   
   
   type props = {
@@ -17,6 +20,11 @@ import { Header } from './Header';
   
 
 export const InvoiceCard = ({invoice}:props) => {
+    const navigate = useNavigate();
+
+    const navigateToDetailsPage = () => {
+        navigate(`/invoices/create/business?inv_id=${invoice.$id}`)
+    }
 
     const currentStatus = STATUS_OPTIONS.find(opt => opt.value === invoice.status);
 
@@ -60,7 +68,7 @@ export const InvoiceCard = ({invoice}:props) => {
         {/* Amount and Client */}
          <Box sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main', mb: 0.5 }}>
-              ${invoice.total_amt || 0}
+              ₹{invoice.total_amt || 0}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {invoice.customer_business_name}
@@ -68,9 +76,17 @@ export const InvoiceCard = ({invoice}:props) => {
           </Box>
   
           {/* Due Date */}
-          <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
-            Due {new Date(invoice.invoice_due_date ?? '').toLocaleDateString()}
-          </Typography>
+          <Stack direction="row" sx={{
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
+                Due {new Date(invoice.invoice_due_date ?? '').toLocaleDateString()}
+            </Typography>
+
+            <Button onClick={navigateToDetailsPage} variant="contained" size="small">See Details</Button>
+          </Stack>
+
         </CardContent>
       </Card>
     )

@@ -60,7 +60,7 @@ export const Stats = ({totalAmount, paidAmount, pendingAmount}:props) => {
           <Grid item xs={12} md={4}>
             <StatCard 
               title="Total Outstanding" 
-              value={`$${totalAmount}`}
+              value={`₹${totalAmount}`}
               icon={<AttachMoney />}
               color="primary"
             />
@@ -68,7 +68,7 @@ export const Stats = ({totalAmount, paidAmount, pendingAmount}:props) => {
           <Grid item xs={12} md={4}>
             <StatCard 
               title="Amount Pending" 
-              value={`$${pendingAmount}`}
+              value={`₹${pendingAmount}`}
               icon={<AccountBalanceWallet />}
               color="warning"
             />
@@ -76,7 +76,7 @@ export const Stats = ({totalAmount, paidAmount, pendingAmount}:props) => {
           <Grid item xs={12} md={4}>
             <StatCard 
               title="Amount Received" 
-              value={`$${paidAmount}`}
+              value={`₹${paidAmount}`}
               icon={<TrendingUp />}
               color="success"
             />

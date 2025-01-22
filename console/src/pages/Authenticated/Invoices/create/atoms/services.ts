@@ -12,9 +12,11 @@ type Billing = {
     discountValue: string;
 }
 
-export const billingAtom = atom<Billing>({
+
+export const initialBillingData = {
     discountApplied: false,
-    supplyType: 'intraState',
-    discountType: '',
+    supplyType: 'intraState' as const,
+    discountType: '' as const,
     discountValue: '',
-})
+}
+export const billingAtom = atom<Billing>(initialBillingData)

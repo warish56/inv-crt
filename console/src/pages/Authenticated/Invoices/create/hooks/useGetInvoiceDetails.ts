@@ -16,16 +16,16 @@ const fetchInvoicesList = (invoiceId: string) => {
 }
 
 type props = {
-    invoiceId: string;
+    invoiceId: string|null;
 }
-export const useInvoiceDetails = ({invoiceId}:props) => {
+export const useGetInvoiceDetails = ({invoiceId}:props) => {
     const query = useQuery({
         queryKey: [AppQueries.invoiceDetails, invoiceId],
         queryFn: () => {
-            return  fetchInvoicesList(invoiceId)
+            return  fetchInvoicesList(invoiceId || '')
         },
-        refetchOnMount: false,
         refetchOnWindowFocus: false,
+        enabled:!!invoiceId,
     })
     
     return query;

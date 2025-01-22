@@ -25,7 +25,6 @@ export const useCustomerSearch = ({userId, searchText}:props) => {
         queryFn: () => {
             return  fetchCustomersList(userId, searchText)
         },
-        refetchOnMount: true,
         refetchOnWindowFocus: false,
         enabled: !!searchText,
     })

@@ -16,10 +16,15 @@ export const useServiceAtom = () => {
         setServices((services) => services.filter(service => service.id !== id))
     }
 
+    const initializeServices = (services: typeof data) => {
+        setServices(services)
+    }
+
     return {
         addService,
         updateService,
         removeService,
+        initializeServices,
         services: data
     }
 }

@@ -25,7 +25,6 @@ export const useBankSearch = ({userId, searchText}:props) => {
         queryFn: () => {
             return  fetchBanksList(userId, searchText)
         },
-        refetchOnMount: true,
         refetchOnWindowFocus: false,
         enabled: !!searchText,
     })

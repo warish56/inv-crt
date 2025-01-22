@@ -25,7 +25,6 @@ export const useBusinessSearch = ({userId, searchText}:props) => {
         queryFn: () => {
             return  fetchBusinessList(userId, searchText)
         },
-        refetchOnMount: true,
         refetchOnWindowFocus: false,
         enabled: !!searchText,
     })

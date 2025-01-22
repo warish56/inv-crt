@@ -5,6 +5,10 @@ import { extraDetailsAtom } from "../atoms/extra";
 export const useExtraDetailsAtom = () => {
     const [data,  setExtraDetails] = useAtom(extraDetailsAtom);
 
+    const initializeExtraDetails = (payload: typeof data) => {
+        setExtraDetails(payload)
+    }
+
     const updateExtraDetails = (payload: typeof data) => {
         setExtraDetails((prevData) => ({
             ...prevData,
@@ -14,6 +18,7 @@ export const useExtraDetailsAtom = () => {
 
     return {
         updateExtraDetails,
+        initializeExtraDetails,
         extraDetails: data
     }
 }

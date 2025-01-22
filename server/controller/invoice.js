@@ -126,7 +126,7 @@ const updateInvoiceDetails = async ({
     if(!invoice){
         throw {message: 'Invoice not found', status: 404}
     }
-    const shippingId = invoice.shippingId;
+    const shippingId = invoice.shipping_id;
 
     // first update the shipping details
     const updatedShippingData  =  await updateShippingData({
@@ -156,8 +156,8 @@ const updateInvoiceDetails = async ({
     });
 
     return {
+        ...updatedShippingData,
         ...updatedInvoiceDetails,
-        ...updatedShippingData
     };
 }
 

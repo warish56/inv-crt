@@ -53,10 +53,10 @@ export type Service = {
 }
 
 export type ShippingDetail = {
-    address: string;
-    city: string;
-    postalCode: string;
-    state: string;
+    address: string | undefined;
+    city: string | undefined;
+    postalCode: string| undefined;
+    state: string | undefined;
 }
 
 
@@ -71,7 +71,7 @@ export type Invoice = {
     "invoice_date": string;
     "invoice_due_date": string | null;
     "notes": string | null;
-    "discount_type": DiscountType;
+    "discount_type": DiscountType | null;
     "supply_type": SupplyType;
     "discount_amt": number | null;
     "services_list": Service[];
@@ -79,8 +79,8 @@ export type Invoice = {
     "$updatedAt": string;
     "shipping_method": string;
     "shipping_amt": number | null;
-    "from_details": Partial<ShippingDetail>;
-    "to_details": Partial<ShippingDetail>;
+    "from_details": ShippingDetail;
+    "to_details": ShippingDetail;
 }
 
 export type PartialInvoice = {

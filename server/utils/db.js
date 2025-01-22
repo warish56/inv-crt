@@ -47,6 +47,16 @@ const createAttributesInDb = async (attributesList, databases, db,  collection) 
             );
         } 
 
+        if(attribute.type === 'float'){
+            await databases.createFloatAttribute(
+                db.$id,
+                collection.$id,
+                attribute.name,
+                attribute.required
+            );
+        } 
+
+
 
         if(attribute.type === 'boolean'){
             await databases.createBooleanAttribute(

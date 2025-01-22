@@ -21,6 +21,7 @@ import {
 import { useLocation, useNavigate } from 'react-router';
 import { useStepsStatusTracker } from '../../hooks/useStepsStatusTracker';
 import { Step as StepType } from '../../types/common';
+import { useAppNavigation } from '@hooks/useAppNavigation';
 
 
 const steps:StepType[] = [
@@ -87,13 +88,12 @@ const steps:StepType[] = [
 
 type props = {}
 export const StepManager = ({}:props) => {
-  const naviagte = useNavigate();
+  const {navigate} = useAppNavigation();
   const location = useLocation();
   const {isStepCompleted} = useStepsStatusTracker()
 
   const activeStep = steps.findIndex(item => location.pathname.includes(item.path));
 
- 
 
     return (
         <Card
@@ -122,7 +122,7 @@ export const StepManager = ({}:props) => {
               return (
                 <Step key={step.id} completed={completed}>
                   <StepButton 
-                    onClick={() => naviagte(step.path)}
+                    onClick={() => navigate(step.path)}
                     optional={
                       step.optional && (
                         <Typography variant="caption" color="text.secondary">

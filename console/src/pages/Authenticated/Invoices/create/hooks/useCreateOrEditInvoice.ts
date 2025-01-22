@@ -8,6 +8,7 @@ type invoicePayload = {
     bankId: string;
     businessId: string;
     customerId: string;
+    invoiceTotalAmount: number;
     invoiceNumber: string;
     invoiceDate: string;
     invoiceDueDate: string;
@@ -20,6 +21,7 @@ type invoicePayload = {
     servicesList: string;
     shippingMethod: string;
     shippingAmt: string;
+    
 }
 
 const createInvoice = (data:invoicePayload) => {

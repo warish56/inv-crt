@@ -68,6 +68,11 @@ const Attributes = {
         type: 'date',
         required: false, 
     },
+    invoiceTotalAmount: {
+        name: 'invoice_total_amount',
+        type: 'number',
+        required: false, 
+    },
     notes: {
         name: 'notes',
         type: 'string',
@@ -101,8 +106,8 @@ const Attributes = {
 
 /**
  * Schema
- *  id      user_id  bank_id  status    business_id    customer_id   shipping_id  invoice_number  invoice_date   invoice_due_date   notes    supply_type  discount_type  discount_amt  services_list  
- *  string  string   string   enum      string         string        string       string          date          date                string   enum         enum           number        string       
+ *  id      user_id  bank_id  status    business_id    customer_id   shipping_id  invoice_total_amount invoice_number  invoice_date   invoice_due_date   notes    supply_type  discount_type  discount_amt  services_list  
+ *  string  string   string   enum      string         string        string       number               string          date          date                string   enum         enum           number        string       
  */
 
 
@@ -154,6 +159,7 @@ customerId,
 shippingId,
 invoiceName,
 invoiceNumber,
+invoiceTotalAmount,
 invoiceDate,
 invoiceDueDate,
 notes,
@@ -168,6 +174,7 @@ servicesList,
         [Attributes.invoiceName.name]: invoiceName,
         [Attributes.invoiceNumber.name]: invoiceNumber,
         [Attributes.status.name]: InvoiceStatus.pending,
+        [Attributes.invoiceTotalAmount.name]: invoiceTotalAmount,
         ...(bankId ? {[Attributes.bankId.name]: bankId} : {}),
         ...(businessId ? {[Attributes.businessId.name]: businessId} : {}),
         ...(customerId ? {[Attributes.customerId.name]: customerId} : {}),
@@ -199,6 +206,7 @@ const updateInvoice = async ({
     businessId,
     customerId,
     invoiceNumber,
+    invoiceTotalAmount,
     invoiceDate,
     invoiceDueDate,
     notes,
@@ -211,6 +219,7 @@ const updateInvoice = async ({
         const dataObj = {
                [Attributes.invoiceNumber.name]: invoiceNumber,
                [Attributes.invoiceName.name]: invoiceName,
+               [Attributes.invoiceTotalAmount.name]: invoiceTotalAmount,
             ...(bankId ? {[Attributes.bankId.name]: bankId} : {}),
             ...(businessId ? {[Attributes.businessId.name]: businessId} : {}),
             ...(customerId ? {[Attributes.customerId.name]: customerId} : {}),

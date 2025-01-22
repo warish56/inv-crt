@@ -20,6 +20,8 @@ export const ApiRoutes = {
         search: '/bank/search'
     },
     invoice: {
+        list: '/invoice/list',
+        details: '/invoice/details',
         create: '/invoice/create',
         update: '/invoice/update',
     },

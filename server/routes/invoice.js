@@ -1,7 +1,7 @@
 
 const express = require('express');
 const { sendFailureResponse, sendSuccessResponse } = require('../utils/response');
-const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb } = require('../controller/invoice');
+const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb, getInvoiceFullDetails } = require('../controller/invoice');
 const router = express.Router();
 
 
@@ -14,7 +14,20 @@ router.post('/list', async (req, res) => {
         })
     }catch(err){
         console.log("==Error in invoice list ==", err);
-        return sendFailureResponse(res, err, 'Something went wrong in invoices')
+        return sendFailureResponse(res, err, 'Something went wrong in invoices list')
+    }
+})
+
+router.post('/details', async (req, res) => {
+    try{
+        const {invoiceId}  = req.body;
+        const invoice = await getInvoiceFullDetails(invoiceId);
+        return sendSuccessResponse(res, {
+            invoice
+        })
+    }catch(err){
+        console.log("==Error in invoice list ==", err);
+        return sendFailureResponse(res, err, 'Something went wrong in invoice details')
     }
 })
 

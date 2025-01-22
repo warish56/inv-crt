@@ -89,6 +89,7 @@ export type PartialInvoice = {
     "invoice_name": string;
     "invoice_number": string;
     "customer_business_name": string;
+    "customer_business_email": string;
     "invoice_date": string;
     "invoice_due_date": string | null;
     "total_amt": number;

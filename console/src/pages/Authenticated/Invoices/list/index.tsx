@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Box,
   Typography,
@@ -16,11 +16,34 @@ import {
   FilterList,
 } from '@mui/icons-material';
 import { Stats } from './Stats';
-import { InvoiceCard } from './InvoiceCard';
+import { InvoiceCard } from './components/InvoiceCard';
+import { useInvoicesList } from './hooks/useInvoicesList';
+import { useSnackbar } from '@hooks/useSnackbar';
+import { StatsLoader } from './loaders/stats';
+import { InvoiceListLoader } from './loaders/list';
 
   
 export const InvoiceListPage = () => {
   const [viewMode, setViewMode] = useState('grid');
+  const {data, isPending, error} = useInvoicesList({userId: '1'});
+  const {showSnackbar} = useSnackbar()
+
+
+  useEffect(() => {
+    if(data?.[1] || error ){
+      showSnackbar({
+        message: data?.[1] || error?.message || '',
+        type: 'error'
+      });
+    }
+  }, [data, error]);
+
+  const list = data?.[0]?.invoices ?? [];
+  const isLoading = isPending;
+
+  const totalAmount = list.reduce((prevValue, currentValue) => currentValue.total_amt + prevValue , 0);
+  const pendingAmount = list.reduce((prevValue, currentValue) => currentValue.status === 'pending' ? currentValue.total_amt + prevValue : prevValue , 0)
+  const overDueAmount = list.reduce((prevValue, currentValue) => currentValue.status === 'overdue' ? currentValue.total_amt + prevValue : prevValue, 0)
 
   return (
     <Box sx={{ p: 3, bgcolor: 'background.default', minHeight: '100vh' }}>
@@ -31,11 +54,15 @@ export const InvoiceListPage = () => {
         </Typography>
 
         <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Stats 
-                totalAmount={0}
-                pendingAmount={0}
-                paidAmount={0}
-            />
+            {isLoading ?
+              <StatsLoader />
+              :
+              <Stats 
+                totalAmount={totalAmount}
+                pendingAmount={pendingAmount}
+                paidAmount={overDueAmount}
+              />
+            }
         </Grid>
 
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
@@ -76,13 +103,15 @@ export const InvoiceListPage = () => {
 
       {/* Invoices Grid */}
       <Grid container spacing={3}>
-        {[].map((invoice) => (
-          <Grid item xs={12} sm={6} md={4}  key={invoice.id}>
-          <InvoiceCard 
-            invoice={invoice} 
-          />
-        </Grid>
+        {isLoading && <InvoiceListLoader />}
+        {!isLoading && list.map((invoice) => (
+          <Grid item xs={12} sm={6} md={4}  key={invoice.$id}>
+            <InvoiceCard 
+              invoice={invoice} 
+            />
+          </Grid>
         ))}
+        
       </Grid>
     </Box>
   );

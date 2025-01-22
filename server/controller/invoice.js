@@ -1,11 +1,46 @@
+const { getCustomerWithId } = require("../db/customer");
 const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice, updateInvoiceStatus } = require("../db/invoice");
-const { deleteShippingWithId } = require("../db/shipping");
+const { deleteShippingWithId, getShippingWithId } = require("../db/shipping");
 const { createShippingData, updateShippingData } = require("./shipings");
+
+
+const getInvoiceFullDetails = async (invoiceId) => {
+    const invoice = await getInvoiceWithId(invoiceId);
+    if(!invoice){
+        throw {message: 'Invoice not found', status: '404'}
+    }
+    const shippingDetails = await getShippingWithId(invoice.shipping_id);
+    return  {
+        ...invoice,
+        services_list: JSON.parse(invoice.services_list),
+        shipping_method: shippingDetails.shipping_method,
+        shipping_amt: shippingDetails.shipping_amt,
+        from_details: JSON.parse(shippingDetails.from_details),
+        to_details: JSON.parse(shippingDetails.to_details),
+    }
+}
+
 
 
 const getAllInvoicesOfUser = async (userId) => {
     const invoicesList = await getUserInvoicesList(userId);
-    return invoicesList
+    const result = []
+    for(const invoice of invoicesList){
+        const customerDetails = await getCustomerWithId(invoice.customer_id);
+        const data = {
+            $id: invoice.$id,
+            status: invoice.invoice_status,
+            invoice_name: invoice.invoice_name,
+            invoice_number: invoice.invoice_number,
+            invoice_date: invoice.invoice_date,
+            invoice_due_date: invoice.invoice_due_date,
+            total_amt: invoice.invoice_total_amount,
+            customer_business_name: customerDetails.business_name,
+            customer_business_email: customerDetails.email
+        }
+        result.push(data)
+    }
+    return result;
 }
 
 
@@ -15,6 +50,7 @@ const createNewInvoiceForUser = async ({
     businessId,
     customerId,
     invoiceName,
+    invoiceTotalAmount,
     invoiceNumber,
     invoiceDate,
     invoiceDueDate,
@@ -43,6 +79,7 @@ const createNewInvoiceForUser = async ({
             businessId,
             customerId,
             invoiceName,
+            invoiceTotalAmount,
             invoiceNumber,
             invoiceDate,
             invoiceDueDate,
@@ -71,6 +108,7 @@ const updateInvoiceDetails = async ({
     businessId,
     customerId,
     invoiceName,
+    invoiceTotalAmount,
     invoiceNumber,
     invoiceDate,
     invoiceDueDate,
@@ -106,6 +144,7 @@ const updateInvoiceDetails = async ({
         businessId,
         customerId,
         invoiceName,
+        invoiceTotalAmount,
         invoiceNumber,
         invoiceDate,
         invoiceDueDate,
@@ -147,5 +186,6 @@ module.exports = {
     getAllInvoicesOfUser,
     createNewInvoiceForUser,
     updateInvoiceDetails,
-    updateInvoiceStatusInDb
+    updateInvoiceStatusInDb,
+    getInvoiceFullDetails
 }

@@ -8,6 +8,10 @@ export const useSelectionAtom = () => {
     const [data,  setSelectionDetails] = useAtom(selectionAtom);
     const {clearSameShippingFromAddress, clearSameShippingToAddress} = useShippingAtom();
 
+    const initializeSelectionData = (payload: typeof data)=>{
+        setSelectionDetails(payload)
+    }
+
     const selectBusiness = (id:string) => {
         setSelectionDetails((prev) => {
             const newValue = prev.selectedBusinessId === id ? '' :  id;
@@ -45,6 +49,7 @@ export const useSelectionAtom = () => {
         selectBank,
         selectBusiness,
         selectCustomer,
+        initializeSelectionData,
         selectionDetails: data
     }
 }

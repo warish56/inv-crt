@@ -5,6 +5,11 @@ import { shippingAtom } from "../atoms/shipping";
 export const useShippingAtom = () => {
     const [data,  setShippingData] = useAtom(shippingAtom);
 
+
+    const initializeShippingData = (payload: typeof data) => {
+            setShippingData(payload)
+    }
+
     const clearSameShippingFromAddress = () => {
         if(!data.fromDetailsSameAsSelectedBusinessDetails){
             return
@@ -77,6 +82,7 @@ export const useShippingAtom = () => {
         setSameAddress,
         clearSameShippingFromAddress,
         clearSameShippingToAddress,
+        initializeShippingData,
         shippingData:data
     }
 }

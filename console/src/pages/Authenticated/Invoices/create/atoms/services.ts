@@ -1,16 +1,7 @@
+import { Service } from "@types/db";
 import { atom } from "jotai";
 
 
-type Service = {
-    id: string;
-    type: 'product' | 'service';
-    name: string;
-    description: string;
-    code: string;
-    price: string;
-    gst: string;
-    qty: string;
-}
 
 export const servicesAtom = atom<Service[]>([])
 
@@ -21,9 +12,11 @@ type Billing = {
     discountValue: string;
 }
 
-export const billingAtom = atom<Billing>({
+
+export const initialBillingData = {
     discountApplied: false,
-    supplyType: 'intraState',
-    discountType: '',
+    supplyType: 'intraState' as const,
+    discountType: '' as const,
     discountValue: '',
-})
+}
+export const billingAtom = atom<Billing>(initialBillingData)

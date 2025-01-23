@@ -9,12 +9,14 @@ import {
 } from '@mui/material';
 import { StepManager } from './Steps/StepManager';
 import { StepFooter } from './Footer';
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
+import { Outlet, useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
 import AutoSaveIndicator from './common/AutoSaveIndicator';
 import { useStepsStatusTracker } from './hooks/useStepsStatusTracker';
-import { useCreateOrEditInvoice } from './hooks/useCreateOrEditInvoice';
+import { useCreateOrEditInvoice } from './hooks/server/useCreateOrEditInvoice';
 import { useInvoiceAtom } from './hooks/useInvoiceAtom';
 import { useSnackbar } from '@hooks/useSnackbar';
+import { useGetInvoiceDetails } from './hooks/server/useGetInvoiceDetails';
+import { useDataInitializer } from './hooks/useDataInitializer';
 
 
 
@@ -22,17 +24,44 @@ export const CreateInvoiceLayout = () => {
   const {allRequiredStepsCompleted} = useStepsStatusTracker()
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
-  const {invoiceId} = useParams();
+  const [searchParams] = useSearchParams();
   const navigate= useNavigate()
   const {getInvoicePayloadForServer} = useInvoiceAtom();
   const {showSnackbar} = useSnackbar()
+  const invoiceId = searchParams.get('inv_id');
   const isEditMode = !!invoiceId;
 
+  const tempRef = useRef<{onceInitialized: boolean; prevEditMode: boolean | null}>({onceInitialized: false, prevEditMode:null})
+
+  const {data:invoiceResult, isPending: isLoadingInvoiceDetails} = useGetInvoiceDetails({invoiceId})
   const mutation = useCreateOrEditInvoice(isEditMode ? 'edit': 'create');
+  const {initializeData, resetData} = useDataInitializer()
+
+  const invoice = invoiceResult?.[0]?.invoice ?? null
+
+
+
+  useEffect(()=> {
+    if(isEditMode !== tempRef.current.prevEditMode){
+      tempRef.current.prevEditMode = isEditMode;
+      resetData();
+    }
+  }, [isEditMode])
+
+
+
+  useEffect(() => {
+    if(invoice && !isLoadingInvoiceDetails){
+      tempRef.current.onceInitialized = true;
+      initializeData(invoice);
+    }
+  }, [invoice, isLoadingInvoiceDetails])
+
 
   const handleInvoiceSave = () => {
       mutation.mutateAsync({
         userId: '1',
+        ...(isEditMode ? {invoiceId} :  {}),
         ...getInvoicePayloadForServer()
       }).then(res => {
         const [_, error] = res;
@@ -75,7 +104,7 @@ export const CreateInvoiceLayout = () => {
             color: 'primary.main'
           }}
         >
-          Create New Invoice
+          {isEditMode ? 'Edit' : 'Create New'} Invoice
         </Typography>
         <AutoSaveIndicator />
       </Stack>

@@ -1,12 +1,6 @@
+import { ShippingDetail } from "@types/db";
 import { atom } from "jotai";
 
-
-type ShippingDetail = {
-    address: string;
-    city: string;
-    postalCode: string;
-    state: string;
-}
 
 type ShippingData = {
     fromDetailsSameAsSelectedBusinessDetails: boolean;
@@ -17,7 +11,8 @@ type ShippingData = {
     cost: string;
 }
 
-export const shippingAtom = atom<ShippingData>({
+
+export const initialShippingData = {
 
     fromDetailsSameAsSelectedBusinessDetails: false,
     toDetailsSameAsSelectedCustomerDetails: false,
@@ -38,4 +33,6 @@ export const shippingAtom = atom<ShippingData>({
     
     method: '',
     cost: ''
-})
+}
+
+export const shippingAtom = atom<ShippingData>(initialShippingData)

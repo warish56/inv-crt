@@ -24,7 +24,6 @@ export const useCustomersList = ({userId}:props) => {
         queryFn: () => {
             return  fetchCustomerList(userId)
         },
-        refetchOnMount: false,
         refetchOnWindowFocus: false,
     })
     

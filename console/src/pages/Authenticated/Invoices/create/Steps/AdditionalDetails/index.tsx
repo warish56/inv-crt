@@ -12,11 +12,16 @@ import { useForm } from '@tanstack/react-form';
 import { useExtraDetailsAtom } from '../../hooks/useExtraDetailsAtom';
 import { FormField } from '../../common/FormField';
 import { useAutoSaveAtom } from '../../hooks/useAutoSaveAtom';
+import { isDateAheadAndEqual, nonEmptyValidator } from '@utils/validators';
+import { validateField } from '@utils/validators';
+import dayjs, { Dayjs } from 'dayjs';
+import { DateField } from '../../common/DateField';
 
 type formState = {
   invoiceId: string;
-  invoiceDate: string;
-  dueDate: string;
+  invoiceName: string;
+  invoiceDate: Dayjs | null;
+  dueDate: Dayjs | null;
   notes: string;
 }
 
@@ -26,12 +31,18 @@ export const AdditionalDetailsStep = () => {
   const form = useForm<formState>({
     defaultValues: {
       invoiceId: extraDetails.invoiceId ?? '',
-      invoiceDate: extraDetails.invoiceDate ?? '',
-      dueDate: extraDetails.dueDate ?? '',
+      invoiceDate: dayjs(extraDetails.invoiceDate || undefined),
+      invoiceName: extraDetails.invoiceName ?? '',
+      dueDate: dayjs(extraDetails.dueDate || undefined),
       notes: extraDetails.notes ?? '',
+      
     },
     onSubmit: ({value}) => {
-      updateExtraDetails(value);
+      updateExtraDetails({
+        ...value,
+        invoiceDate: dayjs(value.invoiceDate).format(),
+        dueDate: dayjs(value.dueDate).format(),
+      });
       triggerAutoSave();
     }
   })
@@ -76,11 +87,24 @@ export const AdditionalDetailsStep = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <form.Field name='invoiceDate'>
+            <form.Field 
+            name='invoiceName'
+            validators={{
+              onBlur: ({value}) => {
+                const validators = [
+                  {
+                    validator: nonEmptyValidator,
+                    errorMessage: 'Invoice name is required'
+                  },
+                ]
+                return validateField(validators, value);
+            }
+            }}
+            >
                 {(field) => (
                     <FormField 
                     fullWidth
-                    label="Invoice Date"
+                    label="Invoice Name"
                     InputLabelProps={{ shrink: true }}
                     field={field}
                     icon={ <CalendarIcon sx={{ color: 'text.secondary' }} />}
@@ -90,14 +114,37 @@ export const AdditionalDetailsStep = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <form.Field name='dueDate'>
+            <form.Field name='invoiceDate'>
                 {(field) => (
-                    <FormField 
-                    fullWidth
-                    label="Due Date"
-                    InputLabelProps={{ shrink: true }}
+                   <DateField 
+                   fullWidth
+                    label="Invoice Date"
                     field={field}
-                    icon={ <CalendarIcon sx={{ color: 'text.secondary' }} />}
+                   />
+                )}
+            </form.Field>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <form.Field 
+            name='dueDate'
+            validators={{
+              onChange: ({value, fieldApi}) => {
+                const validators = [
+                  {
+                    validator: isDateAheadAndEqual,
+                    errorMessage: 'Due date should be greater than invoice date'
+                  },
+                ]
+                return validateField(validators, fieldApi.form.getFieldValue('invoiceDate')?.format(), value?.format());
+              }
+            }}
+            >
+                {(field) => (
+                    <DateField 
+                    fullWidth
+                     label="Due Date"
+                     field={field}
                     />
                 )}
             </form.Field>

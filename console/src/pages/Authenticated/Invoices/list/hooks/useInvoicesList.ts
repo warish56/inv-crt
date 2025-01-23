@@ -2,14 +2,14 @@ import { ApiRoutes } from "@constants/api"
 import { AppQueries } from "@constants/queries"
 import { fetchData } from "@services/Api"
 import { useQuery } from "@tanstack/react-query"
-import { Bank } from "@types/db"
+import { PartialInvoice } from "@types/db"
 
 type ApiResponse = {
-    banks: Bank[]
+    invoices: PartialInvoice[]
 }
 
-const fetchBanksList = (userId: string) => {
-    return fetchData<ApiResponse>(ApiRoutes.bank.list, {
+const fetchInvoicesList = (userId: string) => {
+    return fetchData<ApiResponse>(ApiRoutes.invoice.list, {
         method: 'POST',
         body: JSON.stringify({userId})
     })
@@ -18,11 +18,11 @@ const fetchBanksList = (userId: string) => {
 type props = {
     userId: string;
 }
-export const useBanksList = ({userId}:props) => {
+export const useInvoicesList = ({userId}:props) => {
     const query = useQuery({
-        queryKey: [AppQueries.bankList, userId],
+        queryKey: [AppQueries.invoiceList, userId],
         queryFn: () => {
-            return  fetchBanksList(userId)
+            return  fetchInvoicesList(userId)
         },
         refetchOnWindowFocus: false,
     })

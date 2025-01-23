@@ -6,12 +6,12 @@ import {
   MenuItem,
 } from '@mui/material';
 import { StepHeader } from '../../components/StepHeader';
-import { useNavigate } from 'react-router';
 import { PricebreakDown } from './PriceBreakDown';
 import { useBillingAtom } from '../../hooks/useBillingAtom';
 import { ServicesList } from './ServicesList';
 import { SupplyType } from '@types/tax';
 import { useServiceAtom } from '../../hooks/useServiceAtom';
+import { useAppNavigation } from '@hooks/useAppNavigation';
 
 type Props = {}
 
@@ -20,7 +20,7 @@ export const ServicesProvidedStep = ({}: Props) => {
   const {services}= useServiceAtom();
 
 
-  const navigate = useNavigate();
+  const {navigate} = useAppNavigation();
 
   const onAddService = () => {
     navigate('/invoices/create/services/create')

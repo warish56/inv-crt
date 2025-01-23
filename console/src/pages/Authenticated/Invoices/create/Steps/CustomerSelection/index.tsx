@@ -7,7 +7,6 @@ import {
   Search as SearchIcon,
 } from '@mui/icons-material';
 import { StepHeader } from '../../components/StepHeader';
-import { useNavigate } from 'react-router';
 import { CustomerCardSkeleton } from './CustomerCardSkeleton';
 import { CustomerCard } from './CustomerCard';
 import { useRef } from 'react';
@@ -19,12 +18,12 @@ import { useCustomersList } from './hooks/useCustomersList';
 import { useCustomerSearch } from './hooks/useCustomerSearch';
 import { useSelectionAtom } from '../../hooks/useSelectionAtom';
 import { SelectedAlert } from '../../common/SelectedAlert';
+import { useAppNavigation } from '@hooks/useAppNavigation';
 
 type Props = {}
 
 export const CustomerSelectionStep = ({}: Props) => {
-
-  const navigate = useNavigate();
+  const {navigate} = useAppNavigation();
   const [searchText, setSearchText] = useState('');
   const [serverSearchText, setServerSearchText] = useState('');
   const {isPending: isFetchingCustomersList, error:listError, data: listData} = useCustomersList({userId: '1'})

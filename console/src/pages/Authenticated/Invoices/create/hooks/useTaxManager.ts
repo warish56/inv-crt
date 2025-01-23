@@ -1,11 +1,12 @@
 import { useMemo } from "react";
-import { useInvoiceAtom } from "./useInvoiceAtom";
+import { useServiceAtom } from "./useServiceAtom";
+import { useBillingAtom } from "./useBillingAtom";
+import { useShippingAtom } from "./useShippingAtom";
 
 export const useTaxManager = () => {
-
-    const {invoiceData} = useInvoiceAtom();
-    const {billingDetails, shippingDetails:shippingData} = invoiceData;
-    const {services} = billingDetails;
+    const {services} = useServiceAtom();
+    const {billingDetails} = useBillingAtom();
+    const {shippingData} = useShippingAtom()
   
     const calculateDiscount = (subTotal: number) => {
       const {discountApplied, discountType, discountValue} = billingDetails;

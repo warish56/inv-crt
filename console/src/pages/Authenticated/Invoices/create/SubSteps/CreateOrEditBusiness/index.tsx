@@ -131,7 +131,7 @@ export const CreateOrEditBusiness= ({}:props) => {
                   }
                 ]
                 fieldApi.setErrorMap({onBlur: ''})
-                return validateField(value, validators);
+                return validateField(validators, value);
               },
               onBlur: ({value}) => {
                   const validators = [
@@ -140,7 +140,7 @@ export const CreateOrEditBusiness= ({}:props) => {
                       errorMessage: 'Business name is required'
                     }
                   ]
-                  return validateField(value, validators);
+                  return validateField(validators, value);
               }
             }}
             >
@@ -191,7 +191,7 @@ export const CreateOrEditBusiness= ({}:props) => {
                     }
                   ];
                   fieldApi.setErrorMap({onBlur: ''})
-                  return validateField(value, validators);
+                  return validateField(validators, value);
                 },
                 onBlur: ({value}) => {
                     const validators = [
@@ -200,7 +200,7 @@ export const CreateOrEditBusiness= ({}:props) => {
                         errorMessage: 'Phone number is required'
                       },
                     ]
-                    return validateField(value, validators);
+                    return validateField(validators, value);
                 }
               }}
             >

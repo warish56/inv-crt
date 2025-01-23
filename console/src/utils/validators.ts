@@ -13,15 +13,29 @@ export const nonEmptyValidator = (value:string|undefined|null) => {
 }
 
 
+export const isDateAhead = (value1:string|undefined|null, value2:string|undefined|null) => {
+    const d1 = new Date(value1 || '');
+    const d2 = new Date(value2 || '');
+    return d2.getTime() - d1.getTime() > 0
+}
+
+export const isDateAheadAndEqual = (value1:string|undefined|null, value2:string|undefined|null) => {
+    const d1 = new Date(value1 || '');
+    const d2 = new Date(value2 || '');
+    return d2.getTime() - d1.getTime() >= 0
+}
+
+
+
 
 type ValidatorObj = {
-    validator: (val:string|undefined|null) => boolean;
+    validator: (...rest:(string|undefined|null)[]) => boolean;
     errorMessage: string
 }
 
-export const validateField = (value:string|undefined|null, validators:ValidatorObj[]) => {
+export const validateField = (validators:ValidatorObj[], ...rest:(string|undefined|null)[]) => {
     const errors = validators.map((item) => {
-        return !item.validator(value) ? item.errorMessage : undefined
+        return !item.validator(...rest) ? item.errorMessage : undefined
     }).filter(Boolean);
     return errors[0];
 }

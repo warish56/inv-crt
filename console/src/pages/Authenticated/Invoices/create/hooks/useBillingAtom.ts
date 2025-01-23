@@ -6,6 +6,10 @@ import { billingAtom } from "../atoms/services"
 export const useBillingAtom = () => {
     const [data,  setBillingDetails] = useAtom(billingAtom);
 
+    const initializeBillingData = (payload: typeof data)=>{
+        setBillingDetails(payload)
+    } 
+
     const updateBillingType = (value: typeof data['supplyType']) => {
         setBillingDetails((prev) => ({
             ...prev,
@@ -34,6 +38,7 @@ export const useBillingAtom = () => {
         updateDiscount,
         updateBillingType,
         toggleDiscount,
+        initializeBillingData,
         billingDetails: data
     }
 }

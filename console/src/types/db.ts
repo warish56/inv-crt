@@ -1,3 +1,5 @@
+import { DiscountType, GoodsType, InvoiceStatus, SupplyType } from "./tax";
+
 export type Business = {
     $id: string;
     user_id:string;
@@ -39,3 +41,56 @@ export type Bank = {
 }
 
 
+export type Service = {
+    id: string;
+    type: GoodsType;
+    name: string;
+    description: string;
+    code: string;
+    price: string;
+    gst: string;
+    qty: string;
+}
+
+export type ShippingDetail = {
+    address: string | undefined;
+    city: string | undefined;
+    postalCode: string| undefined;
+    state: string | undefined;
+}
+
+
+export type Invoice = {
+    "$id": string;
+    "status": InvoiceStatus;
+    "invoice_name": string;
+    "invoice_number": string;
+    "bank_id": string| null;
+    "business_id": string;
+    "customer_id": string;
+    "invoice_date": string;
+    "invoice_due_date": string | null;
+    "notes": string | null;
+    "discount_type": DiscountType | null;
+    "supply_type": SupplyType;
+    "discount_amt": number | null;
+    "services_list": Service[];
+    "$createdAt": string;
+    "$updatedAt": string;
+    "shipping_method": string;
+    "shipping_amt": number | null;
+    "from_details": ShippingDetail;
+    "to_details": ShippingDetail;
+}
+
+export type PartialInvoice = {
+    "$id": string;
+    "status": InvoiceStatus;
+    "invoice_name": string;
+    "invoice_number": string;
+    "customer_business_name": string;
+    "customer_business_email": string;
+    "invoice_date": string;
+    "invoice_due_date": string | null;
+    "total_amt": number;
+}

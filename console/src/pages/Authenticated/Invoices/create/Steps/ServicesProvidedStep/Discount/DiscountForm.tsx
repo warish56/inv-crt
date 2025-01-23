@@ -9,9 +9,9 @@ import {
     InputAdornment,
   } from '@mui/material';
 import { ReactFormExtendedApi } from '@tanstack/react-form';
+import { DiscountType } from '@types/tax';
 
 
-type DiscountType = 'percentage'| 'fixed' | '';
   
 type formState = {
     discountType: DiscountType;

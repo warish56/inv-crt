@@ -14,14 +14,14 @@ import { useSnackbar } from '@hooks/useSnackbar';
 import { useEffect, useRef, useState } from 'react';
 import { useBusinessSearch } from './hooks/useBusinessSearch';
 import { debounce } from '@utils/time';
-import { useNavigate } from 'react-router';
 import { useSelectionAtom } from '../../hooks/useSelectionAtom';
 import { SelectedAlert } from '../../common/SelectedAlert';
+import { useAppNavigation } from '@hooks/useAppNavigation';
 
 type Props = {}
 
 export const BusinessSelectionStep = ({}: Props) => {
-  const navigate = useNavigate();
+  const {navigate} = useAppNavigation();
   const [searchText, setSearchText] = useState('');
   const [serverSearchText, setServerSearchText] = useState('');
   const {isPending: isFetchingBusinessList, error:listError, data: listData} = useBusinessList({userId: '1'});

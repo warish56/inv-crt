@@ -6,7 +6,6 @@ import {
 import {
   Search as SearchIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import { BankCard } from './BankCard';
@@ -19,11 +18,12 @@ import { BankCardSkeleton } from './BankCardSkeleton';
 import { StepHeader } from '../../components/StepHeader';
 import { useSelectionAtom } from '../../hooks/useSelectionAtom';
 import { SelectedAlert } from '../../common/SelectedAlert';
+import { useAppNavigation } from '@hooks/useAppNavigation';
 
 type Props = {}
 
 export const BankSelection = ({}: Props) => {
-  const navigate = useNavigate()
+  const {navigate} = useAppNavigation()
   const [searchText, setSearchText] = useState('');
   const [serverSearchText, setServerSearchText] = useState('');
   const {isPending: isFetchingBanksList, error:listError, data: listData} = useBanksList({userId: '1'})

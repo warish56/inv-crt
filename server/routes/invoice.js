@@ -149,7 +149,7 @@ router.put('/update_status', async (req, res) => {
             status,
         });
         return sendSuccessResponse(res, {
-            invoice
+            success: true
         })
     }catch(err){
         console.log("==Error in updating  invoice ==", err);

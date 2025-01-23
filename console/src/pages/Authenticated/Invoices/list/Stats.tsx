@@ -11,6 +11,7 @@ import {
     AttachMoney,
     AccountBalanceWallet,
     TrendingUp,
+    TrendingDown
   } from '@mui/icons-material';
 
 
@@ -53,11 +54,12 @@ type props = {
     totalAmount: number;
     pendingAmount: number;
     paidAmount: number;
+    overDueAmount: number;
 }
-export const Stats = ({totalAmount, paidAmount, pendingAmount}:props) => {
+export const Stats = ({totalAmount, paidAmount, pendingAmount, overDueAmount}:props) => {
     return (
          <>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <StatCard 
               title="Total Outstanding" 
               value={`₹${totalAmount}`}
@@ -65,7 +67,7 @@ export const Stats = ({totalAmount, paidAmount, pendingAmount}:props) => {
               color="primary"
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <StatCard 
               title="Amount Pending" 
               value={`₹${pendingAmount}`}
@@ -73,12 +75,20 @@ export const Stats = ({totalAmount, paidAmount, pendingAmount}:props) => {
               color="warning"
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <StatCard 
               title="Amount Received" 
               value={`₹${paidAmount}`}
               icon={<TrendingUp />}
               color="success"
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <StatCard 
+              title="Amount Overdue" 
+              value={`₹${overDueAmount}`}
+              icon={<TrendingDown />}
+              color="error"
             />
           </Grid>
           </>

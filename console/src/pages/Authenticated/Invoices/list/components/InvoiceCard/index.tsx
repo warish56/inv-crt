@@ -6,13 +6,16 @@ import {
     Typography,
     LinearProgress,
     Stack,
-    Button
+    Button,
   } from '@mui/material';
   import { STATUS_OPTIONS } from '../../constants';
   import {  PartialInvoice } from '@types/db';
 import { Header } from './Header';
 import { useNavigate } from 'react-router';
-  
+import { useModifyStatus } from '../../hooks/useModifyStatus';
+import { useSnackbar } from '@hooks/useSnackbar';
+import { InvoiceStatus } from '@types/tax';
+
   
   type props = {
       invoice: PartialInvoice
@@ -21,6 +24,24 @@ import { useNavigate } from 'react-router';
 
 export const InvoiceCard = ({invoice}:props) => {
     const navigate = useNavigate();
+    const mutation = useModifyStatus();
+    const {showSnackbar} = useSnackbar();
+
+    const isChangingStatus = mutation.isPending;
+  
+  
+    const handleStatusChange = (status:InvoiceStatus) => {
+      mutation.mutateAsync({
+        invoiceId: invoice.$id,
+        status
+      }).then((response) => {
+          if(response[0]?.success){
+            showSnackbar({message: 'Status updated successfully', type: 'succes'})
+          }else{
+            showSnackbar({message: 'Failed to update status', type: 'error'})
+          }
+      })
+    }
 
     const navigateToDetailsPage = () => {
         navigate(`/invoices/create/business?inv_id=${invoice.$id}`)
@@ -43,7 +64,7 @@ export const InvoiceCard = ({invoice}:props) => {
       >
 
         <LinearProgress 
-        variant="determinate" 
+        variant={isChangingStatus? 'indeterminate': 'determinate'}
         value={currentStatus?.progress || 0}
         sx={{
             height: 4,
@@ -62,6 +83,8 @@ export const InvoiceCard = ({invoice}:props) => {
             invoiceName={invoice.invoice_name}
             invoiceNumber={invoice.invoice_number}
             status={invoice.status}
+            onStatusChange={handleStatusChange}
+            isChangingStatus={isChangingStatus}
             />
 
 
@@ -83,8 +106,7 @@ export const InvoiceCard = ({invoice}:props) => {
             <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
                 Due {new Date(invoice.invoice_due_date ?? '').toLocaleDateString()}
             </Typography>
-
-            <Button onClick={navigateToDetailsPage} variant="contained" size="small">See Details</Button>
+            <Button variant='text' size='small' onClick={navigateToDetailsPage}>See Details</Button>
           </Stack>
 
         </CardContent>

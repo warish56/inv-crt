@@ -7,8 +7,7 @@ import {
   } from '@mui/material';
   import { StatusIndicator } from './StatusIndicator';
 import { InvoiceStatus } from '@types/tax';
-import { InvoiceStatusOptions } from './StatusOptions';
-  
+import { InvoiceStatusOptions } from './StatusOptions';  
 
   const getInitials = (name:string) => {
     return name
@@ -21,12 +20,21 @@ import { InvoiceStatusOptions } from './StatusOptions';
 
   type props = {
     userName: string;
+    onStatusChange: (status: InvoiceStatus) => void; 
     invoiceName: string;
     invoiceNumber: string;
-    status: InvoiceStatus
+    status: InvoiceStatus;
+    isChangingStatus: boolean;
   }
   
-export const Header = ({userName, invoiceName, invoiceNumber, status}:props) => {
+export const Header = ({
+  userName,
+  invoiceName,
+  invoiceNumber,
+  status,
+  onStatusChange,
+  isChangingStatus
+}:props) => {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <Avatar 
@@ -34,8 +42,8 @@ export const Header = ({userName, invoiceName, invoiceNumber, status}:props) => 
             width: 32,
             height: 32,
             fontSize: '0.875rem',
-            bgcolor: 'grey.100',
-            color: 'primary.main'
+            bgcolor: 'primary.main',
+            color: 'background.default'
           }}
         >
           {getInitials(userName || '')}
@@ -54,6 +62,7 @@ export const Header = ({userName, invoiceName, invoiceNumber, status}:props) => 
           sx={{ 
             position: 'relative',
             cursor: 'pointer',
+            pointerEvents: isChangingStatus? 'none' : 'all',
             '&:hover .status-menu': {
               opacity: 1,
               visibility: 'visible',
@@ -63,6 +72,7 @@ export const Header = ({userName, invoiceName, invoiceNumber, status}:props) => 
         >
           <StatusIndicator status={status} />
             <InvoiceStatusOptions 
+                onStatusChange={onStatusChange}
                 containerProps={{
                     className: "status-menu"
                 }}

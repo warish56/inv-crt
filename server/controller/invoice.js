@@ -36,7 +36,8 @@ const getAllInvoicesOfUser = async (userId) => {
             invoice_due_date: invoice.invoice_due_date,
             total_amt: invoice.invoice_total_amount,
             customer_business_name: customerDetails.business_name,
-            customer_business_email: customerDetails.email
+            customer_business_email: customerDetails.email,
+            payment_date: invoice.invoice_payment_date,
         }
         result.push(data)
     }

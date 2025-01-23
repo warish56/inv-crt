@@ -43,6 +43,7 @@ export const InvoiceListPage = () => {
 
   const totalAmount = list.reduce((prevValue, currentValue) => currentValue.total_amt + prevValue , 0);
   const pendingAmount = list.reduce((prevValue, currentValue) => currentValue.status === 'pending' ? currentValue.total_amt + prevValue : prevValue , 0)
+  const paidAmount = list.reduce((prevValue, currentValue) => currentValue.status === 'paid' ? currentValue.total_amt + prevValue : prevValue, 0)
   const overDueAmount = list.reduce((prevValue, currentValue) => currentValue.status === 'overdue' ? currentValue.total_amt + prevValue : prevValue, 0)
 
   return (
@@ -60,7 +61,8 @@ export const InvoiceListPage = () => {
               <Stats 
                 totalAmount={totalAmount}
                 pendingAmount={pendingAmount}
-                paidAmount={overDueAmount}
+                paidAmount={paidAmount}
+                overDueAmount={overDueAmount}
               />
             }
         </Grid>

@@ -12,10 +12,10 @@ import { StepFooter } from './Footer';
 import { Outlet, useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
 import AutoSaveIndicator from './common/AutoSaveIndicator';
 import { useStepsStatusTracker } from './hooks/useStepsStatusTracker';
-import { useCreateOrEditInvoice } from './hooks/useCreateOrEditInvoice';
+import { useCreateOrEditInvoice } from './hooks/server/useCreateOrEditInvoice';
 import { useInvoiceAtom } from './hooks/useInvoiceAtom';
 import { useSnackbar } from '@hooks/useSnackbar';
-import { useGetInvoiceDetails } from './hooks/useGetInvoiceDetails';
+import { useGetInvoiceDetails } from './hooks/server/useGetInvoiceDetails';
 import { useDataInitializer } from './hooks/useDataInitializer';
 
 
@@ -31,7 +31,7 @@ export const CreateInvoiceLayout = () => {
   const invoiceId = searchParams.get('inv_id');
   const isEditMode = !!invoiceId;
 
-  const tempRef = useRef({onceInitialized: false, onceReset:false})
+  const tempRef = useRef<{onceInitialized: boolean; prevEditMode: boolean | null}>({onceInitialized: false, prevEditMode:null})
 
   const {data:invoiceResult, isPending: isLoadingInvoiceDetails} = useGetInvoiceDetails({invoiceId})
   const mutation = useCreateOrEditInvoice(isEditMode ? 'edit': 'create');
@@ -40,24 +40,22 @@ export const CreateInvoiceLayout = () => {
   const invoice = invoiceResult?.[0]?.invoice ?? null
 
 
-  // useEffect(() => {
-  //   console.log("==resetting data==",{invoice})
-  //   if(!tempRef.current.onceReset){
-  //     tempRef.current.onceReset = true;
-  //     resetData();
-  //   }
-  //   return () => {
-  //     resetData();
-  //   }
-  // }, [isEditMode])
+
+  useEffect(()=> {
+    if(isEditMode !== tempRef.current.prevEditMode){
+      tempRef.current.prevEditMode = isEditMode;
+      resetData();
+    }
+  }, [isEditMode])
+
+
 
   useEffect(() => {
-    if(invoice && !isLoadingInvoiceDetails && !tempRef.current.onceInitialized){
+    if(invoice && !isLoadingInvoiceDetails){
       tempRef.current.onceInitialized = true;
       initializeData(invoice);
     }
   }, [invoice, isLoadingInvoiceDetails])
-
 
 
   const handleInvoiceSave = () => {

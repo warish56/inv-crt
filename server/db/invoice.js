@@ -68,6 +68,11 @@ const Attributes = {
         type: 'date',
         required: false, 
     },
+    invoicePaymentDate: {
+        name: 'invoice_payment_date',
+        type: 'date',
+        required: false, 
+    },
     invoiceTotalAmount: {
         name: 'invoice_total_amount',
         type: 'float',
@@ -106,8 +111,8 @@ const Attributes = {
 
 /**
  * Schema
- *  id      user_id  bank_id  status    business_id    customer_id   shipping_id  invoice_total_amount invoice_number  invoice_date   invoice_due_date   notes    supply_type  discount_type  discount_amt  services_list  
- *  string  string   string   enum      string         string        string       number               string          date          date                string   enum         enum           number        string       
+ *  id      user_id  bank_id  status    business_id    customer_id   shipping_id  invoice_total_amount invoice_number  invoice_date   invoice_due_date invoice_payment_date   notes    supply_type  discount_type  discount_amt  services_list  
+ *  string  string   string   enum      string         string        string       number               string          date          date              date                   string   enum         enum           number        string       
  */
 
 
@@ -248,7 +253,8 @@ const updateInvoice = async ({
         }) => {
         
             const dataObj = {
-                [Attributes.status.name]: status
+                [Attributes.status.name]: status,
+                ...(status === InvoiceStatus.paid ?  {[Attributes.invoicePaymentDate.name]: new Date().toISOString()}: {})
             }
         
             const databases = new sdk.Databases(dbValues.client);

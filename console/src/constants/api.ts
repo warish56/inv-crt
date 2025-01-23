@@ -24,5 +24,6 @@ export const ApiRoutes = {
         details: '/invoice/details',
         create: '/invoice/create',
         update: '/invoice/update',
+        updateStatus: '/invoice/update_status'
     },
 }

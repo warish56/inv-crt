@@ -93,4 +93,5 @@ export type PartialInvoice = {
     "invoice_date": string;
     "invoice_due_date": string | null;
     "total_amt": number;
+    payment_date: string | null;
 }

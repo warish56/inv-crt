@@ -13,6 +13,7 @@ import { Discount } from './Discount';
 import { useBillingAtom } from '../../hooks/useBillingAtom';
 import { useShippingAtom } from '../../hooks/useShippingAtom';
 import { useTaxManager } from '../../hooks/useTaxManager';
+import { formatCurrency } from '@utils/common';
 
 
 type tax = {
@@ -37,7 +38,7 @@ return (
         {name}
       </Typography>
       <Typography variant="body2">
-        ₹{amt}
+        {amt}
       </Typography>
     </Box>
     ))}
@@ -64,7 +65,7 @@ return (
       {title}
     </Typography>
     <Typography variant="body1" fontWeight="medium">
-      {type === 'add' && '+ '}₹{value}
+      {type === 'add' && '+ '}{value}
     </Typography>
   </Box>
 )
@@ -112,10 +113,10 @@ const {
 
       {/* Price Summary */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <PriceItem title='Sub Total' value={subTotal}/>
+        <PriceItem title='Sub Total' value={formatCurrency(subTotal)}/>
 
         {shippingData.method && shippingData.cost && Number(shippingData.cost) > 0 &&
-          <PriceItem title='Shipping cost' value={shippingData.cost} type='add'/>
+          <PriceItem title='Shipping cost' value={formatCurrency(shippingData.cost)} type='add'/>
         }
 
 
@@ -132,7 +133,7 @@ const {
               Discount {billingDetails.discountType === 'percentage' ? `(${billingDetails.discountValue}%)` : ''}
             </Typography>
             <Typography variant="body1" fontWeight="medium">
-              - ₹{discount}
+              - {formatCurrency(discount)}
             </Typography>
           </Box>
         )}
@@ -142,9 +143,9 @@ const {
           {billingDetails.supplyType  === 'intraState' && ( 
             <TaxGroup 
              taxes={[
-              {name: 'SGST', amt: totalBillTaxes.sgst},
-              {name: 'CGST', amt: totalBillTaxes.cgst},
-              ...(shippingGstValue > 0 ? [{name: 'Shipping GST', amt: shippingGstValue.toFixed(2)}]: []),
+              {name: 'SGST', amt: formatCurrency(totalBillTaxes.sgst)},
+              {name: 'CGST', amt: formatCurrency(totalBillTaxes.cgst)},
+              ...(shippingGstValue > 0 ? [{name: 'Shipping GST', amt: formatCurrency(shippingGstValue)}]: []),
              ]}
             />
           )}
@@ -153,7 +154,7 @@ const {
             <TaxGroup 
               taxes={[
                 {name: 'IGST', amt: totalBillTaxes.igst},
-                ...(shippingGstValue > 0 ? [{name: 'Shipping GST', amt: shippingGstValue.toFixed(2)}]: []),
+                ...(shippingGstValue > 0 ? [{name: 'Shipping GST', amt: formatCurrency(shippingGstValue)}]: []),
               ]}
             />
           )}
@@ -163,7 +164,7 @@ const {
               taxes={[
               {name: 'CGST', amt: totalBillTaxes.cgst},
               {name: 'UTGST', amt: totalBillTaxes.utgst},
-              ...(shippingGstValue > 0 ? [{name: 'Shipping GST', amt: shippingGstValue.toFixed(2)}]: []),
+              ...(shippingGstValue > 0 ? [{name: 'Shipping GST', amt: formatCurrency(shippingGstValue)}]: []),
               ]}
             />
           )}
@@ -187,7 +188,7 @@ const {
             Total Amount
           </Typography>
           <Typography variant="h6">
-            ₹{totalAmount}
+            {formatCurrency(totalAmount)}
           </Typography>
         </Box>
       </Box>

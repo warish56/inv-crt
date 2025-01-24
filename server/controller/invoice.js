@@ -1,7 +1,16 @@
 const { getCustomerWithId } = require("../db/customer");
-const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice, updateInvoiceStatus } = require("../db/invoice");
+const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice, updateInvoiceStatus, deleteInvoice } = require("../db/invoice");
 const { deleteShippingWithId, getShippingWithId } = require("../db/shipping");
 const { createShippingData, updateShippingData } = require("./shipings");
+
+
+const deleteInvoiceDetails = async (invoiceId) => {
+    const invoice = await getInvoiceWithId(invoiceId);
+    if(!invoice){
+        throw {message: 'Invoice not found', status: '404'}
+    }
+    await deleteInvoice(invoiceId);
+}
 
 
 const getInvoiceFullDetails = async (invoiceId) => {
@@ -188,5 +197,6 @@ module.exports = {
     createNewInvoiceForUser,
     updateInvoiceDetails,
     updateInvoiceStatusInDb,
-    getInvoiceFullDetails
+    getInvoiceFullDetails,
+    deleteInvoiceDetails
 }

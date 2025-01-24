@@ -13,6 +13,7 @@ import {
     TrendingUp,
     TrendingDown
   } from '@mui/icons-material';
+import { formatCurrency } from '@utils/common';
 
 
 type Statprops = {
@@ -62,7 +63,7 @@ export const Stats = ({totalAmount, paidAmount, pendingAmount, overDueAmount}:pr
           <Grid item xs={12} md={3}>
             <StatCard 
               title="Total Outstanding" 
-              value={`₹${totalAmount}`}
+              value={`${formatCurrency(totalAmount)}`}
               icon={<AttachMoney />}
               color="primary"
             />
@@ -70,7 +71,7 @@ export const Stats = ({totalAmount, paidAmount, pendingAmount, overDueAmount}:pr
           <Grid item xs={12} md={3}>
             <StatCard 
               title="Amount Pending" 
-              value={`₹${pendingAmount}`}
+              value={`${formatCurrency(pendingAmount)}`}
               icon={<AccountBalanceWallet />}
               color="warning"
             />
@@ -78,7 +79,7 @@ export const Stats = ({totalAmount, paidAmount, pendingAmount, overDueAmount}:pr
           <Grid item xs={12} md={3}>
             <StatCard 
               title="Amount Received" 
-              value={`₹${paidAmount}`}
+              value={`${formatCurrency(paidAmount)}`}
               icon={<TrendingUp />}
               color="success"
             />
@@ -86,7 +87,7 @@ export const Stats = ({totalAmount, paidAmount, pendingAmount, overDueAmount}:pr
           <Grid item xs={12} md={3}>
             <StatCard 
               title="Amount Overdue" 
-              value={`₹${overDueAmount}`}
+              value={`${formatCurrency(overDueAmount)}`}
               icon={<TrendingDown />}
               color="error"
             />

@@ -1,8 +1,22 @@
 
 const express = require('express');
 const { sendFailureResponse, sendSuccessResponse } = require('../utils/response');
-const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb, getInvoiceFullDetails } = require('../controller/invoice');
+const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb, getInvoiceFullDetails, deleteInvoiceDetails } = require('../controller/invoice');
 const router = express.Router();
+
+
+router.delete('/delete', async (req, res) => {
+    try{
+        const {invoiceId}  = req.body;
+        await deleteInvoiceDetails(invoiceId);
+        return sendSuccessResponse(res, {
+            success: true 
+        })
+    }catch(err){
+        console.log("==Error in invoice deleting ==", err);
+        return sendFailureResponse(res, err, 'Something went wrong in invoice deletion')
+    }
+})
 
 
 router.post('/list', async (req, res) => {

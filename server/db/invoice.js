@@ -145,6 +145,12 @@ const getInvoiceWithId = async (invoice) => {
     return result;
 }
 
+
+const deleteInvoice = async (invoiceId) => {
+     const databases = new sdk.Databases(dbValues.client);
+     await databases.deleteDocument(dbValues.db.$id, collectionData.collection.$id, invoiceId);
+}
+
 const getUserInvoicesList = async (userId) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
@@ -254,7 +260,10 @@ const updateInvoice = async ({
         
             const dataObj = {
                 [Attributes.status.name]: status,
-                ...(status === InvoiceStatus.paid ?  {[Attributes.invoicePaymentDate.name]: new Date().toISOString()}: {})
+                ...(status === InvoiceStatus.paid ?  
+                    {[Attributes.invoicePaymentDate.name]: new Date().toISOString()} : 
+                    {[Attributes.invoicePaymentDate.name]: null}
+                )
             }
         
             const databases = new sdk.Databases(dbValues.client);
@@ -273,6 +282,7 @@ module.exports = {
     prepareInvoiceCollection,
     createInvoice,
     updateInvoice,
+    deleteInvoice,
     updateInvoiceStatus,
     getUserInvoicesList,
     getInvoiceWithId,

@@ -16,6 +16,9 @@ import { useBusinessList } from '../../Steps/BusinessSelection/hooks/useBusiness
 import { useCustomersList } from '../../Steps/CustomerSelection/hooks/useCustomersList';
 import { useBanksList } from '../../Steps/BankSelection/hooks/useBanksList';
 import { useTaxManager } from '../../hooks/useTaxManager';
+import { formatCurrency } from '@utils/common';
+import dayjs from 'dayjs'
+
 
 export const InvoiceTemplateA = () => {
   const theme = useTheme();
@@ -82,11 +85,11 @@ export const InvoiceTemplateA = () => {
               Invoice No: <strong>{extraDetails.invoiceId || '---'}</strong>
             </Typography>
             <Typography variant="body1" sx={{ mb: 1 }}>
-              Date: <strong>{extraDetails.invoiceDate || '---'}</strong>
+              Date: <strong>{dayjs(extraDetails.invoiceDate).format('DD/MM/YYYY') || '---'}</strong>
             </Typography>
             {extraDetails.dueDate && (
               <Typography variant="body1" sx={{ mb: 1 }}>
-                Due Date: <strong>{extraDetails.dueDate || '---'}</strong>
+                Due Date: <strong>{dayjs(extraDetails.dueDate).format('DD/MM/YYYY')|| '---'}</strong>
               </Typography>
             )}
           </Grid>
@@ -265,9 +268,9 @@ export const InvoiceTemplateA = () => {
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.code}</TableCell>
                 <TableCell align="right">{item.qty}</TableCell>
-                <TableCell align="right">{Number(item.price).toFixed(2)}</TableCell>
+                <TableCell align="right">{formatCurrency(item.price)}</TableCell>
                 <TableCell align="right">{item.gst}%</TableCell>
-                <TableCell align="right">{(amount + gstAmount).toFixed(2)}</TableCell>
+                <TableCell align="right">{formatCurrency(amount + gstAmount)}</TableCell>
               </TableRow>
             );
           })}
@@ -289,7 +292,7 @@ export const InvoiceTemplateA = () => {
               justifyContent: 'space-between'
             }}>
               <span>Subtotal:</span>
-              <strong>₹{subTotal}</strong>
+              <strong>{formatCurrency(subTotal)}</strong>
             </Typography>
 
             {shippingCost > 0 &&
@@ -299,7 +302,7 @@ export const InvoiceTemplateA = () => {
                 justifyContent: 'space-between'
               }}>
                 <span>Shipping:</span>
-                <strong>+ ₹{shippingCost}</strong>
+                <strong>+ {formatCurrency(shippingCost)}</strong>
               </Typography>
             }
 
@@ -311,7 +314,7 @@ export const InvoiceTemplateA = () => {
                 color: 'success.main'
               }}>
                 <span>Discount:</span>
-                <strong>- ₹{discount}</strong>
+                <strong>- {formatCurrency(discount)}</strong>
               </Typography>
             )}
 
@@ -322,7 +325,7 @@ export const InvoiceTemplateA = () => {
                 justifyContent: 'space-between'
               }}>
                 <span>Shipping GST:</span>
-                <strong>₹{shippingGstValue.toFixed(2)}</strong>
+                <strong>{formatCurrency(shippingGstValue)}</strong>
               </Typography>
             )}
 
@@ -333,7 +336,7 @@ export const InvoiceTemplateA = () => {
                 justifyContent: 'space-between'
               }}>
                 <span>IGST:</span>
-                <strong>₹{totalBillTaxes.igst}</strong>
+                <strong>{formatCurrency(totalBillTaxes.igst)}</strong>
               </Typography>
             )}
 
@@ -345,7 +348,7 @@ export const InvoiceTemplateA = () => {
                   justifyContent: 'space-between'
                 }}>
                   <span>CGST:</span>
-                  <strong>₹{totalBillTaxes.cgst}</strong>
+                  <strong>{formatCurrency(totalBillTaxes.cgst)}</strong>
                 </Typography>
                 <Typography variant="body1" sx={{ 
                   mb: 2, 
@@ -353,7 +356,7 @@ export const InvoiceTemplateA = () => {
                   justifyContent: 'space-between'
                 }}>
                   <span>SGST:</span>
-                  <strong>₹{totalBillTaxes.sgst}</strong>
+                  <strong>{formatCurrency(totalBillTaxes.sgst)}</strong>
                 </Typography>
               </>
             )}
@@ -365,7 +368,7 @@ export const InvoiceTemplateA = () => {
                 justifyContent: 'space-between'
               }}>
                 <span>UTGST:</span>
-                <strong>₹{totalBillTaxes.utgst}</strong>
+                <strong>{formatCurrency(totalBillTaxes.utgst)}</strong>
               </Typography>
             )}
 
@@ -377,7 +380,7 @@ export const InvoiceTemplateA = () => {
               color: 'primary.main'
             }}>
               <span>Total:</span>
-              <strong>₹{totalAmount}</strong>
+              <strong>{formatCurrency(totalAmount)}</strong>
             </Typography>
           </Box>
         </Grid>

@@ -109,7 +109,7 @@ export const InvoiceCard = ({invoice}:props) => {
         <CardContent sx={{ p: 2 }}>
           <Header 
           userName={invoice.customer_business_name}
-          invoiceName={invoice.invoice_name}
+          invoiceName={invoice.invoice_name || invoice.customer_business_name}
           invoiceNumber={invoice.invoice_number}
           status={invoice.status}
           onStatusChange={handleStatusChange}

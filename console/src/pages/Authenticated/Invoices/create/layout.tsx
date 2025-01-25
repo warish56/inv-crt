@@ -17,6 +17,7 @@ import { useInvoiceAtom } from './hooks/useInvoiceAtom';
 import { useSnackbar } from '@hooks/useSnackbar';
 import { useGetInvoiceDetails } from './hooks/server/useGetInvoiceDetails';
 import { useDataInitializer } from './hooks/useDataInitializer';
+import { useReactToPrint } from 'react-to-print';
 
 
 
@@ -28,6 +29,21 @@ export const CreateInvoiceLayout = () => {
   const navigate= useNavigate()
   const {getInvoicePayloadForServer} = useInvoiceAtom();
   const {showSnackbar} = useSnackbar()
+  const reactToPrintFn = useReactToPrint({ 
+    contentRef: scrollContainerRef,
+    documentTitle: `Invoice-${new Date().toISOString()}`,
+    pageStyle: `
+      @page { 
+        size: A4; 
+        margin: 1mm; 
+      }
+      @media print {
+        body { 
+          -webkit-print-color-adjust: exact; 
+        }
+      }
+    `
+  });
   const invoiceId = searchParams.get('inv_id');
   const isEditMode = !!invoiceId;
 
@@ -58,6 +74,19 @@ export const CreateInvoiceLayout = () => {
   }, [invoice, isLoadingInvoiceDetails])
 
 
+  /**
+   * Handles scroll restoration
+   */
+  useEffect(() => {
+    if(!scrollContainerRef.current){
+      return
+    }
+
+    scrollContainerRef.current.scrollTo(0, -Infinity);
+  }, [location.pathname])
+
+
+
   const handleInvoiceSave = () => {
       mutation.mutateAsync({
         userId: '1',
@@ -74,14 +103,9 @@ export const CreateInvoiceLayout = () => {
       })
   }
 
-
-  useEffect(() => {
-    if(!scrollContainerRef.current){
-      return
-    }
-
-    scrollContainerRef.current.scrollTo(0, -Infinity);
-  }, [location.pathname])
+  const handlePrint = () => {
+    reactToPrintFn();
+  }
 
 
   return (
@@ -123,7 +147,10 @@ export const CreateInvoiceLayout = () => {
               border: 'none',
               boxShadow: 'none',
               bgcolor: 'background.default',
-              paddingRight: '30px'
+              paddingRight: '30px',
+              '@media print': {
+                paddingRight: '0px',
+              }
             }}
           >
             <CardContent sx={{
@@ -143,7 +170,9 @@ export const CreateInvoiceLayout = () => {
           <StepFooter 
            allStepsCompleted={allRequiredStepsCompleted}
            onSave={handleInvoiceSave}
+           showPrintBtn={allRequiredStepsCompleted && location.pathname.includes('/preview')}
            isLoading={mutation.isPending}
+           handlePrint={handlePrint}
           />
         </Grid>
 

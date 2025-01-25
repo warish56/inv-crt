@@ -1,4 +1,5 @@
 import { Service } from "@types/db";
+import { DiscountType, SupplyType } from "@types/tax";
 import { atom } from "jotai";
 
 
@@ -7,8 +8,8 @@ export const servicesAtom = atom<Service[]>([])
 
 type Billing = {
     discountApplied: boolean;
-    supplyType: 'intraState' | 'interState' | 'unionTerritory';
-    discountType: 'percentage'| 'fixed' | '';
+    supplyType: SupplyType;
+    discountType: DiscountType;
     discountValue: string;
 }
 

@@ -115,18 +115,18 @@ export const useTaxManager = () => {
       return {
         totalAmount: Math.max(totalAmount, 0),
         totalBillTaxes: {
-          cgst: totalBillTaxes.cgst.toFixed(2), 
-          igst: totalBillTaxes.igst.toFixed(2),   
-          sgst: totalBillTaxes.sgst.toFixed(2),  
-          utgst: totalBillTaxes.utgst.toFixed(2), 
+          cgst: totalBillTaxes.cgst, 
+          igst: totalBillTaxes.igst,   
+          sgst: totalBillTaxes.sgst,  
+          utgst: totalBillTaxes.utgst, 
         },
       }
     }, [allTaxes, taxableAmountAfterDiscount , billingDetails, shippingGstValue]);
 
     return {
-        totalAmount: totalAmount.toFixed(2),
+        totalAmount: totalAmount,
         totalBillTaxes,
-        subTotal: subTotal.toFixed(2),
+        subTotal: subTotal,
         discount: discount,
         shippingGstValue: shippingGstValue,
         shippingCost,

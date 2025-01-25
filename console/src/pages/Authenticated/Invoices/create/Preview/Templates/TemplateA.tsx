@@ -4,7 +4,7 @@ import { useBusinessList } from '../../Steps/BusinessSelection/hooks/useBusiness
 import { useCustomersList } from '../../Steps/CustomerSelection/hooks/useCustomersList';
 import { useBanksList } from '../../Steps/BankSelection/hooks/useBanksList';
 import { useTaxManager } from '../../hooks/useTaxManager';
-import { PlainTemplate } from '@pages/Authenticated/Invoices/common/components/Templates/PlainTemplate';
+import { PrintFriendlyTemplate } from '@pages/Authenticated/Invoices/common/components/Templates/PrintFriendlyTemplate';
 
 
 export const InvoiceTemplateA = () => {
@@ -30,7 +30,7 @@ export const InvoiceTemplateA = () => {
 
 
   return (
-    <PlainTemplate 
+    <PrintFriendlyTemplate 
     businessData={businessData}
     customerData={customerData}
     bankData={bankData}

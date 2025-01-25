@@ -35,7 +35,7 @@ export const CreateInvoiceLayout = () => {
     pageStyle: `
       @page { 
         size: A4; 
-        margin: 1mm; 
+        margin: 10mm; 
       }
       @media print {
         body { 

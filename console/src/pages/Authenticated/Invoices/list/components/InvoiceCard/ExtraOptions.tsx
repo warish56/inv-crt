@@ -2,7 +2,7 @@ import { Box, IconButton, Menu, MenuItem } from "@mui/material"
 
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import PrintIcon from '@mui/icons-material/Print';
+// import PrintIcon from '@mui/icons-material/Print';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EmailIcon from '@mui/icons-material/Email';
@@ -33,10 +33,9 @@ export const ExtraOptions = ({invoiceId, handleDelete:onDelete}:props) => {
       onDelete();
   }
 
-  const handlePrint = () => {
-      window.print();
-      handleMenuClose();
-  }
+//   const handlePrint = () => {
+//       handleMenuClose();
+//   }
 
   const handleEdit = () => {
         navigate(`/invoices/create/business?inv_id=${invoiceId}`)
@@ -76,9 +75,9 @@ export const ExtraOptions = ({invoiceId, handleDelete:onDelete}:props) => {
                 <MenuItem onClick={handleEdit} sx={{ gap: 1.5 }}>
                     <EditIcon fontSize="small" /> Edit
                 </MenuItem>
-                <MenuItem onClick={handlePrint} sx={{ gap: 1.5 }}>
+                {/* <MenuItem onClick={handlePrint} sx={{ gap: 1.5 }}>
                     <PrintIcon fontSize="small" /> Print
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={handleSendEmail} sx={{ gap: 1.5 }}>
                     <EmailIcon fontSize="small" /> Send Email
                 </MenuItem>

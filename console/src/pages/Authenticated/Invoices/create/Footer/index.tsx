@@ -1,29 +1,39 @@
-import React from 'react';
 import {
   Button,
   Stack,
   IconButton,
-  Tooltip
+  Tooltip,
+  CircularProgress
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import SaveIcon from '@mui/icons-material/Save';
 import SendIcon from '@mui/icons-material/Send';
+import DownloadIcon from '@mui/icons-material/Download';
+
+type loadingState = {
+  isCreatingOrEditing: boolean;
+  isDownloading: boolean;
+}
 
 type Props = {
   allStepsCompleted: boolean;
   onSave: () => void;
-  isLoading: boolean;
+  loaders:loadingState;
   onSendInvoice?: () => void;
   handlePrint: () => void;
+  handleDownload: () => void;
   showPrintBtn: boolean;
+  showDownloadBtn: boolean;
 }
 
 export const StepFooter = ({
   allStepsCompleted,
   onSave,
-  isLoading,
+  loaders,
   onSendInvoice,
   handlePrint,
+  handleDownload,
+  showDownloadBtn,
   showPrintBtn
 }: Props) => {
 
@@ -31,6 +41,7 @@ export const StepFooter = ({
     return null;
   }
   
+  const {isCreatingOrEditing, isDownloading} = loaders
   return (
     <Stack
       direction="row"
@@ -42,6 +53,26 @@ export const StepFooter = ({
         width: '100%'
       }}
     >
+
+    {showDownloadBtn &&
+        <Tooltip title="Doenload Invoice">
+          <IconButton 
+            disabled={isDownloading}
+            onClick={handleDownload}
+            sx={{ 
+              color: 'text.secondary',
+              '&:hover': {
+                backgroundColor: 'grey.100'
+              }
+            }}
+          >
+            {isDownloading ? <CircularProgress color='primary' size="20px" /> : <DownloadIcon />}
+          </IconButton>
+        </Tooltip>
+      }
+
+
+
       {showPrintBtn &&
         <Tooltip title="Print Invoice">
           <IconButton 
@@ -57,6 +88,7 @@ export const StepFooter = ({
           </IconButton>
         </Tooltip>
       }
+
 
       {onSendInvoice && (
         <Tooltip title="Send Invoice">
@@ -76,7 +108,7 @@ export const StepFooter = ({
 
       <Button 
         onClick={onSave} 
-        disabled={isLoading} 
+        disabled={isCreatingOrEditing} 
         variant="contained"
         startIcon={<SaveIcon />}
       >

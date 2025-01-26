@@ -1,8 +1,31 @@
 
 const express = require('express');
+const multer = require('multer');
 const { sendFailureResponse, sendSuccessResponse } = require('../utils/response');
-const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb, getInvoiceFullDetails, deleteInvoiceDetails } = require('../controller/invoice');
+const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb, getInvoiceFullDetails, deleteInvoiceDetails, generateInvoicePdf } = require('../controller/invoice');
 const router = express.Router();
+// Configure Multer for file storage in memory
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+
+
+router.post('/download', upload.single('file'), async (req, res) => {
+    try{
+        const {invoiceId}  = req.body;
+        const htmlContent = req.file.buffer.toString();
+        const pdf = await generateInvoicePdf(invoiceId, `${htmlContent}`);
+        const date = new Date().toLocaleDateString();
+        res.header({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename=invoice_${date.split('/').join('_')}.pdf`,
+        });
+        res.end(pdf);
+    }catch(err){
+        console.log("==Error in invoice download ==", err);
+        return sendFailureResponse(res, err, 'Something went wrong in invoice downloading')
+    }
+})
 
 
 router.delete('/delete', async (req, res) => {

@@ -21,6 +21,7 @@ export const ApiRoutes = {
     },
     invoice: {
         list: '/invoice/list',
+        download: '/invoice/download',
         delete: '/invoice/delete',
         details: '/invoice/details',
         create: '/invoice/create',

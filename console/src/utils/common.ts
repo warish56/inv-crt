@@ -1,5 +1,4 @@
 
-
 export const generateUniquId = (size = 5) => {
     let str = '';
     for(let i=0; i< size; i++){
@@ -15,4 +14,24 @@ export const formatCurrency = (amount:number|string) => {
         currency: 'INR',
     }).format(value);
     return formattedAmount;
+}
+
+export const createLink = (url:string, options:{download?:string}) => {
+    const a = document.createElement('a');
+    a.href = url;
+    Object.keys(options).forEach((key:string) => {
+        const val = (options as Record<string, string>)[key];
+        if(val){
+            a.setAttribute(key, val)
+        }
+    })
+    return a;
+}
+
+export const downloadBlob = (blob:Blob) => {
+    const url = URL.createObjectURL(blob);
+    const link = createLink(url, {download: 'invoice.pdf'});
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
 }

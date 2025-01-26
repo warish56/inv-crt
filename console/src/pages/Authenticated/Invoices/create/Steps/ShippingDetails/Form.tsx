@@ -17,7 +17,7 @@ import {
   LocationOn
 } from '@mui/icons-material';
 
-import { FormField } from '../../common/FormField';
+import { FormField } from '../../../../../../components/Form/FormField';
 import { ReactFormExtendedApi } from '@tanstack/react-form';
 import { IndianStates } from '@constants/states';
 import { useAutoSaveAtom } from '../../hooks/useAutoSaveAtom';
@@ -133,7 +133,7 @@ export const ShippingDetailsForm = ({
           </Grid>
 
           <Grid item xs={12} sm={6} md={4}>
-          <form.Field name='state'>
+            <form.Field name='state'>
             {(field) => (
                 <FormField
                 select

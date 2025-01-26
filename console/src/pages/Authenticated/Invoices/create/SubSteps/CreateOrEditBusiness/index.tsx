@@ -19,7 +19,7 @@ import {
 import { SubStepHeader } from '../../components/SubStepHeader';
 import { FormHeader } from '../../common/FormHeader';
 import { useForm } from '@tanstack/react-form';
-import { FormField } from '../../common/FormField';
+import { FormField } from '../../../../../../components/Form/FormField';
 import { Countries, IndianStates } from '@constants/states';
 import { nonEmptyValidator, phoneValidator, validateField } from '@utils/validators';
 import { useCreateOrEditBusiness } from './hooks/useCreateOrEditBusiness';

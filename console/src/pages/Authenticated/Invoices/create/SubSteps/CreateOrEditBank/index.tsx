@@ -19,7 +19,7 @@ import { useCreateOrEditBank } from './hooks/useCreateOrEditBank';
 import { useSnackbar } from '@hooks/useSnackbar';
 import { useBanksList } from '../../Steps/BankSelection/hooks/useBanksList';
 import { useForm } from '@tanstack/react-form';
-import { FormField } from '../../common/FormField';
+import { FormField } from '../../../../../../components/Form/FormField';
 
 
 const attributes = {

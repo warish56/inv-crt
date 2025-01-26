@@ -8,25 +8,27 @@ type ApiResponse = {
     invoices: PartialInvoice[]
 }
 
-const fetchInvoicesList = (userId: string, filters:Filters) => {
-    return fetchData<ApiResponse>(ApiRoutes.invoice.list, {
+const fetchInvoiceList = (userId: string, searchText:string, filters:Filters) => {
+    return fetchData<ApiResponse>(ApiRoutes.invoice.search, {
         method: 'POST',
-        body: JSON.stringify({userId, filters})
+        body: JSON.stringify({userId, searchText, filters})
     })
 }
 
 type props = {
     userId: string;
+    searchText: string;
     filters:Filters
+
 }
-export const useInvoicesList = ({userId, filters}:props) => {
-    const filtersKey = JSON.stringify(filters)
+export const useInvoiceSearch = ({userId, searchText, filters}:props) => {
     const query = useQuery({
-        queryKey: [AppQueries.invoiceList, userId, filtersKey],
+        queryKey: [AppQueries.invoiceSearch, searchText],
         queryFn: () => {
-            return  fetchInvoicesList(userId, filters)
+            return  fetchInvoiceList(userId, searchText, filters)
         },
         refetchOnWindowFocus: false,
+        enabled: !!searchText,
     })
     
     return query;

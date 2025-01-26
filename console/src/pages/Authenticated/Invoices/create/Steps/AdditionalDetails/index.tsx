@@ -10,12 +10,12 @@ import {
 import { StepHeader } from '../../components/StepHeader';
 import { useForm } from '@tanstack/react-form';
 import { useExtraDetailsAtom } from '../../hooks/useExtraDetailsAtom';
-import { FormField } from '../../common/FormField';
+import { FormField } from '../../../../../../components/Form/FormField';
 import { useAutoSaveAtom } from '../../hooks/useAutoSaveAtom';
 import { isDateAheadAndEqual, nonEmptyValidator } from '@utils/validators';
 import { validateField } from '@utils/validators';
 import dayjs, { Dayjs } from 'dayjs';
-import { DateField } from '../../common/DateField';
+import { DateField } from '../../../../../../components/Form/DateField';
 
 type formState = {
   invoiceId: string;

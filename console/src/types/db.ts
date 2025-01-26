@@ -95,3 +95,9 @@ export type PartialInvoice = {
     "total_amt": number;
     payment_date: string | null;
 }
+
+export type Filters = {
+    invoiceStatus: InvoiceStatus | '';
+    invoiceDueCondition: string | null;
+    invoiceDueDate: string | null;
+}

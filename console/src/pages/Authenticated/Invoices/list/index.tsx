@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { 
   Box,
   Typography,
@@ -7,13 +7,11 @@ import {
   InputAdornment,
   ToggleButton,
   ToggleButtonGroup,
-  Button,
 } from '@mui/material';
 import { 
   Search,
   GridView,
   ViewList,
-  FilterList,
 } from '@mui/icons-material';
 import { Stats } from './Stats';
 import { InvoiceCard } from './components/InvoiceCard';
@@ -21,30 +19,52 @@ import { useInvoicesList } from './hooks/useInvoicesList';
 import { useSnackbar } from '@hooks/useSnackbar';
 import { StatsLoader } from './loaders/stats';
 import { InvoiceListLoader } from './loaders/list';
+import { useInvoiceSearch } from './hooks/useInvoiceSearch';
+import { debounce } from '@utils/time';
+import { FiltersPopoverButton } from './components/Filters';
+import { Filters } from '@types/db';
 
   
 export const InvoiceListPage = () => {
   const [viewMode, setViewMode] = useState('grid');
-  const {data, isPending, error} = useInvoicesList({userId: '1'});
-  const {showSnackbar} = useSnackbar()
+  const [searchText, setSearchText] = useState('');
+  const [filters, setFilters] = useState<Filters>({
+    invoiceStatus: '',
+    invoiceDueCondition: '',
+    invoiceDueDate: null
+  })
+  const [serverSearchText, setServerSearchText] = useState('');
+  const {isPending: isFetchingInvoiceList, error:listError, data: listData} = useInvoicesList({userId: '1', filters});
+  const {isPending: isSearching, error:searchError, data:searchData} = useInvoiceSearch({userId: '1', searchText:serverSearchText, filters})
+  const {showSnackbar} = useSnackbar();
+  const debouncedRef = useRef({ set: debounce(setServerSearchText, 500)});
+
+
+  const handleSearchChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+    debouncedRef.current.set(e.target.value);
+  }
 
 
   useEffect(() => {
-    if(data?.[1] || error ){
+    if(listData?.[1] || listError || searchData?.[1] || searchError){
       showSnackbar({
-        message: data?.[1] || error?.message || '',
+        message: listData?.[1] || listError?.message || searchData?.[1] || searchError?.message ||  '',
         type: 'error'
-      });
+      })
     }
-  }, [data, error]);
+  }, [listData, listError, searchError, searchData])
 
-  const list = data?.[0]?.invoices ?? [];
-  const isLoading = isPending;
 
-  const totalAmount = list.reduce((prevValue, currentValue) => currentValue.total_amt + prevValue , 0);
-  const pendingAmount = list.reduce((prevValue, currentValue) => currentValue.status === 'pending' ? currentValue.total_amt + prevValue : prevValue , 0)
-  const paidAmount = list.reduce((prevValue, currentValue) => currentValue.status === 'paid' ? currentValue.total_amt + prevValue : prevValue, 0)
-  const overDueAmount = list.reduce((prevValue, currentValue) => currentValue.status === 'overdue' ? currentValue.total_amt + prevValue : prevValue, 0)
+  const list = (searchText ? searchData?.[0]?.invoices : listData?.[0]?.invoices) ?? []
+  const initialInvoicesList = listData?.[0]?.invoices ?? [];
+  const isLoading = (searchText && isSearching) || isFetchingInvoiceList;
+
+
+  const totalAmount = initialInvoicesList.reduce((prevValue, currentValue) => currentValue.total_amt + prevValue , 0);
+  const pendingAmount = initialInvoicesList.reduce((prevValue, currentValue) => currentValue.status === 'pending' ? currentValue.total_amt + prevValue : prevValue , 0)
+  const paidAmount = initialInvoicesList.reduce((prevValue, currentValue) => currentValue.status === 'paid' ? currentValue.total_amt + prevValue : prevValue, 0)
+  const overDueAmount = initialInvoicesList.reduce((prevValue, currentValue) => currentValue.status === 'overdue' ? currentValue.total_amt + prevValue : prevValue, 0)
 
   return (
     <Box sx={{ p: 3, bgcolor: 'background.default', minHeight: '100vh' }}>
@@ -55,7 +75,7 @@ export const InvoiceListPage = () => {
         </Typography>
 
         <Grid container spacing={3} sx={{ mb: 4 }}>
-            {isLoading ?
+            {isFetchingInvoiceList ?
               <StatsLoader />
               :
               <Stats 
@@ -67,11 +87,13 @@ export const InvoiceListPage = () => {
             }
         </Grid>
 
-        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+        <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'stretch' }}>
           <TextField
             fullWidth
             variant="outlined"
-            placeholder="Search invoices..."
+            value={searchText}
+            onChange={handleSearchChange}
+            placeholder="Search invoices using name, customer name, notes..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -80,13 +102,9 @@ export const InvoiceListPage = () => {
               ),
             }}
           />
-          <Button
-            variant="outlined"
-            startIcon={<FilterList />}
-            sx={{ minWidth: '120px' }}
-          >
-            Filters
-          </Button>
+          <FiltersPopoverButton 
+            handleFiltersChange={(filters) => setFilters(filters)}
+          />
           <ToggleButtonGroup
             value={viewMode}
             exclusive

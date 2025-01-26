@@ -125,7 +125,7 @@ const searchBusinessByNameOrNumber = async (userId, searchText) => {
     ];
 
     const uniqueResults = Array.from(new Map(totalResults.map(result => [result.$id, result])).values())
-    return uniqueResults[0].$createdAt
+    return uniqueResults;
 }
 
 const getBusinessWithId = async (businessId) => {

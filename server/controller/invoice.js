@@ -1,5 +1,5 @@
 const { getCustomerWithId } = require("../db/customer");
-const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice, updateInvoiceStatus, deleteInvoice } = require("../db/invoice");
+const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice, updateInvoiceStatus, deleteInvoice, searchInvoiceByNameOrCustomerNameOrNotes } = require("../db/invoice");
 const { deleteShippingWithId, getShippingWithId } = require("../db/shipping");
 const { generatePdf } = require("../services/pdf");
 const { createShippingData, updateShippingData } = require("./shipings");
@@ -31,9 +31,7 @@ const getInvoiceFullDetails = async (invoiceId) => {
 }
 
 
-
-const getAllInvoicesOfUser = async (userId) => {
-    const invoicesList = await getUserInvoicesList(userId);
+const generatePartialInvoicesList = async (invoicesList) => {
     const result = []
     for(const invoice of invoicesList){
         const customerDetails = await getCustomerWithId(invoice.customer_id);
@@ -52,6 +50,13 @@ const getAllInvoicesOfUser = async (userId) => {
         result.push(data)
     }
     return result;
+}
+
+
+const getAllInvoicesOfUser = async (userId, filters) => {
+    const invoicesList = await getUserInvoicesList(userId, filters);
+    const partialList = await generatePartialInvoicesList(invoicesList);
+    return partialList;
 }
 
 
@@ -204,6 +209,12 @@ const generateInvoicePdf = async (invoiceId, htmlContent) => {
     return pdf;
 }
 
+const searchInvoiceOfUser = async (userId, searchText, filters) => {
+    const invoicesList = await searchInvoiceByNameOrCustomerNameOrNotes(userId, searchText, filters);
+    const partialList = await generatePartialInvoicesList(invoicesList);
+    return partialList
+}
+
 
 module.exports = {
     getAllInvoicesOfUser,
@@ -212,5 +223,6 @@ module.exports = {
     updateInvoiceStatusInDb,
     getInvoiceFullDetails,
     deleteInvoiceDetails,
-    generateInvoicePdf
+    generateInvoicePdf,
+    searchInvoiceOfUser
 }

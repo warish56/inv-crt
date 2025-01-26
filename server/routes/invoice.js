@@ -2,7 +2,7 @@
 const express = require('express');
 const multer = require('multer');
 const { sendFailureResponse, sendSuccessResponse } = require('../utils/response');
-const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb, getInvoiceFullDetails, deleteInvoiceDetails, generateInvoicePdf } = require('../controller/invoice');
+const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb, getInvoiceFullDetails, deleteInvoiceDetails, generateInvoicePdf, searchInvoiceOfUser } = require('../controller/invoice');
 const router = express.Router();
 // Configure Multer for file storage in memory
 const storage = multer.memoryStorage();
@@ -44,8 +44,8 @@ router.delete('/delete', async (req, res) => {
 
 router.post('/list', async (req, res) => {
     try{
-        const {userId}  = req.body;
-        const invoicesList = await getAllInvoicesOfUser(userId);
+        const {userId, filters}  = req.body;
+        const invoicesList = await getAllInvoicesOfUser(userId, filters);
         return sendSuccessResponse(res, {
             invoices: invoicesList 
         })
@@ -193,5 +193,20 @@ router.put('/update_status', async (req, res) => {
         return sendFailureResponse(res, err, 'Something went wrong in invoice status updation')
     }
 })
+
+
+router.post('/search', async (req, res) => {
+    try{
+        const {userId, searchText, filters}  = req.body;
+        const invoicesList = await searchInvoiceOfUser(userId, searchText, filters);
+        return sendSuccessResponse(res, {
+            invoices: invoicesList 
+        })
+    }catch(err){
+        console.log("==Error in invoice search ==", err);
+        return sendFailureResponse(res, err, 'Something went wrong in invoice search')
+    }
+})
+
 
 module.exports = router;

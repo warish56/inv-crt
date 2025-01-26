@@ -1,6 +1,7 @@
 const sdk = require("node-appwrite");
 const {dbValues} = require('./init');
 const { createAttributesInDb, getExistingCollection } = require("../utils/db");
+const { searchCustomersByNameOrEmailOrPhone } = require("./customer");
 
 const {Query} = sdk
 
@@ -26,6 +27,8 @@ const Attributes = {
         name: 'invoice_name',
         type: 'string',
         required: true,
+        index: sdk.IndexType.Fulltext,
+        indexName: 'invoice_name_index'
     },
     status: {
         name: 'invoice_status',
@@ -82,6 +85,8 @@ const Attributes = {
         name: 'notes',
         type: 'string',
         required: false, 
+        index: sdk.IndexType.Fulltext,
+        indexName: 'invoice_notes_index'
     },
     supplyType: {
         name: 'supply_type',
@@ -151,13 +156,78 @@ const deleteInvoice = async (invoiceId) => {
      await databases.deleteDocument(dbValues.db.$id, collectionData.collection.$id, invoiceId);
 }
 
-const getUserInvoicesList = async (userId) => {
+const getFilterCondition = (condition) => {
+    switch(condition){
+        case 'greater': return Query.greaterThan;
+        case 'less': return Query.lessThan;
+        case 'equal': return Query.equal;
+        default: return null;
+    }
+}
+
+const getInvoiceFilters = (filters) => {
+    const dbFilters = [];
+    Object.keys(filters).forEach((key) => {
+        const value = filters[key];
+        if(!value){
+            return;
+        }
+        if(key === 'invoiceStatus'){
+            dbFilters.push(Query.equal(Attributes.status.name, value));
+        }else if(key === 'invoiceDueDate'){
+            const queryCondition = getFilterCondition(filters['invoiceDueCondition']);
+            dbFilters.push(queryCondition(Attributes.invoiceDueDate.name, value));
+        }
+    })
+    return dbFilters;
+}
+
+const getUserInvoicesList = async (userId, filters) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
         Query.equal(Attributes.userId.name, userId),
+        ...getInvoiceFilters(filters),
         Query.orderDesc('$createdAt')
     ]);
     return result.documents;
+}
+
+
+const searchInvoiceByNameOrCustomerNameOrNotes = async (userId, searchText) => {
+    const databases = new sdk.Databases(dbValues.client);
+    const result1 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
+        Query.search(Attributes.invoiceName.name, searchText),
+        Query.equal(Attributes.userId.name, userId),
+        Query.orderDesc('$createdAt')
+    ]);
+
+    const userCustomers = await searchCustomersByNameOrEmailOrPhone(userId, searchText);
+
+    let result2 = []
+    
+    if(userCustomers.length > 0){
+        result2 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
+            Query.equal(Attributes.customerId.name, userCustomers.map(customer => customer.$id)),
+            Query.equal(Attributes.userId.name, userId),
+            Query.orderDesc('$createdAt')
+        ]);
+    }
+
+
+
+    const result3 = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
+        Query.search(Attributes.notes.name, searchText),
+        Query.equal(Attributes.userId.name, userId),
+        Query.orderDesc('$createdAt')
+    ]);
+    const totalResults =  [
+        ...result1.documents, 
+        ...(result2?.documents ?? []),
+        ...result3.documents
+    ];
+
+    const uniqueResults = Array.from(new Map(totalResults.map(result => [result.$id, result])).values())
+    return uniqueResults;
 }
 
 
@@ -286,4 +356,5 @@ module.exports = {
     updateInvoiceStatus,
     getUserInvoicesList,
     getInvoiceWithId,
+    searchInvoiceByNameOrCustomerNameOrNotes
 }

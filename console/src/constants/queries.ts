@@ -9,4 +9,6 @@ export const AppQueries = {
     invoiceList: 'invoice_list',
     invoiceDetails: 'invoice_details',
     bankSearch: 'bank_search',
+    invoiceSearch: 'invoice_search',
+
 }

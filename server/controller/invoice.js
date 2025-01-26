@@ -1,6 +1,7 @@
 const { getCustomerWithId } = require("../db/customer");
 const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice, updateInvoiceStatus, deleteInvoice } = require("../db/invoice");
 const { deleteShippingWithId, getShippingWithId } = require("../db/shipping");
+const { generatePdf } = require("../services/pdf");
 const { createShippingData, updateShippingData } = require("./shipings");
 
 
@@ -192,11 +193,24 @@ const updateInvoiceStatusInDb = async ({
     };
 }
 
+
+
+const generateInvoicePdf = async (invoiceId, htmlContent) => {
+    const invoice = await getInvoiceWithId(invoiceId);
+    if(!invoice){
+        throw {message: 'Invoice not found', status: '404'}
+    }
+    const pdf = await generatePdf(htmlContent);
+    return pdf;
+}
+
+
 module.exports = {
     getAllInvoicesOfUser,
     createNewInvoiceForUser,
     updateInvoiceDetails,
     updateInvoiceStatusInDb,
     getInvoiceFullDetails,
-    deleteInvoiceDetails
+    deleteInvoiceDetails,
+    generateInvoicePdf
 }

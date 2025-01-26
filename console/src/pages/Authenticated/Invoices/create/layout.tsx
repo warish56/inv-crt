@@ -18,20 +18,45 @@ import { useSnackbar } from '@hooks/useSnackbar';
 import { useGetInvoiceDetails } from './hooks/server/useGetInvoiceDetails';
 import { useDataInitializer } from './hooks/useDataInitializer';
 import { useReactToPrint } from 'react-to-print';
+import { useDownloadInvoice } from '../list/hooks/useDownloadInvoice';
 
 
+type tempRefState = {
+  onceInitialized: boolean; 
+  prevEditMode: boolean | null;
+  isDownloadFlow: boolean;
+}
 
 export const CreateInvoiceLayout = () => {
   const {allRequiredStepsCompleted} = useStepsStatusTracker()
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const navigate= useNavigate()
+  const navigate= useNavigate();
   const {getInvoicePayloadForServer} = useInvoiceAtom();
-  const {showSnackbar} = useSnackbar()
+  const {showSnackbar} = useSnackbar();
+  const tempRef = useRef<tempRefState>({onceInitialized: false, prevEditMode:null, isDownloadFlow: false})
+
   const reactToPrintFn = useReactToPrint({ 
     contentRef: scrollContainerRef,
     documentTitle: `Invoice-${new Date().toISOString()}`,
+    print: (data) => {
+      if(tempRef.current.isDownloadFlow){
+        const html  = data.contentDocument?.documentElement.outerHTML;
+        downloadMutation.mutateAsync({
+          invoiceId: invoice?.$id || '',
+          htmlContent: html || ''
+        });
+        tempRef.current.isDownloadFlow = false;
+        return Promise.resolve({success: true})
+      }else{
+        return new Promise((res) => {
+          data.contentWindow?.print();
+          res({success:true});
+        })
+      }
+
+    },
     pageStyle: `
       @page { 
         size: A4; 
@@ -47,10 +72,10 @@ export const CreateInvoiceLayout = () => {
   const invoiceId = searchParams.get('inv_id');
   const isEditMode = !!invoiceId;
 
-  const tempRef = useRef<{onceInitialized: boolean; prevEditMode: boolean | null}>({onceInitialized: false, prevEditMode:null})
 
   const {data:invoiceResult, isPending: isLoadingInvoiceDetails} = useGetInvoiceDetails({invoiceId})
-  const mutation = useCreateOrEditInvoice(isEditMode ? 'edit': 'create');
+  const createOrEditmutation = useCreateOrEditInvoice(isEditMode ? 'edit': 'create');
+  const downloadMutation = useDownloadInvoice();
   const {initializeData, resetData} = useDataInitializer()
 
   const invoice = invoiceResult?.[0]?.invoice ?? null
@@ -88,7 +113,7 @@ export const CreateInvoiceLayout = () => {
 
 
   const handleInvoiceSave = () => {
-      mutation.mutateAsync({
+    createOrEditmutation.mutateAsync({
         userId: '1',
         ...(isEditMode ? {invoiceId} :  {}),
         ...getInvoicePayloadForServer()
@@ -104,6 +129,11 @@ export const CreateInvoiceLayout = () => {
   }
 
   const handlePrint = () => {
+    reactToPrintFn();
+  }
+
+  const handleDownload = () => {
+    tempRef.current.isDownloadFlow = true;
     reactToPrintFn();
   }
 
@@ -171,8 +201,13 @@ export const CreateInvoiceLayout = () => {
            allStepsCompleted={allRequiredStepsCompleted}
            onSave={handleInvoiceSave}
            showPrintBtn={allRequiredStepsCompleted && location.pathname.includes('/preview')}
-           isLoading={mutation.isPending}
+           showDownloadBtn={isEditMode && allRequiredStepsCompleted && location.pathname.includes('/preview')}
+           loaders={{
+            isCreatingOrEditing: createOrEditmutation.isPending,
+            isDownloading: downloadMutation.isPending
+           }}
            handlePrint={handlePrint}
+           handleDownload={handleDownload}
           />
         </Grid>
 

@@ -1,13 +1,11 @@
 import { FormField } from "@components/Form/FormField";
-import { Button, Stack, Typography } from "@mui/material"
-import { ReactFormExtendedApi, useForm } from "@tanstack/react-form";
+import { Button, Stack } from "@mui/material"
+import { ReactFormExtendedApi, useStore } from "@tanstack/react-form";
 
 import EmailIcon from '@mui/icons-material/Email';
 import SubjectIcon from '@mui/icons-material/Subject';
-import GroupIcon from '@mui/icons-material/Group';
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import { AutoCompleteFormField } from "@components/Form/AutoCompleteField";
-import { validateField } from "@utils/validators";
+import { emailValidator, validateField } from "@utils/validators";
 import { nonEmptyValidator } from "@utils/validators";
 
 
@@ -28,6 +26,7 @@ type props = {
 
 export const EmailForm = ({onCancel, form, isSending}:props) => {
 
+    const canSubmit = useStore(form.store, (state => state.canSubmit))
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         form.handleSubmit();
@@ -38,8 +37,6 @@ export const EmailForm = ({onCancel, form, isSending}:props) => {
         onCancel();
     }
 
-    const hasAnyErrors = form.state.errors.length > 0
-    console.log("==errors==",{form: form.state})
 
     return (
         <Stack 
@@ -57,6 +54,10 @@ export const EmailForm = ({onCancel, form, isSending}:props) => {
                           validator: nonEmptyValidator,
                           errorMessage: 'Clients email is required'
                         },
+                        {
+                            validator: emailValidator,
+                            errorMessage: 'Invalid email'
+                          },
                       ];
                       return validateField(validators, value);
                 }
@@ -73,7 +74,21 @@ export const EmailForm = ({onCancel, form, isSending}:props) => {
                 )}
             </form.Field>
 
-            <form.Field name="ccEmails">
+            <form.Field 
+            name="ccEmails"
+            validators={{
+                onChange: ({value}) => {
+                    const validators = [
+                        {
+                            validator: (...rest:unknown[]) => (rest as string[]).every(emailValidator),
+                            errorMessage: 'Invalid email'
+                          },
+                      ];
+                      return validateField(validators, ...value);
+                }
+            }}
+            
+            >
                 {(field) => (
                         <AutoCompleteFormField 
                         freeSolo
@@ -149,7 +164,7 @@ export const EmailForm = ({onCancel, form, isSending}:props) => {
                 justifyContent: 'flex-end'
             }}>
                 <Button variant="text" onClick={handleCancel}>Cancel</Button>
-                <Button disabled={hasAnyErrors || isSending} variant="contained" type="submit">Send</Button>
+                <Button disabled={!canSubmit || isSending} variant="contained" type="submit">Send</Button>
             </Stack>
 
         </Stack>

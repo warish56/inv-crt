@@ -13,8 +13,9 @@ import { useAppNavigation } from "@hooks/useAppNavigation";
 type props = {
     invoiceId: string;
     handleDelete: () => void;
+    handleSendMail: () => void;
 }
-export const ExtraOptions = ({invoiceId, handleDelete:onDelete}:props) => {
+export const ExtraOptions = ({invoiceId, handleDelete:onDelete, handleSendMail:onSendMail}:props) => {
     const {showSnackbar} = useSnackbar();
     const {navigate} = useAppNavigation();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -29,9 +30,15 @@ export const ExtraOptions = ({invoiceId, handleDelete:onDelete}:props) => {
     };
 
     const handleDelete = () => {
-      handleMenuClose();
-      onDelete();
-  }
+        handleMenuClose();
+        onDelete();
+    }
+
+
+  const handleSendEmail = () => {
+        handleMenuClose();
+        onSendMail();
+    }
 
 //   const handlePrint = () => {
 //       handleMenuClose();
@@ -44,12 +51,6 @@ export const ExtraOptions = ({invoiceId, handleDelete:onDelete}:props) => {
 
   const open = Boolean(anchorEl);
 
-
-  const handleSendEmail = () => {
-      // Implement email sending logic
-      showSnackbar({message: 'Send invoice email not implemented', type: 'info'});
-      handleMenuClose();
-  }
   
     return (
         <Box>

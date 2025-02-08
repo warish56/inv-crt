@@ -1,8 +1,14 @@
+const { getBusinessWithId } = require("../db/businessDetails");
 const { getCustomerWithId } = require("../db/customer");
 const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice, updateInvoiceStatus, deleteInvoice, searchInvoiceByNameOrCustomerNameOrNotes } = require("../db/invoice");
 const { deleteShippingWithId, getShippingWithId } = require("../db/shipping");
+const { sendMail } = require("../services/email/provider/sendgrid");
+const { generateInvoiceEmailTemplate } = require("../services/email/templates/invoice");
 const { generatePdf } = require("../services/pdf");
+const { formatCurrency } = require("../utils/common");
 const { createShippingData, updateShippingData } = require("./shipings");
+const dayjs = require('dayjs')
+
 
 
 const deleteInvoiceDetails = async (invoiceId) => {
@@ -58,6 +64,38 @@ const getAllInvoicesOfUser = async (userId, filters) => {
     const partialList = await generatePartialInvoicesList(invoicesList);
     return partialList;
 }
+
+const sendInvoiceMail = async (payload) => {
+    const {
+        clientsEmail,
+        ccEmails,
+        subject,
+        message,
+        invoiceId,
+    } = payload;
+    const invoice = await getInvoiceWithId(invoiceId);
+    if(!invoice){
+        throw {message: 'Invoice not found', status: 404}
+    }
+    const client = await getCustomerWithId(invoice.customer_id);
+    const business = await getBusinessWithId(invoice.business_id);
+
+    await sendMail({
+        email: clientsEmail,
+        subject,
+        text: message,
+        cc:ccEmails,
+        html: generateInvoiceEmailTemplate({
+            message,
+            invoiceNumber: invoice.invoice_number,
+            billingDate: dayjs(invoice.invoice_date).format('D MMMM, YYYY'),
+            dueDate: dayjs(invoice.invoice_due_date).format('D MMMM, YYYY'),
+            dueAmt: formatCurrency(invoice.invoice_total_amount),
+            clientBusinessName: client?.business_name ?? '',
+            senderBusinessName: business?.name ?? 'My Business'
+        }) ,
+    })
+} 
 
 
 const createNewInvoiceForUser = async ({
@@ -224,5 +262,6 @@ module.exports = {
     getInvoiceFullDetails,
     deleteInvoiceDetails,
     generateInvoicePdf,
-    searchInvoiceOfUser
+    searchInvoiceOfUser,
+    sendInvoiceMail
 }

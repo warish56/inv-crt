@@ -2,7 +2,7 @@
 const express = require('express');
 const multer = require('multer');
 const { sendFailureResponse, sendSuccessResponse } = require('../utils/response');
-const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb, getInvoiceFullDetails, deleteInvoiceDetails, generateInvoicePdf, searchInvoiceOfUser } = require('../controller/invoice');
+const { getAllInvoicesOfUser, createNewInvoiceForUser, updateInvoiceDetails, updateInvoiceStatusInDb, getInvoiceFullDetails, deleteInvoiceDetails, generateInvoicePdf, searchInvoiceOfUser, sendInvoiceMail } = require('../controller/invoice');
 const router = express.Router();
 // Configure Multer for file storage in memory
 const storage = multer.memoryStorage();
@@ -52,6 +52,19 @@ router.post('/list', async (req, res) => {
     }catch(err){
         console.log("==Error in invoice list ==", err);
         return sendFailureResponse(res, err, 'Something went wrong in invoices list')
+    }
+})
+
+
+router.post('/send_mail', async (req, res) => {
+    try{
+         await sendInvoiceMail(req.body);
+        return sendSuccessResponse(res, {
+            sucess: true 
+        })
+    }catch(err){
+        console.log("==Error in sending mail ==", err);
+        return sendFailureResponse(res, err, 'Something went wrong in sending mail')
     }
 })
 

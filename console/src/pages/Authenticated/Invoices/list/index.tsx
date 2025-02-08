@@ -23,6 +23,7 @@ import { useInvoiceSearch } from './hooks/useInvoiceSearch';
 import { debounce } from '@utils/time';
 import { FiltersPopoverButton } from './components/Filters';
 import { Filters } from '@types/db';
+import { Outlet } from 'react-router';
 
   
 export const InvoiceListPage = () => {
@@ -67,72 +68,74 @@ export const InvoiceListPage = () => {
   const overDueAmount = initialInvoicesList.reduce((prevValue, currentValue) => currentValue.status === 'overdue' ? currentValue.total_amt + prevValue : prevValue, 0)
 
   return (
-    <Box sx={{ p: 3, bgcolor: 'background.default', minHeight: '100vh' }}>
-      {/* Header and Stats sections remain the same... */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
-          Invoices
-        </Typography>
+    <>
+      <Box sx={{ p: 3, bgcolor: 'background.default', minHeight: '100vh' }}>
+        {/* Header and Stats sections remain the same... */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
+            Invoices
+          </Typography>
 
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-            {isFetchingInvoiceList ?
-              <StatsLoader />
-              :
-              <Stats 
-                totalAmount={totalAmount}
-                pendingAmount={pendingAmount}
-                paidAmount={paidAmount}
-                overDueAmount={overDueAmount}
-              />
-            }
-        </Grid>
-
-        <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'stretch' }}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            value={searchText}
-            onChange={handleSearchChange}
-            placeholder="Search invoices using name, customer name, notes..."
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search sx={{ color: 'grey.500' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <FiltersPopoverButton 
-            handleFiltersChange={(filters) => setFilters(filters)}
-          />
-          <ToggleButtonGroup
-            value={viewMode}
-            exclusive
-            onChange={(e, newValue) => newValue && setViewMode(newValue)}
-            aria-label="view mode"
-          >
-            <ToggleButton value="grid" aria-label="grid view">
-              <GridView />
-            </ToggleButton>
-            <ToggleButton value="list" aria-label="list view">
-              <ViewList />
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
-      </Box>
-
-      {/* Invoices Grid */}
-      <Grid container spacing={3}>
-        {isLoading && <InvoiceListLoader />}
-        {!isLoading && list.map((invoice) => (
-          <Grid item xs={12} sm={6} md={4}  key={invoice.$id}>
-            <InvoiceCard 
-              invoice={invoice} 
-            />
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+              {isFetchingInvoiceList ?
+                <StatsLoader />
+                :
+                <Stats 
+                  totalAmount={totalAmount}
+                  pendingAmount={pendingAmount}
+                  paidAmount={paidAmount}
+                  overDueAmount={overDueAmount}
+                />
+              }
           </Grid>
-        ))}
-        
-      </Grid>
-    </Box>
+
+          <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'stretch' }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              value={searchText}
+              onChange={handleSearchChange}
+              placeholder="Search invoices using name, customer name, notes..."
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search sx={{ color: 'grey.500' }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <FiltersPopoverButton 
+              handleFiltersChange={(filters) => setFilters(filters)}
+            />
+            <ToggleButtonGroup
+              value={viewMode}
+              exclusive
+              onChange={(e, newValue) => newValue && setViewMode(newValue)}
+              aria-label="view mode"
+            >
+              <ToggleButton value="grid" aria-label="grid view">
+                <GridView />
+              </ToggleButton>
+              <ToggleButton value="list" aria-label="list view">
+                <ViewList />
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+        </Box>
+
+        {/* Invoices Grid */}
+        <Grid container spacing={3}>
+          {isLoading && <InvoiceListLoader />}
+          {!isLoading && list.map((invoice) => (
+            <Grid item xs={12} sm={6} md={4}  key={invoice.$id}>
+              <InvoiceCard 
+                invoice={invoice} 
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+      <Outlet/>
+    </>
   );
 };

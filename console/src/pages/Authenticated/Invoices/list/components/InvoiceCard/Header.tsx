@@ -31,6 +31,7 @@ import { ExtraOptions } from './ExtraOptions';
     children?: React.ReactNode;
 
     handleDelete: () => void;
+    handleSendMail: ()=> void;
   }
   
 export const Header = ({
@@ -41,7 +42,8 @@ export const Header = ({
   status,
   onStatusChange,
   isChangingStatus,
-  handleDelete
+  handleDelete,
+  handleSendMail
 }:props) => {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -94,6 +96,7 @@ export const Header = ({
               <ExtraOptions 
               invoiceId={invoiceId}
               handleDelete={handleDelete}
+              handleSendMail={handleSendMail}
               />
           </Stack>
         </Box>

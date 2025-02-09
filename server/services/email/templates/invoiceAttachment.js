@@ -30,195 +30,228 @@ const generateInvoiceAttachmentTemplate = ({
       <head>
         <meta charset="utf-8">
  <style>
-    /* Base styles optimized for PDF generation */
-    body {
-      font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-      line-height: 1.5;
-      color: rgba(0, 0, 0, 0.87);
-      margin: 0;
-      padding: 20px;
-      max-width: 100%;
-      background-color: #ffffff;
-    }
+  body {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1.3;
+  color: rgba(0, 0, 0, 0.87);
+  margin: 37.795px;
+  padding: 15px;
+  max-width: 100%;
+  background-color: #ffffff;
+  font-size: 0.85rem;
+}
 
-    /* Header */
-    .header {
-      margin-bottom: 20px;
-      border-bottom: 2px solid #c2185b;
-      padding-bottom: 10px;
-    }
+/* Header */
+.header {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #c2185b;
+  padding-bottom: 8px;
+}
 
-    .header-content {
-      display: flex;
-      justify-content: space-between;
-    }
+.header-content{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
 
-    .business-name {
-      color: #c2185b;
-      font-size: 1.75rem;
-      font-weight: 500;
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
-    }
+.business-name {
+  color: #c2185b;
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
 
-    .invoice-title {
-      font-size: 1.5rem;
-      font-weight: 500;
-      text-align: right;
-      margin-bottom: 8px;
-    }
+.invoice-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-align: right;
+  margin-bottom: 4px;
+}
 
-    .invoice-details {
-      text-align: right;
-      line-height: 1.5;
-    }
+.invoice-details {
+  text-align: right;
+  line-height: 1.3;
+  font-size: 0.8rem;
+}
 
-    /* Address section */
-    .address-section {
-      display: flex;
-      justify-content: space-between;
-      gap: 32px;
-      margin-bottom: 20px;
-      break-inside: avoid;
-    }
+.invoice-desc-item{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+}
 
-    .address-box {
-      flex: 1;
-      padding-left: 8px;
-    }
+/* Address section */
+.address-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 15px;
+  break-inside: avoid;
+}
 
-    .address-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
+.address-box {
+  flex: 1;
+  font-size: 0.8rem;
+}
 
-    .address-content div {
-      margin-bottom: 1px;
-      line-height: 1.4;
-    }
+.address-box-content{
+  padding-left: 6px;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 5px;
+}
 
-    /* Shipping section */
-    .shipping-section {
-      margin-bottom: 20px;
-      break-inside: avoid;
-    }
+.address-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
 
-    .shipping-title {
-      color: #c2185b;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
+.address-content div {
+  margin-bottom: 1px;
+  line-height: 1.2;
+}
 
-    .shipping-boxes {
-      display: flex;
-      justify-content: space-between;
-      gap: 32px;
-    }
+/* Shipping section */
+.shipping-section {
+  margin-bottom: 15px;
+  break-inside: avoid;
+}
 
-    .shipping-box {
-      flex: 1;
-      padding: 5px 15px;
-    }
+.shipping-title {
+  color: #c2185b;
+  font-weight: 800;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
 
-    .shipping-box div {
-      margin-bottom: 1px;
-      line-height: 1.4;
-    }
+.shipping-boxes {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
 
-    /* Table */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-      break-inside: avoid;
-    }
+.shipping-box {
+  flex: 1;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 5px;
+}
 
-    thead {
-      display: table-header-group;
-    }
+.shipping-box div {
+  line-height: 1.2;
+}
 
-    th {
-      background-color: #c2185b;
-      color: white;
-      padding: 8px;
-      font-weight: 600;
-      font-size: 1rem;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+  break-inside: avoid;
+  font-size: 0.8rem;
+}
 
-    td {
-      padding: 8px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    }
+th {
+  background-color: #c2185b;
+  color: white;
+  padding: 4px 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
 
-    tr:nth-child(odd) {
-      background-color: #fafafa;
-    }
+td {
+  padding: 4px 6px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
 
-    /* Footer section */
-    .footer-section {
-      display: flex;
-      justify-content: space-between;
-      gap: 32px;
-      margin-bottom: 20px;
-      break-inside: avoid;
-    }
+tr:nth-child(odd) {
+  background-color: #fafafa;
+}
 
-    .bank-details {
-      flex: 1;
-      padding: 15px;
-    }
+/* Footer section */
+.footer-section {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  margin-bottom: 15px;
+  break-inside: avoid;
+}
 
-    .bank-header {
-      margin-bottom: 12px;
-    }
+.bank-details {
+  flex-basis: 45%;
+  font-size: 0.8rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  max-width: 500px;
+  overflow: hidden;
+}
 
-    .bank-content > div {
-      margin-bottom: 12px;
-    }
+.bank-header {
+  margin-bottom: 8px;
+  background-color: #fafafa;
+  borderBottom: 1px solid #eeeeee;
+  padding: 12px 8px;
+}
 
-    .bank-content div div:first-child {
-      color: #666;
-      margin-bottom: 4px;
-    }
+.bank-content{
+  padding: 10px;
+}
 
-    .bank-content div div:last-child {
-      font-weight: 500;
-    }
+.bank-content > div {
+  margin-bottom: 8px;
+}
 
-    .totals-box {
-      flex: 1;
-      padding: 15px;
-    }
+.bank-content div div:first-child {
+  color: #666;
+  margin-bottom: 2px;
+}
 
-    .total-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      line-height: 1.4;
-    }
+.totals-box {
+  flex-basis: 45%;
+  padding: 10px;
+  font-size: 0.8rem;
+  margin-left: auto;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 6px;
+}
 
-    .final-total {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(0, 0, 0, 0.12);
-      color: #c2185b;
-      font-weight: 600;
-    }
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 1.3;
+}
 
-    /* Notes section */
-    .notes-section {
-      margin-top: 20px;
-      break-inside: avoid;
-    }
+.final-total {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  color: #c2185b;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
 
-    .notes-section > div:first-child {
-      color: #c2185b;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
+/* Notes section */
+.notes-section {
+  margin-top: 15px;
+  break-inside: avoid;
+  font-size: 0.8rem;
+}
+
+.notes-section > div:first-child {
+  color: #c2185b;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
 
     /* Text alignment utilities */
     .text-right {
@@ -242,9 +275,9 @@ const generateInvoiceAttachmentTemplate = ({
       </div>
       <div>
         <div class="invoice-title">INVOICE</div>
-        <div>Invoice No: <strong>${invoiceId || '---'}</strong></div>
-        <div>Date: <strong>${dayjs(invoiceDate).format('DD/MM/YYYY') || '---'}</strong></div>
-        ${dueDate ? `<div>Due Date: <strong>${dayjs(dueDate).format('DD/MM/YYYY') || '---'}</strong></div>` : ''}
+        <div class="invoice-desc-item">Invoice No: <strong>${invoiceId || '---'}</strong></div>
+        <div class="invoice-desc-item">Date: <strong>${dayjs(invoiceDate).format('DD/MM/YYYY') || '---'}</strong></div>
+        ${dueDate ? `<div class="invoice-desc-item">Due Date: <strong>${dayjs(dueDate).format('DD/MM/YYYY') || '---'}</strong></div>` : ''}
       </div>
     </div>
   </div>
@@ -255,7 +288,7 @@ const generateInvoiceAttachmentTemplate = ({
     <div class="address-box">
       <div class="address-title">Bill From</div>
       ${businessData ? `
-        <div>
+        <div class="address-box-content">
           <div style="font-weight: 600; margin-bottom: 1px;">${businessData.name}</div>
           <div style="margin-bottom: 1px;">${businessData.address}</div>
           <div style="margin-bottom: 1px;">${businessData.city}, ${businessData.country} - ${businessData.postal_code}</div>
@@ -270,7 +303,7 @@ const generateInvoiceAttachmentTemplate = ({
     <div class="address-box">
       <div class="address-title">Bill To</div>
       ${customerData ? `
-        <div>
+        <div class="address-box-content">
           <div style="font-weight: 600; margin-bottom: 1px;">${customerData.business_name}</div>
           <div style="margin-bottom: 1px;">${customerData.address}</div>
           <div style="margin-bottom: 1px;">${customerData.city}, ${customerData.country} - ${customerData.postal_code}</div>
@@ -289,17 +322,17 @@ const generateInvoiceAttachmentTemplate = ({
     <div class="shipping-boxes">
       ${fromShippingDetails.address ? `
       <div class="shipping-box">
-        <div style="margin-bottom: 1px;">From:</div>
-        <div style="margin-bottom: 1px;">${fromShippingDetails.address}</div>
-        <div style="margin-bottom: 1px;">${fromShippingDetails.city}, ${fromShippingDetails.state} ${fromShippingDetails.postalCode}</div>
+        <div>From:</div>
+        <div>${fromShippingDetails.address}</div>
+        <div>${fromShippingDetails.city}, ${fromShippingDetails.state} ${fromShippingDetails.postalCode}</div>
       </div>
       ` : ''}
 
       ${toShippingDetails.address ? `
       <div class="shipping-box">
-        <div style="margin-bottom: 1px;">To:</div>
-        <div style="margin-bottom: 1px;">${toShippingDetails.address}</div>
-        <div style="margin-bottom: 1px;">${toShippingDetails.city}, ${toShippingDetails.state} ${toShippingDetails.postalCode}</div>
+        <div>To:</div>
+        <div>${toShippingDetails.address}</div>
+        <div>${toShippingDetails.city}, ${toShippingDetails.state} ${toShippingDetails.postalCode}</div>
       </div>
       ` : ''}
     </div>

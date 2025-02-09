@@ -227,6 +227,9 @@ export const CreateOrEditCustomer= ({}:props) => {
                   field={field}
                   icon={ <AccountBalanceIcon sx={{ color: 'primary.main' }} />}
                   >
+                    <MenuItem  value="">
+                        Select State
+                    </MenuItem>
                     {IndianStates.map(state => (
                       <MenuItem key={state} value={state}>
                         {state}

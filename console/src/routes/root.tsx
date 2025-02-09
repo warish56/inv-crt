@@ -19,6 +19,7 @@ import { CreateOrEditBusiness } from "@pages/Authenticated/Invoices/create/SubSt
 import { CreateOrEditCustomer } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditCustomer"
 import { CreateOrEditBank } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditBank"
 import { CreateOrEditService } from "@pages/Authenticated/Invoices/create/SubSteps/CreateOrEditService"
+import { SendEmailPage } from "@pages/Authenticated/SendEmail"
 
 
 
@@ -29,7 +30,9 @@ export const RootRoute = () => {
             <Route path="/otp" element={<OtpPage />} />
 
             <Route element={<AuthLayout/>}>
-                <Route path="/" element={<InvoiceListPage />} />
+                <Route path="/" element={<InvoiceListPage />} >
+                    <Route path="send-mail/:invoiceId" element={<SendEmailPage />} />
+                </Route>
 
                 <Route path="/invoices">
                     <Route index element={<InvoiceListPage />} />

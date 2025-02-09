@@ -20,6 +20,8 @@ import { useSnackbar } from '@hooks/useSnackbar';
 import { useBanksList } from '../../Steps/BankSelection/hooks/useBanksList';
 import { useForm } from '@tanstack/react-form';
 import { FormField } from '../../../../../../components/Form/FormField';
+import { validateField } from '@utils/validators';
+import { nonEmptyValidator } from '@utils/validators';
 
 
 const attributes = {
@@ -104,7 +106,20 @@ export const CreateOrEditBank= ({}:props) => {
       <Grid container spacing={3}>
 
         <Grid item xs={12} md={6}>
-          <form.Field name='bankName'>
+          <form.Field
+           name='bankName'           
+           validators={{
+              onChange: ({value}) => {
+                const validators = [
+                    {
+                        validator: nonEmptyValidator,
+                        errorMessage: 'Bank name is required'
+                    },
+                  ];
+                    return validateField(validators, value);
+              }
+           }}
+          >
                 {(field) => (
                     <FormField 
                     fullWidth
@@ -121,7 +136,20 @@ export const CreateOrEditBank= ({}:props) => {
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <form.Field name='holderName'>
+          <form.Field 
+          name='holderName'
+          validators={{
+            onChange: ({value}) => {
+              const validators = [
+                  {
+                      validator: nonEmptyValidator,
+                      errorMessage: 'Account holder name is required'
+                  },
+                ];
+                  return validateField(validators, value);
+            }
+          }}
+          >
                 {(field) => (
                     <FormField 
                     fullWidth
@@ -138,7 +166,20 @@ export const CreateOrEditBank= ({}:props) => {
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <form.Field name='accountNumber'>
+          <form.Field 
+          name='accountNumber'
+          validators={{
+            onChange: ({value}) => {
+              const validators = [
+                  {
+                      validator: nonEmptyValidator,
+                      errorMessage: 'Account number is required'
+                  },
+                ];
+                  return validateField(validators, value);
+            }
+          }}
+          >
                 {(field) => (
                     <FormField 
                     fullWidth
@@ -156,7 +197,20 @@ export const CreateOrEditBank= ({}:props) => {
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <form.Field name='ifscCode'>
+          <form.Field 
+          name='ifscCode'
+          validators={{
+            onChange: ({value}) => {
+              const validators = [
+                  {
+                      validator: nonEmptyValidator,
+                      errorMessage: 'IFSC code is required'
+                  },
+                ];
+                  return validateField(validators, value);
+            }
+          }}
+          >
                 {(field) => (
                     <FormField 
                     fullWidth

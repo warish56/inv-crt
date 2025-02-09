@@ -160,11 +160,11 @@ const updateBank = async ({
    }) => {
    
        const dataObj = {
-           ...(bankName ? {[Attributes.bankName.name]: bankName} : {}),
-           ...(accountNumber ? {[Attributes.accountNumber.name]: accountNumber} : {}),
-           ...(holderName ? {[Attributes.accountHolderName.name]: holderName} : {}),
-           ...(ifscCode ? {[Attributes.ifscCode.name]: ifscCode} : {}),
-           ...(accountType ? {[Attributes.type.name]: accountType} : {}),
+        [Attributes.bankName.name]: bankName,
+        [Attributes.accountNumber.name]: accountNumber,
+        [Attributes.accountHolderName.name]: holderName,
+        [Attributes.ifscCode.name]: ifscCode,
+        [Attributes.type.name]: accountType
        }
    
        const databases = new sdk.Databases(dbValues.client);

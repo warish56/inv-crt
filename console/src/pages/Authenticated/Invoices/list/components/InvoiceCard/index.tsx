@@ -40,7 +40,13 @@ export const InvoiceCard = ({invoice}:props) => {
             showSnackbar({message: 'Failed to delete invoice', type: 'error'})
           }
         });
-  }
+    }
+
+  const handleSendMail = () => {
+      navigate(`/send-mail/${invoice.$id}`,{
+        state: invoice
+      })
+    }
 
     const handleStatusChange = (status:InvoiceStatus) => {
       mutation.mutateAsync({
@@ -116,6 +122,7 @@ export const InvoiceCard = ({invoice}:props) => {
           invoiceId={invoice.$id}
           isChangingStatus={isChangingStatus}
           handleDelete={handleDelete}
+          handleSendMail={handleSendMail}
           />
 
         {/* Amount and Client */}

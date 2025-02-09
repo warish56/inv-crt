@@ -143,6 +143,9 @@ export const ShippingDetailsForm = ({
                 disabled={formDisabled}
                 icon={<LocationOn color='primary'/>}
                 >
+                    <MenuItem  value="">
+                        Select State
+                    </MenuItem>
                     {IndianStates.map(state => (
                       <MenuItem key={state} value={state}>
                         {state}

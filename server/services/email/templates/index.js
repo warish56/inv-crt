@@ -1,9 +1,9 @@
 
 
-const invoice = require('./invoice');
-const previewB = require('./previewB')
+const invoice = require('./invoiceEmail');
+const previewC = require('./invoiceAttachment')
 
 module.exports = {
     ...invoice,
-    ...previewB
+    ...previewC
 }

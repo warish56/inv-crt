@@ -4,7 +4,7 @@ const { getCustomerWithId } = require("../db/customer");
 const { getUserInvoicesList, createInvoice, getInvoiceWithId, updateInvoice, updateInvoiceStatus, deleteInvoice, searchInvoiceByNameOrCustomerNameOrNotes } = require("../db/invoice");
 const { deleteShippingWithId, getShippingWithId } = require("../db/shipping");
 const { sendMail } = require("../services/email/provider/sendgrid");
-const { generateInvoiceEmailTemplate, getInvoiceEmailTemplate_B } = require("../services/email/templates");
+const { generateInvoiceEmailTemplate, generateInvoiceAttachmentTemplate } = require("../services/email/templates");
 const { InvoiceManager } = require("../services/InvoiceManager");
 const { generatePdf } = require("../services/pdf");
 const { formatCurrency } = require("../utils/common");
@@ -102,7 +102,7 @@ const sendInvoiceMail = async (payload) => {
         totalBillTaxes
     } = invoiceManager.calculate();
 
-    const attachmentHtmlContent = getInvoiceEmailTemplate_B({
+    const attachmentHtmlContent = generateInvoiceAttachmentTemplate({
         businessData: business,
         customerData: customer,
         bankData: bank,
@@ -128,7 +128,6 @@ const sendInvoiceMail = async (payload) => {
 
     const pdf = await generatePdf(attachmentHtmlContent);
     const pdfBase64 = Buffer.from(pdf).toString('base64');
-
 
     await sendMail({
         email: clientsEmail,

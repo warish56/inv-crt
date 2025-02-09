@@ -25,6 +25,8 @@ import { useForm } from '@tanstack/react-form';
 import { FormHeader } from '../../common/FormHeader';
 import { FormField } from '../../../../../../components/Form/FormField';
 import { Countries, IndianStates } from '@constants/states';
+import { phoneValidator, validateField } from '@utils/validators';
+import { nonEmptyValidator } from '@utils/validators';
 
 
 
@@ -121,7 +123,30 @@ export const CreateOrEditCustomer= ({}:props) => {
           <FormHeader title='Required Information'/>
 
           <Grid item xs={12}>
-            <form.Field name='businessName'>
+            <form.Field 
+            name='businessName'
+            validators={{
+              onChange: ({value, fieldApi}) => {
+                const validators = [
+                  {
+                    validator: nonEmptyValidator,
+                    errorMessage: 'Business name is required'
+                  }
+                ]
+                fieldApi.setErrorMap({onBlur: ''})
+                return validateField(validators, value);
+              },
+              onBlur: ({value}) => {
+                  const validators = [
+                    {
+                      validator: nonEmptyValidator,
+                      errorMessage: 'Business name is required'
+                    }
+                  ]
+                  return validateField(validators, value);
+              }
+            }}
+            >
               {(field) => (
                   <FormField 
                   fullWidth
@@ -155,7 +180,34 @@ export const CreateOrEditCustomer= ({}:props) => {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <form.Field name='phoneNumber'>
+            <form.Field 
+            name='phoneNumber'
+            validators={{
+              onChange: ({value, fieldApi}) => {
+                const validators = [
+                  {
+                    validator: nonEmptyValidator,
+                    errorMessage: 'Phone number is required'
+                  },
+                  {
+                    validator: phoneValidator,
+                    errorMessage: 'Invalid phone number'
+                  }
+                ];
+                fieldApi.setErrorMap({onBlur: ''})
+                return validateField(validators, value);
+              },
+              onBlur: ({value}) => {
+                  const validators = [
+                    {
+                      validator: nonEmptyValidator,
+                      errorMessage: 'Phone number is required'
+                    },
+                  ]
+                  return validateField(validators, value);
+              }
+            }}
+            >
               {(field) => (
                   <FormField 
                   fullWidth

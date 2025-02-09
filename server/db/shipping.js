@@ -121,10 +121,10 @@ const updateShipping = async ({
    }) => {
    
        const dataObj = {
-        ...(fromAddressDetails ? {[Attributes.fromAddressDetails.name]: fromAddressDetails} : {}),
-        ...(toAddressDetails ? {[Attributes.toAddressDetails.name]: toAddressDetails} : {}),
-        ...(shippingMethod ? {[Attributes.shippingMethod.name]: shippingMethod} : {}),
-        ...(shippingAmt ? {[Attributes.shippingAmt.name]: Number(shippingAmt || 0)} : {}),
+        [Attributes.fromAddressDetails.name]: fromAddressDetails,
+        [Attributes.toAddressDetails.name]: toAddressDetails,
+        [Attributes.shippingMethod.name]: shippingMethod,
+        [Attributes.shippingAmt.name]: Number(shippingAmt || 0)
        }
    
        const databases = new sdk.Databases(dbValues.client);

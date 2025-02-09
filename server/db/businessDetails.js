@@ -199,15 +199,15 @@ const updateBusiness = async ({
     }) => {
     
         const dataObj = {
-            ...(phone ? {[Attributes.phone.name]: phone} : {}),
-            ...(name ? {[Attributes.name.name]: name} : {}),
-            ...(email ? {[Attributes.email.name]: email} : {}),
-            ...(address ? {[Attributes.address.name]: address} : {}),
-            ...(city ? {[Attributes.city.name]: city} : {}),
-            ...(state ? {[Attributes.state.name]: state} : {}),
-            ...(postalCode ? {[Attributes.postalCode.name]: postalCode} : {}),
-            ...(gstin ? {[Attributes.gstin.name]: gstin} : {}),
-            ...(pan ? {[Attributes.pan.name]: pan} : {}),
+            [Attributes.phone.name]: phone,
+            [Attributes.name.name]: name,
+            [Attributes.email.name]: email,
+            [Attributes.address.name]: address,
+            [Attributes.city.name]: city,
+            [Attributes.state.name]: state,
+            [Attributes.postalCode.name]: postalCode,
+            [Attributes.gstin.name]: gstin,
+            [Attributes.pan.name]: pan
         }
     
         const databases = new sdk.Databases(dbValues.client);

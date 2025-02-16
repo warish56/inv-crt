@@ -5,7 +5,8 @@ export const ApiRoutes = {
         create: '/business/create',
         update: '/business/update',
         list: '/business/list',
-        search: '/business/search'
+        search: '/business/search',
+        personal: '/business/personal'
     },
     customer: {
         create: '/customer/create',

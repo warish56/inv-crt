@@ -1,10 +1,15 @@
-const { getUserBusinessList, searchBusinessByNameOrNumber, createBusiness, getBusinessWithId, updateBusiness } = require("../db/businessDetails");
+const { getUserBusinessList, searchBusinessByNameOrNumber, createBusiness, getBusinessWithId, updateBusiness, getUserPersonalBusiness } = require("../db/businessDetails");
 
 
 
 const getAllBusinessOfUser = async (userId) => {
     const businessList = await getUserBusinessList(userId);
     return businessList
+}
+
+const getPersonalBusinessOfUser = async (userId) => {
+    const business = await getUserPersonalBusiness(userId);
+    return business
 }
 
 const searchBusinessOfUser = async (userId, searchText) => {
@@ -23,7 +28,8 @@ const createNewBusinessForUser = async ({
     postalCode,
     country,
     gstin,
-    pan
+    pan,
+    personal
 }) => {
     const business = await createBusiness({
         userId,
@@ -36,7 +42,8 @@ const createNewBusinessForUser = async ({
         postalCode,
         country,
         gstin,
-        pan
+        pan,
+        personal
     });
 
     return business;
@@ -78,5 +85,6 @@ module.exports = {
     getAllBusinessOfUser,
     createNewBusinessForUser,
     updateBusinessDetails,
-    searchBusinessOfUser
+    searchBusinessOfUser,
+    getPersonalBusinessOfUser
 }

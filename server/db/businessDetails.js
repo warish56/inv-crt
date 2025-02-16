@@ -65,6 +65,11 @@ const Attributes = {
         type: 'string',
         required: false,
     },
+    personal: {
+        name: 'personal',
+        type: 'boolean',
+        required: false,
+    },
     postalCode: {
         name: 'postal_code',
         type: 'string',
@@ -143,6 +148,18 @@ const getUserBusinessList = async (userId) => {
     return result.documents;
 }
 
+const getUserPersonalBusiness = async (userId) => {
+    const databases = new sdk.Databases(dbValues.client);
+    const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
+        Query.equal(Attributes.userId.name, userId),
+        Query.equal(Attributes.personal.name, true),
+        Query.orderDesc('$createdAt')
+    ]);
+    return result.documents[0];
+}
+
+
+
 
 
 const createBusiness = async ({
@@ -156,7 +173,8 @@ state,
 postalCode,
 country,
 gstin,
-pan
+pan,
+personal
 }) => {
 
     const dataObj = {
@@ -171,6 +189,7 @@ pan
         ...(postalCode ? {[Attributes.postalCode.name]: postalCode} : {}),
         ...(gstin ? {[Attributes.gstin.name]: gstin} : {}),
         ...(pan ? {[Attributes.pan.name]: pan} : {}),
+        ...(pan ? {[Attributes.personal.name]: personal} : {}),
 
     }
 
@@ -228,5 +247,6 @@ module.exports = {
     updateBusiness,
     getUserBusinessList,
     getBusinessWithId,
-    searchBusinessByNameOrNumber
+    searchBusinessByNameOrNumber,
+    getUserPersonalBusiness
 }

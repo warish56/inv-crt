@@ -1,7 +1,7 @@
 
 const express = require('express');
 const { sendFailureResponse, sendSuccessResponse } = require('../utils/response');
-const { getAllBusinessOfUser, createNewBusinessForUser, updateBusinessDetails, searchBusinessOfUser } = require('../controller/business');
+const { getAllBusinessOfUser, createNewBusinessForUser, updateBusinessDetails, searchBusinessOfUser, getPersonalBusinessOfUser } = require('../controller/business');
 const router = express.Router();
 
 
@@ -31,7 +31,9 @@ router.post('/create', async (req, res) => {
             postalCode,
             country,
             gstin,
-            pan
+            pan,
+            personal
+
         }  = req.body;
 
         const business = await createNewBusinessForUser({
@@ -45,7 +47,9 @@ router.post('/create', async (req, res) => {
             postalCode,
             country,
             gstin,
-            pan
+            pan,
+            personal
+
         });
         return sendSuccessResponse(res, {
             business
@@ -68,7 +72,7 @@ router.put('/update', async (req, res) => {
             state,
             postalCode,
             gstin,
-            pan
+            pan,
         }  = req.body;
 
 
@@ -103,6 +107,19 @@ router.post('/search', async (req, res) => {
     }catch(err){
         console.log("==Error in business search ==", err);
         return sendFailureResponse(res, err, 'Something went wrong in business search')
+    }
+})
+
+router.post('/personal', async (req, res) => {
+    try{
+        const {userId}  = req.body;
+        const business = await getPersonalBusinessOfUser(userId);
+        return sendSuccessResponse(res, {
+            business 
+        })
+    }catch(err){
+        console.log("==Error in personal business ==", err);
+        return sendFailureResponse(res, err, 'Something went wrong in personal business')
     }
 })
 

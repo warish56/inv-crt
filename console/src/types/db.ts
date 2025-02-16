@@ -13,6 +13,7 @@ export type Business = {
     country:string;
     gstin: string;
     pan:string;
+    personal?: boolean;
 }
 
 export type Customer = {

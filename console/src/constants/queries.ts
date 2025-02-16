@@ -2,6 +2,7 @@
 
 export const AppQueries = {
     businessList: 'business_list',
+    businessPersonal: 'business_personal',
     businessSearch: 'business_search',
     customerList: 'customer_list',
     customerSearch: 'customer_search',
